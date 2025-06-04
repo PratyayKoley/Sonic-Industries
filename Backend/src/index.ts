@@ -7,6 +7,7 @@ import "./database";
 
 import UserRoutes from "./routes/users-routes";
 import CategoryRoutes from "./routes/categories-routes";
+import ProductRoutes from "./routes/products-routes";
 
 import "./models/products.model";
 import "./models/cart.model";
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 
 app.use("/api/users", UserRoutes);
 app.use("/api/categories", CategoryRoutes);
+app.use("/api/products", ProductRoutes);
 
 // Routes
 

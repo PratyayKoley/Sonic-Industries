@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CategoryModel } from "../models/categories.model";
+import { Category, CategoryModel } from "../models/categories.model";
 
 export const getCategoryBySlug = async (
   req: Request,
@@ -42,7 +42,7 @@ export const createCategory = async (
   res: Response
 ): Promise<void> => {
   try {
-    const categoryData = req.body;
+    const categoryData: Category = req.body;
     if (!categoryData || Object.keys(categoryData).length === 0) {
       res.status(400).json({
         message: "Category data is required.",
@@ -101,7 +101,10 @@ export const updateCategory = async (
   }
 };
 
-export const deleteCategory = async (req: Request, res: Response): Promise<void> => {
+export const deleteCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { slug } = req.params;
 
@@ -122,7 +125,7 @@ export const deleteCategory = async (req: Request, res: Response): Promise<void>
 
     res.status(200).json({
       message: "Category deleted successfully.",
-      deleteCategory,
+      deletedCategory,
     });
     return;
   } catch (error) {
