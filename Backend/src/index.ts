@@ -6,9 +6,9 @@ import bodyParser from "body-parser";
 import "./database";
 
 import UserRoutes from "./routes/users-routes";
+import CategoryRoutes from "./routes/categories-routes";
 
 import "./models/products.model";
-import "./models/categories.model";
 import "./models/cart.model";
 import "./models/orders.model";
 
@@ -21,6 +21,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/api/users", UserRoutes);
+app.use("/api/categories", CategoryRoutes);
 
 // Routes
 

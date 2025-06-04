@@ -10,7 +10,7 @@ const JWT_SECRET =
 
 export const createMemberUser = async (
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> => {
   try {
     const { role, password, email, ...rest } = req.body;
@@ -52,11 +52,11 @@ export const createMemberUser = async (
 
 export const getAllMembers = async (
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> => {
   try {
     const users = await UserModel.find({ role: "member" }).select(
-      "-password -security_answer -role -security_question -__v -createdAt -updatedAt -_id",
+      "-password -security_answer -role -security_question -__v -createdAt -updatedAt -_id"
     );
     res.status(200).json({
       message: "Members fetched successfully",
@@ -97,7 +97,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user._id, role: user.role, username: user.username },
       JWT_SECRET,
-      { expiresIn: "7d" },
+      { expiresIn: "7d" }
     );
 
     res.status(200).json({
@@ -117,5 +117,34 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteMembers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (req.user?.userId === id) {
+      res.status(400).json({ message: "Admins cannot delete themselves." });
+      return;
+    }
+
+    const deletedMember = await UserModel.findByIdAndDelete(id);
+
+    if (!deletedMember) {
+      res.status(404).json({ message: "Member not found." });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Member deleted successfully.",
+      user: deletedMember,
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Failed to delete user", error });
   }
 };
