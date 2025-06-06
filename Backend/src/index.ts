@@ -8,9 +8,7 @@ import "./database";
 import UserRoutes from "./routes/users-routes";
 import CategoryRoutes from "./routes/categories-routes";
 import ProductRoutes from "./routes/products-routes";
-
-import "./models/products.model";
-import "./models/cart.model";
+import CartRoutes from "./routes/cart-routes";
 import "./models/orders.model";
 
 dotenv.config();
@@ -21,11 +19,12 @@ const port: number = parseInt(process.env.PORT || "5000");
 app.use(cors());
 app.use(bodyParser.json());
 
+// Routes
+
 app.use("/api/users", UserRoutes);
 app.use("/api/categories", CategoryRoutes);
 app.use("/api/products", ProductRoutes);
-
-// Routes
+app.use("/api/cart", CartRoutes);;
 
 // Server Connection
 app.get("/", (req: Request, res: Response): void => {
