@@ -15,13 +15,14 @@ export const createMemberUser = async (
   try {
     const { role, password, email, ...rest } = req.body;
 
+    // Check if email is already registered
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       res.status(409).json({ message: "User already exists." });
       return;
     }
 
-    // 🔐 Hash password using Argon2
+    // Hash the password using Argon2
     const hashedPassword = await argon2.hash(password, {
       type: argon2.argon2id,
       memoryCost: 2 ** 16,
@@ -29,9 +30,20 @@ export const createMemberUser = async (
       parallelism: 1,
     });
 
-    const uniqueSuffix = uuidv4().split("-")[0].slice(0, 6);
-    const generatedUsername = `M${uniqueSuffix.toUpperCase()}`;
+    // Generate a unique username: MXXXXXXXXXX
+    let generatedUsername = "";
+    let isUnique = false;
 
+    while (!isUnique) {
+      const suffix = uuidv4().replace(/-/g, "").slice(0, 10).toUpperCase();
+      generatedUsername = `M${suffix}`;
+      const usernameExists = await UserModel.findOne({ username: generatedUsername });
+      if (!usernameExists) {
+        isUnique = true;
+      }
+    }
+
+    // Create new user
     const user = await UserModel.create({
       ...rest,
       email,

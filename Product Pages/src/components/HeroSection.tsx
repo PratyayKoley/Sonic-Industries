@@ -1,7 +1,15 @@
 import { Ripple } from "./ui/ripple";
+import { useEffect } from "react";
 
 export default function HeroSection({ productData }) {
   console.log(productData);
+
+  useEffect(() => {
+    if (productData?.name) {
+      document.title = `${productData.name} | Sonic Industries`;
+    }
+  }, [productData]);
+  
   return (
     <section
       className="min-h-screen w-full bg-white flex items-center justify-center px-4 py-12"

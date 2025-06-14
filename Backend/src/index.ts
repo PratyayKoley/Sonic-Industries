@@ -9,7 +9,7 @@ import UserRoutes from "./routes/users-routes";
 import CategoryRoutes from "./routes/categories-routes";
 import ProductRoutes from "./routes/products-routes";
 import CartRoutes from "./routes/cart-routes";
-import "./models/orders.model";
+import OrderRoutes from "./routes/orders-routes";
 
 dotenv.config();
 const app = express();
@@ -24,7 +24,8 @@ app.use(bodyParser.json());
 app.use("/api/users", UserRoutes);
 app.use("/api/categories", CategoryRoutes);
 app.use("/api/products", ProductRoutes);
-app.use("/api/cart", CartRoutes);;
+app.use("/api/cart", CartRoutes);
+app.use("/api/orders", OrderRoutes);
 
 // Server Connection
 app.get("/", (req: Request, res: Response): void => {
