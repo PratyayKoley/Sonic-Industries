@@ -17,29 +17,29 @@ import Testimonials from "./Testimonials";
 import FAQs from "./FAQs";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
+import { CategoryBackend } from "@/types";
 
 const ProductPage = () => {
-  const { id } = useParams();
-  const [productData, setProductData] = useState(null);
+  const { slug } = useParams();
+  console.log(slug);
+  const [productData, setProductData] = useState<CategoryBackend | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
 
     setLoading(true);
     axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}`, {
-        params: { prod_id: id },
-      })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories/${slug}`)
       .then((res) => {
-        setProductData(res.data);
+        setProductData(res.data.category);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching product:", err);
         setLoading(false);
       });
-  }, [id]);
+  }, [slug]);
 
   // Don't render anything until data is loaded
   if (loading || !productData) {
@@ -56,7 +56,7 @@ const ProductPage = () => {
       <SEO
         title={`${productData.name} | Sonic Industries`}
         description={productData.description}
-        canonical={`https://yourdomain.com/product/${id}`}
+        canonical={`https://yourdomain.com/product/${slug}`}
       >
         <script type="application/ld+json">
           {JSON.stringify({

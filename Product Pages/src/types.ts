@@ -53,3 +53,79 @@ export interface FAQItem {
   question: string;
   answer: string;
 }
+
+export interface ProductBackend {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  tagline?: string;
+
+  categoryId: string;
+
+  price: number;
+  mrp?: number;
+  stock: number;
+  images: string[];
+  rating: number;
+  num_reviews: number;
+  sku?: string;
+
+  size?: string;
+  color?: string;
+  material?: string;
+  countryOfOrigin?: string;
+  hsnCode?: string;
+
+  features?: {
+    name?: string;
+    weight?: number;
+  }[];
+
+  packaging?: {
+    items?: number;
+    length?: number;
+    width?: number;
+    height?: number;
+  };
+
+  yt_video_url?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CategoryBackend {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+
+  features?: {
+    image?: string;
+    name?: string;
+    desc?: string;
+  }[];
+
+  labels?: {
+    x?: number;
+    y?: number;
+    name?: string;
+    desc?: string;
+  }[];
+
+  yt_video_url?: string;
+
+  packaged?: {
+    items?: {
+      name?: string;
+      desc?: string;
+    }[];
+    length: number;
+    width: number;
+    height: number;
+  }[];
+
+  createdAt?: string;
+  updatedAt?: string;
+}
