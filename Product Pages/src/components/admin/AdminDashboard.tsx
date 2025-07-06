@@ -1,5 +1,5 @@
-import CategoriesDashboard from "./CategoriesDashboard";
-import ProductDashboard from "./ProductDashboard";
+import CategoriesDashboard from "./CategoriesDashboard/CategoriesDashboard";
+import ProductDashboard from "./ProductsDashboard.tsx/ProductDashboard";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import { User, Boxes, LogOut, LayoutGrid } from "lucide-react";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 const AdminDashboard = () => {
   const location = useLocation();
   const user = location.state?.user;
-  const [activeTab, setActiveTab] = useState<"products" | "categories">(
+  const [activeTab, setActiveTab] = useState<"products" | "categories" | "profile">(
     "products"
   );
 
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
     },
     {
       label: "Profile",
-      href: "#",
+      onClick: () => setActiveTab("profile"),
       icon: (
         <User className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
