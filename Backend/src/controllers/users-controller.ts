@@ -37,7 +37,9 @@ export const createMemberUser = async (
     while (!isUnique) {
       const suffix = uuidv4().replace(/-/g, "").slice(0, 10).toUpperCase();
       generatedUsername = `M${suffix}`;
-      const usernameExists = await UserModel.findOne({ username: generatedUsername });
+      const usernameExists = await UserModel.findOne({
+        username: generatedUsername,
+      });
       if (!usernameExists) {
         isUnique = true;
       }

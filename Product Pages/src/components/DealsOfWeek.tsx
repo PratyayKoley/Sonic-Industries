@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 
-const Deals_Video = () => {
+export default function DealsOfWeek () {
   return (
     <div className="bg-white min-h-screen py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -77,5 +77,3 @@ const Deals_Video = () => {
     </div>
   );
 };
-
-export default Deals_Video;

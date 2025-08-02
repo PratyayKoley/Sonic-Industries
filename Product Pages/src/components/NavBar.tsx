@@ -45,7 +45,12 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="flex justify-between items-center px-4 md:px-8 py-4">
         <div className="text-xl md:text-2xl font-bold text-purple-600 flex items-center gap-2">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
+          <img
+            src="/favicon.ico"
+            alt="Logo"
+            className="w-8 h-8 md:w-10 md:h-10"
+          />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-300">
             SONIC INDUSTRIES
           </span>
         </div>

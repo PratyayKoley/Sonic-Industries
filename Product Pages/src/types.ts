@@ -107,7 +107,7 @@ export interface CategoryBackend {
 
   yt_video_url?: string;
 
-  packaged?: CategoryPackaged[];
+  packaged?: CategoryPackaged;
 
   createdAt?: string;
   updatedAt?: string;
@@ -279,4 +279,10 @@ export type ProductEditingModalProps = {
 };
 
 export type FormTab = "basic" | "features" | "labels" | "video" | "packaging";
-export type ProductFormTab = "basic" | "features" | "details" | "video" | "packaging" | "pricing";
+export type ProductFormTab =
+  | "basic"
+  | "features"
+  | "details"
+  | "video"
+  | "packaging"
+  | "pricing";

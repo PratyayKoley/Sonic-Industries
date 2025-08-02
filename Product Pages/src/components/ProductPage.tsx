@@ -6,13 +6,13 @@ import SEO from "./SEO";
 import Navbar from "./NavBar";
 import HeroSection from "./HeroSection";
 import About from "./About";
-import ProductIntro from "./ProductIntro";
-import IndustryFeatures from "./IndustryFeatures";
-import AttractiveFeatures from "./AttractiveFeatures";
-import Deals_Video from "./Deals_Video";
-import Related_Products from "./Related_Products";
-import WhyChooseUs from "./Why_Choose_Us";
-import Comparison from "./Comparison";
+import Features from "./ProductIntro";
+import PackagingInfo from "./PackagingInfo";
+import Hotspots from "./Hotspots";
+import DealsOfWeek from "./DealsOfWeek";
+import ProductVariants from "./ProductVariants";
+import WhyChooseUs from "./WhyChooseUs";
+import ProductComparison from "./ProductComparison";
 import Testimonials from "./Testimonials";
 import FAQs from "./FAQs";
 import ContactUs from "./ContactUs";
@@ -74,13 +74,13 @@ const ProductPage = () => {
       <Navbar />
       <HeroSection productData={productData} />
       <About />
-      <ProductIntro productData={productData} />
-      <IndustryFeatures />
-      <AttractiveFeatures />
-      <Deals_Video />
-      <Related_Products />
-      <WhyChooseUs />
-      <Comparison />
+      <Features productData={productData} />
+      <PackagingInfo productData={productData} />
+      <Hotspots />
+      <DealsOfWeek />
+      <ProductVariants />
+      <WhyChooseUs productData={productData} />
+      <ProductComparison />
       <Testimonials />
       <FAQs />
       <ContactUs />

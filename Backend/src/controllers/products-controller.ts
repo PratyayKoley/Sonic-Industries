@@ -138,3 +138,30 @@ export const deleteProduct = async (
     });
   }
 };
+
+export const getAllProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const allProducts = await ProductModel.find();
+
+    if (!allProducts || allProducts.length === 0) {
+      res.status(404).json({
+        message: "No products found.",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Products fetched successfully.",
+      products: allProducts,
+    });
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    res.status(500).json({
+      message: "Failed to fetch products.",
+      error,
+    });
+  }
+};

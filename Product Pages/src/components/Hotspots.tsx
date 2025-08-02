@@ -73,7 +73,7 @@ const hotspots = [
   },
 ];
 
-export default function AttractiveFeatures() {
+export default function Hotspots() {
   const [activeHotspot, setActiveHotspot] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });

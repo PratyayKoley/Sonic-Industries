@@ -25,7 +25,7 @@ const CategorySchema = new Schema(
 
     yt_video_url: { type: String },
 
-    packaged: [
+    packaged: 
       {
         items: [
           {
@@ -36,8 +36,7 @@ const CategorySchema = new Schema(
         length: { type: Number, required: true },
         width: { type: Number, required: true },
         height: { type: Number, required: true },
-      },
-    ],
+      }
   },
   {
     timestamps: true,

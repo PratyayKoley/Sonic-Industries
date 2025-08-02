@@ -7,8 +7,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 
-export default function Related_Products() {
-    // Sample product data
+export default function ProductVariants() {
     const products = [
         { id: 1, name: "Prolab Blue", price: 135, oldPrice: 193, image: "/smartwatch.png", rating: 4.5, background: "bg-pink-200" },
         { id: 2, name: "Prolab Blue", price: 135, oldPrice: 193, image: "/smartwatch2.png", rating: 4.5, background: "bg-gray-500" },

@@ -31,7 +31,6 @@ const ProductSchema = new Schema(
     ],
 
     packaging: {
-      items: { type: Number },
       length: { type: Number },
       width: { type: Number },
       height: { type: Number },

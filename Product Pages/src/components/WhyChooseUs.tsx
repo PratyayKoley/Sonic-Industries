@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Play, RotateCw, Truck, RefreshCw, Headphones, X } from "lucide-react";
+import { CategoryBackend } from "@/types";
 
-export default function WhyChooseUs() {
+interface WhyChooseUsProps {
+  productData: CategoryBackend;
+}
+
+export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -48,7 +53,10 @@ export default function WhyChooseUs() {
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         setIsVideoModalOpen(false);
       }
     };
@@ -74,6 +82,22 @@ export default function WhyChooseUs() {
       document.body.style.overflow = "auto";
     };
   }, [isVideoModalOpen]);
+
+  function getYouTubeEmbedURL(url: string): string | null {
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&?]+)/
+    );
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+  }
+
+  function getYouTubeThumbnail(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&?]+)/);
+  console.log(match);
+  const videoId = match?.[1];
+  console.log(videoId)
+  return videoId ? `https://img.youtube.com/vi/${videoId}/sddefault.jpg` : null;
+}
+
 
   return (
     <div
@@ -112,13 +136,13 @@ export default function WhyChooseUs() {
             {/* Video placeholder */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <img
-                src="/thumbnail.png"
+                src={getYouTubeThumbnail(productData.yt_video_url || "") || ""}
                 alt="Product showcase video thumbnail"
                 className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
               />
 
               {/* Gradient overlay - full blue gradient to match second image */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/30 to-blue-600/70"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-blue-600/20"></div>
 
               {/* Play button */}
               <button
@@ -237,26 +261,25 @@ export default function WhyChooseUs() {
       {/* Video Modal */}
       {isVideoModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div 
+          <div
             ref={modalRef}
             className="bg-black rounded-lg overflow-hidden shadow-xl w-full max-w-4xl transform transition-all duration-300 animate-scaleIn"
           >
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsVideoModalOpen(false)}
                 className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors cursor-pointer"
               >
                 <X size={24} className="text-white" />
               </button>
-              
+
               {/* Video player */}
               <div className="aspect-video w-full">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/dVguhLThS0I"
+                  src={getYouTubeEmbedURL(productData.yt_video_url || "") || ""}
                   title="Product Video"
-                  frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="w-full h-full"
@@ -282,21 +305,31 @@ export default function WhyChooseUs() {
       </div>
 
       {/* Add animation keyframes for modal */}
-      <style jsx global>{`
+      <style>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-        
+
         @keyframes scaleIn {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-out forwards;
         }
-        
+
         .animate-scaleIn {
           animation: scaleIn 0.4s ease-out forwards;
         }

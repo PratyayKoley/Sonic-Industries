@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimationGeneratorType } from "framer-motion";
 import {
   Lightbulb,
   Lock,
@@ -89,7 +89,7 @@ export default function About() {
             x: 0,
             opacity: 1,
             transition: {
-              type: "spring",
+              type: "spring" as AnimationGeneratorType,
               stiffness: 100,
               damping: 12,
               duration: 0.8,
@@ -103,7 +103,7 @@ export default function About() {
             x: 0,
             opacity: 1,
             transition: {
-              type: "spring",
+              type: "spring" as AnimationGeneratorType,
               stiffness: 100,
               damping: 12,
               duration: 0.8,
@@ -117,7 +117,7 @@ export default function About() {
             y: 0,
             opacity: 1,
             transition: {
-              type: "spring",
+              type: "spring" as AnimationGeneratorType,
               stiffness: 80,
               damping: 12,
               duration: 0.8,
@@ -131,7 +131,7 @@ export default function About() {
             scale: 1,
             opacity: 1,
             transition: {
-              type: "spring",
+              type: "spring" as AnimationGeneratorType,
               stiffness: 100,
               damping: 10,
               duration: 0.7,
@@ -150,7 +150,7 @@ export default function About() {
         boxShadow:
           "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         transition: {
-          type: "spring",
+          type: "spring" as AnimationGeneratorType,
           stiffness: 300,
           damping: 20,
         },
@@ -165,12 +165,10 @@ export default function About() {
         transition: {
           rotate: {
             duration: 0.5,
-            ease: "easeInOut",
             times: [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
           scale: {
             duration: 0.3,
-            ease: "easeOut",
           },
         },
       },

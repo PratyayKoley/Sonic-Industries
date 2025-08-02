@@ -1,9 +1,9 @@
-import { useRef, useState, useEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
 import { Product, Specification, SpecRowProps } from "@/types";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
-export default function Comparison() {
+export default function ProductComparison() {
   const products: Product[] = [
     {
       id: 1,
@@ -17,7 +17,7 @@ export default function Comparison() {
       dimensions: "9 x 3.01 x 0.79 in",
       weight: "0.7 lb",
       os: "iOS",
-      battery: "170mAh"
+      battery: "170mAh",
     },
     {
       id: 2,
@@ -31,7 +31,7 @@ export default function Comparison() {
       dimensions: "7 x 5.03 x 0.63 in",
       weight: "2.4 ounces",
       os: "iOS, Android",
-      battery: "180mAh"
+      battery: "180mAh",
     },
     {
       id: 3,
@@ -45,7 +45,7 @@ export default function Comparison() {
       dimensions: "10 x 2.01 x 0.21 in",
       weight: "0.9 lb",
       os: "Android",
-      battery: "190mAh"
+      battery: "190mAh",
     },
     {
       id: 4,
@@ -59,19 +59,19 @@ export default function Comparison() {
       dimensions: "8 x 3.5 x 0.75 in",
       weight: "3.8 ounces",
       os: "iOS, Android",
-      battery: "200mAh"
-    }
+      battery: "200mAh",
+    },
   ];
 
   const specifications: Specification[] = [
-    { id: 'price', name: 'Price' },
-    { id: 'brand', name: 'Brand' },
-    { id: 'color', name: 'Color' },
-    { id: 'compatibility', name: 'Compatible with' },
-    { id: 'dimensions', name: 'Item Dimensions' },
-    { id: 'weight', name: 'Item Weight' },
-    { id: 'os', name: 'Operating System' },
-    { id: 'battery', name: 'Battery Capacity' }
+    { id: "price", name: "Price" },
+    { id: "brand", name: "Brand" },
+    { id: "color", name: "Color" },
+    { id: "compatibility", name: "Compatible with" },
+    { id: "dimensions", name: "Item Dimensions" },
+    { id: "weight", name: "Item Weight" },
+    { id: "os", name: "Operating System" },
+    { id: "battery", name: "Battery Capacity" },
   ];
 
   const [isMobile, setIsMobile] = useState(false);
@@ -84,39 +84,39 @@ export default function Comparison() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
-  
+
   // Handle scroll arrows visibility
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    
+
     const handleScroll = () => {
       const { scrollLeft, scrollWidth, clientWidth } = container;
       setShowLeftArrow(scrollLeft > 0);
       setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
     };
-    
-    container.addEventListener('scroll', handleScroll);
+
+    container.addEventListener("scroll", handleScroll);
     handleScroll(); // Initial check
-    
-    return () => container.removeEventListener('scroll', handleScroll);
+
+    return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Scroll handlers
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
     }
   };
-  
+
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
     }
   };
 
@@ -126,9 +126,9 @@ export default function Comparison() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const headingVariants = {
@@ -138,9 +138,8 @@ export default function Comparison() {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+      },
+    },
   };
 
   const tableVariants = {
@@ -150,9 +149,8 @@ export default function Comparison() {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut"
-      }
-    }
+      },
+    },
   };
 
   const productVariants = {
@@ -162,9 +160,8 @@ export default function Comparison() {
       scale: 1,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
-      }
-    }
+      },
+    },
   };
 
   const rowVariants = {
@@ -174,9 +171,8 @@ export default function Comparison() {
       x: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
-      }
-    }
+      },
+    },
   };
 
   const buttonVariants = {
@@ -184,8 +180,8 @@ export default function Comparison() {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.5 }
-    }
+      transition: { duration: 0.5 },
+    },
   };
 
   function SpecRow({ spec, index }: SpecRowProps) {
@@ -204,7 +200,7 @@ export default function Comparison() {
         <td className="border border-gray-200 p-2 md:p-4 font-bold text-gray-800 sticky left-0 bg-inherit z-10 min-w-[120px]">
           {spec.name}
         </td>
-        {products.map(product => (
+        {products.map((product) => (
           <td
             key={product.id}
             className="border border-gray-200 p-2 md:p-4 text-center min-w-[150px]"
@@ -226,7 +222,7 @@ export default function Comparison() {
   const MobileProductCard = ({ product }: { product: Product }) => {
     const cardRef = useRef(null);
     const isInView = useInView(cardRef, { once: true, amount: 0.1 });
-    
+
     return (
       <motion.div
         ref={cardRef}
@@ -241,12 +237,12 @@ export default function Comparison() {
               className="absolute inset-0 bg-blue-500/10 rounded-full"
               animate={{
                 scale: [1, 1.05, 1],
-                opacity: [0.7, 0.4, 0.7]
+                opacity: [0.7, 0.4, 0.7],
               }}
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                repeatType: "reverse"
+                repeatType: "reverse",
               }}
             />
             <img
@@ -258,19 +254,26 @@ export default function Comparison() {
           <div>
             <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
             <p className="text-gray-500 text-sm">{product.subtitle}</p>
-            <p className="font-extrabold text-lg text-blue-600 mt-1">{product.price}</p>
+            <p className="font-extrabold text-lg text-blue-600 mt-1">
+              {product.price}
+            </p>
           </div>
         </div>
-        
+
         <div className="p-4">
           {specifications.slice(1).map((spec) => (
-            <div key={spec.id} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
-              <span className="text-sm font-medium text-gray-700">{spec.name}</span>
+            <div
+              key={spec.id}
+              className="flex justify-between py-2 border-b border-gray-100 last:border-b-0"
+            >
+              <span className="text-sm font-medium text-gray-700">
+                {spec.name}
+              </span>
               <span className="text-sm text-gray-900">{product[spec.id]}</span>
             </div>
           ))}
         </div>
-        
+
         <div className="p-4 bg-gray-50">
           <button className="bg-red-600 text-white font-bold py-2 px-4 w-full rounded-lg shadow">
             BUY NOW
@@ -292,15 +295,15 @@ export default function Comparison() {
           Compare Similar Products
         </h1>
         <p className="text-center text-gray-600 mb-6 md:mb-12 max-w-2xl mx-auto text-sm md:text-base">
-          Prepared is me marianne pleasure likewise debating. Wonder an unable except better stairs
-          do ye admire. His secure called esteem praise.
+          Prepared is me marianne pleasure likewise debating. Wonder an unable
+          except better stairs do ye admire. His secure called esteem praise.
         </p>
       </motion.div>
 
       {/* Responsive Cards View for Mobile */}
       {isMobile && (
         <div className="md:hidden">
-          {products.map(product => (
+          {products.map((product) => (
             <MobileProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -310,7 +313,7 @@ export default function Comparison() {
       <div className={isMobile ? "hidden md:block relative" : "relative"}>
         {/* Scroll Arrows */}
         {showLeftArrow && (
-          <motion.button 
+          <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 shadow-lg rounded-r-full p-2"
@@ -319,9 +322,9 @@ export default function Comparison() {
             <ChevronLeft size={24} className="text-blue-600" />
           </motion.button>
         )}
-        
+
         {showRightArrow && (
-          <motion.button 
+          <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 shadow-lg rounded-l-full p-2"
@@ -330,7 +333,7 @@ export default function Comparison() {
             <ChevronRight size={24} className="text-blue-600" />
           </motion.button>
         )}
-        
+
         <motion.div
           className="overflow-x-auto rounded-xl shadow-xl scrollbar-hide"
           variants={tableVariants}
@@ -343,7 +346,9 @@ export default function Comparison() {
                 {products.map((product, index) => (
                   <motion.th
                     key={product.id}
-                    className={`border-b border-gray-200 p-3 md:p-6 bg-white min-w-[150px] ${index === products.length - 1 ? "rounded-tr-xl" : ""}`}
+                    className={`border-b border-gray-200 p-3 md:p-6 bg-white min-w-[150px] ${
+                      index === products.length - 1 ? "rounded-tr-xl" : ""
+                    }`}
                     variants={productVariants}
                   >
                     <div className="flex flex-col items-center">
@@ -352,12 +357,12 @@ export default function Comparison() {
                           className="absolute inset-0 bg-blue-500/10 rounded-full"
                           animate={{
                             scale: [1, 1.05, 1],
-                            opacity: [0.7, 0.4, 0.7]
+                            opacity: [0.7, 0.4, 0.7],
                           }}
                           transition={{
                             duration: 3,
                             repeat: Infinity,
-                            repeatType: "reverse"
+                            repeatType: "reverse",
                           }}
                         />
                         <img
@@ -366,8 +371,12 @@ export default function Comparison() {
                           className="w-24 h-24 md:w-36 md:h-36 object-contain relative z-10 cursor-pointer"
                         />
                       </div>
-                      <h3 className="font-bold text-base md:text-xl text-gray-900">{product.name}</h3>
-                      <p className="text-gray-500 text-xs md:text-sm mt-1">{product.subtitle}</p>
+                      <h3 className="font-bold text-base md:text-xl text-gray-900">
+                        {product.name}
+                      </h3>
+                      <p className="text-gray-500 text-xs md:text-sm mt-1">
+                        {product.subtitle}
+                      </p>
                     </div>
                   </motion.th>
                 ))}
@@ -376,10 +385,17 @@ export default function Comparison() {
 
             <tbody>
               <motion.tr variants={rowVariants} className="bg-white">
-                <td className="border border-gray-200 p-2 md:p-5 font-bold text-gray-800 sticky left-0 bg-white z-10 min-w-[120px]">Price</td>
-                {products.map(product => (
-                  <td key={product.id} className="border border-gray-200 p-2 md:p-5 text-center min-w-[150px]">
-                    <span className="font-extrabold text-lg md:text-xl text-blue-600">{product.price}</span>
+                <td className="border border-gray-200 p-2 md:p-5 font-bold text-gray-800 sticky left-0 bg-white z-10 min-w-[120px]">
+                  Price
+                </td>
+                {products.map((product) => (
+                  <td
+                    key={product.id}
+                    className="border border-gray-200 p-2 md:p-5 text-center min-w-[150px]"
+                  >
+                    <span className="font-extrabold text-lg md:text-xl text-blue-600">
+                      {product.price}
+                    </span>
                   </td>
                 ))}
               </motion.tr>
@@ -393,7 +409,9 @@ export default function Comparison() {
                 {products.map((product, index) => (
                   <td
                     key={product.id}
-                    className={`border border-gray-200 p-3 md:p-6 text-center min-w-[150px] ${index === products.length - 1 ? "rounded-br-xl" : ""}`}
+                    className={`border border-gray-200 p-3 md:p-6 text-center min-w-[150px] ${
+                      index === products.length - 1 ? "rounded-br-xl" : ""
+                    }`}
                   >
                     <motion.button
                       className="bg-red-600 text-white font-bold py-2 md:py-3 px-4 md:px-6 w-full rounded-lg shadow-lg cursor-pointer text-sm md:text-base"

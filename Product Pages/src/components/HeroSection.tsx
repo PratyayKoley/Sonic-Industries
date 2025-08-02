@@ -1,7 +1,12 @@
+import { CategoryBackend } from "@/types";
 import { Ripple } from "./ui/ripple";
 import { useEffect } from "react";
 
-export default function HeroSection({ productData }) {
+interface HeroSectionProps {
+  productData: CategoryBackend;
+}
+
+export default function HeroSection({ productData }: HeroSectionProps) {
   console.log(productData);
 
   useEffect(() => {
@@ -23,9 +28,7 @@ export default function HeroSection({ productData }) {
           </h1>
 
           <ul className="text-gray-700 mb-8 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 list-disc list-inside space-y-2">
-            {/* {productData.bullet_points.split("\n,").map((point, index) => (
-              <li key={index}>{point.replace(/^["\s]*|["\s]*$/g, "")}</li>
-            ))} */}
+            {productData.description}
           </ul>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">

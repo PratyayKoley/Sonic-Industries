@@ -6,7 +6,6 @@ import { Menu, X } from "lucide-react";
 
 interface Links {
   label: string;
-  href: string;
   icon: React.JSX.Element | React.ReactNode;
 }
 
@@ -165,7 +164,6 @@ export const SidebarLink = ({
   const { open, animate } = useSidebar();
   return (
     <a
-      href={link.href}
       className={cn(
         "flex items-center justify-start gap-2  group/sidebar py-2",
         className

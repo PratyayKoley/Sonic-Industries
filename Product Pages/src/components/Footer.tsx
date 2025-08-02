@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, AnimationGeneratorType } from "framer-motion";
+import { ChevronUp, PhoneCall } from "lucide-react";
 import {
-  Facebook,
-  Twitter,
-  Linkedin,
-  Plus,
-  Dribbble,
-  ChevronUp,
-  PhoneCall,
-} from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa";
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaPinterest,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa";
 
 export default function Footer() {
   const [isVisible, setIsVisible] = useState(false);
@@ -79,7 +78,11 @@ export default function Footer() {
     animate: {
       scale: 1,
       opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 15 },
+      transition: {
+        type: "spring" as AnimationGeneratorType,
+        stiffness: 300,
+        damping: 15,
+      },
     },
     exit: {
       scale: 0,
@@ -90,7 +93,11 @@ export default function Footer() {
       scale: 1.1,
       boxShadow:
         "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-      transition: { type: "spring", stiffness: 400, damping: 10 },
+      transition: {
+        type: "spring" as AnimationGeneratorType,
+        stiffness: 400,
+        damping: 10,
+      },
     },
     tap: { scale: 0.95 },
   };
@@ -100,7 +107,11 @@ export default function Footer() {
       y: -5,
       boxShadow:
         "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-      transition: { type: "spring", stiffness: 400, damping: 10 },
+      transition: {
+        type: "spring" as AnimationGeneratorType,
+        stiffness: 400,
+        damping: 10,
+      },
     },
     tap: { scale: 0.95 },
   };
@@ -177,15 +188,10 @@ export default function Footer() {
               <div className="mb-4">
                 <div className="flex items-center">
                   <div className="w-10 h-12 relative mr-2">
-                    {/* Flask icon */}
-                    <div className="absolute inset-0 bg-purple-700 rounded-b-lg rounded-t-sm transform rotate-3"></div>
-                    <div className="absolute inset-0 flex justify-center items-center">
-                      <div className="w-1 h-4 bg-white rounded-full"></div>
-                      <div className="w-1 h-2 bg-white rounded-full ml-1 mt-2"></div>
-                    </div>
+                    <img src="/favicon.ico" alt="Logo" />
                   </div>
                   <div className="text-2xl font-bold text-purple-600 flex items-center gap-2">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">
                       SONIC INDUSTRIES
                     </span>
                   </div>
@@ -207,57 +213,62 @@ export default function Footer() {
             >
               {/* Facebook */}
               <motion.a
-                href="#"
-                className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md hover:bg-blue-700 transition-colors"
+                href="https://www.facebook.com/sonicpackagingindustries"
+                className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-md hover:bg-[#145DBF] transition-colors"
                 whileHover="hover"
                 whileTap="tap"
                 variants={socialIconVariants}
+                target="_blank"
               >
-                <Facebook size={20} />
+                <FaFacebook size={20} />
               </motion.a>
 
-              {/* Twitter */}
+              {/* Instagram */}
               <motion.a
-                href="#"
-                className="w-10 h-10 rounded-full bg-cyan-500 text-white flex items-center justify-center shadow-md hover:bg-cyan-600 transition-colors"
+                href="https://www.instagram.com/sonicpackagingindustries/"
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center shadow-md hover:opacity-90 transition-opacity"
                 whileHover="hover"
                 whileTap="tap"
                 variants={socialIconVariants}
+                target="_blank"
               >
-                <Twitter size={20} />
+                <FaInstagram size={20} />
+              </motion.a>
+
+              {/* YouTube */}
+              <motion.a
+                href="https://www.youtube.com/@packagingmachinerybysonic"
+                className="w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center shadow-md hover:bg-[#CC0000] transition-colors"
+                whileHover="hover"
+                whileTap="tap"
+                variants={socialIconVariants}
+                target="_blank"
+              >
+                <FaYoutube size={20} />
+              </motion.a>
+
+              {/* Pinterest */}
+              <motion.a
+                href="https://es.pinterest.com/sonicindustries/"
+                className="w-10 h-10 rounded-full bg-[#E60023] text-white flex items-center justify-center shadow-md hover:bg-[#BD001C] transition-colors"
+                whileHover="hover"
+                whileTap="tap"
+                variants={socialIconVariants}
+                target="_blank"
+              >
+                <FaPinterest size={20} />
               </motion.a>
 
               {/* LinkedIn */}
               <motion.a
-                href="#"
-                className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition-colors"
+                href="https://in.linkedin.com/company/sonic-industries"
+                className="w-10 h-10 rounded-full bg-[#0077B5] text-white flex items-center justify-center shadow-md hover:bg-[#005582] transition-colors"
                 whileHover="hover"
                 whileTap="tap"
                 variants={socialIconVariants}
+                target="_blank"
               >
-                <Linkedin size={20} />
-              </motion.a>
-
-              {/* Google Plus (using Plus icon from Lucide) */}
-              <motion.a
-                href="#"
-                className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md hover:bg-red-700 transition-colors"
-                whileHover="hover"
-                whileTap="tap"
-                variants={socialIconVariants}
-              >
-                <Plus size={20} />
-              </motion.a>
-
-              {/* Dribbble */}
-              <motion.a
-                href="#"
-                className="w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-md hover:bg-pink-600 transition-colors"
-                whileHover="hover"
-                whileTap="tap"
-                variants={socialIconVariants}
-              >
-                <Dribbble size={20} />
+                <FaLinkedin size={20} />
               </motion.a>
             </motion.div>
 

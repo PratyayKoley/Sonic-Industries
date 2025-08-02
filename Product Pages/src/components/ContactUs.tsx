@@ -24,7 +24,6 @@ export default function ContactUs() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real application, you would handle form submission here
     console.log("Form submitted:", formData);
     alert("Message sent successfully!");
     setFormData({
@@ -61,12 +60,12 @@ export default function ContactUs() {
     {
       id: 1,
       icon: <Phone className="text-purple-600" />,
-      content: ["+333 123 4565 7898", "+333 153 4575 7893"],
+      content: ["+91 8010735898", "+333 153 4575 7893"],
     },
     {
       id: 2,
       icon: <Mail className="text-purple-600" />,
-      content: ["demoname@name.com", "anothername@name.com"],
+      content: ["sonicindustriesofficial@gmail.com", "anothername@name.com"],
     },
     {
       id: 3,
