@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, AnimationGeneratorType, spring } from "framer-motion";
+import { motion, AnimatePresence, spring } from "framer-motion";
 import { ChevronUp, PhoneCall } from "lucide-react";
 import {
   FaFacebook,
