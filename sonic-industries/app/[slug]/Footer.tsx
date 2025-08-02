@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, AnimationGeneratorType } from "framer-motion";
+import { motion, AnimatePresence, AnimationGeneratorType, spring } from "framer-motion";
 import { ChevronUp, PhoneCall } from "lucide-react";
 import {
   FaFacebook,
@@ -82,7 +82,7 @@ export default function Footer() {
       scale: 1,
       opacity: 1,
       transition: {
-        type: "spring" as AnimationGeneratorType,
+        type: spring,
         stiffness: 300,
         damping: 15,
       },
@@ -97,7 +97,7 @@ export default function Footer() {
       boxShadow:
         "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
       transition: {
-        type: "spring" as AnimationGeneratorType,
+        type: spring,
         stiffness: 400,
         damping: 10,
       },
@@ -111,7 +111,7 @@ export default function Footer() {
       boxShadow:
         "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
       transition: {
-        type: "spring" as AnimationGeneratorType,
+        type: spring,
         stiffness: 400,
         damping: 10,
       },
@@ -129,6 +129,7 @@ export default function Footer() {
         {/* Scroll to Top */}
         {showScrollButton && (
           <motion.button
+            key="scroll-to-top"
             onClick={scrollToTop}
             className="fixed bottom-6 right-6 w-12 h-12 bg-purple-700 rounded-full text-white flex items-center justify-center shadow-lg z-50 cursor-pointer"
             initial="initial"
@@ -142,39 +143,39 @@ export default function Footer() {
             <ChevronUp size={24} />
           </motion.button>
         )}
-
-        {/* Phone Call Button */}
-        <motion.a
-          href="tel:+918010735898"
-          className="fixed bottom-[84px] right-6 w-12 h-12 bg-green-700 rounded-full text-white flex items-center justify-center shadow-lg z-50"
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          whileHover="hover"
-          whileTap="tap"
-          variants={buttonVariants}
-          aria-label="Call"
-        >
-          <PhoneCall size={22} />
-        </motion.a>
-
-        {/* WhatsApp Button */}
-        <motion.a
-          href="https://wa.me/+918010735898"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed bottom-[144px] right-6 w-12 h-12 bg-[#25D366] rounded-full text-white flex items-center justify-center shadow-lg z-50"
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          whileHover="hover"
-          whileTap="tap"
-          variants={buttonVariants}
-          aria-label="WhatsApp"
-        >
-          <FaWhatsapp size={22} />
-        </motion.a>
       </AnimatePresence>
+
+      {/* Phone Call Button - Always visible, no AnimatePresence needed */}
+      <motion.a
+        key="phone-call"
+        href="tel:+918010735898"
+        className="fixed bottom-[84px] right-6 w-12 h-12 bg-green-700 rounded-full text-white flex items-center justify-center shadow-lg z-50"
+        initial="initial"
+        animate="animate"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonVariants}
+        aria-label="Call"
+      >
+        <PhoneCall size={22} />
+      </motion.a>
+
+      {/* WhatsApp Button - Always visible, no AnimatePresence needed */}
+      <motion.a
+        key="whatsapp"
+        href="https://wa.me/+918010735898"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-[144px] right-6 w-12 h-12 bg-[#25D366] rounded-full text-white flex items-center justify-center shadow-lg z-50"
+        initial="initial"
+        animate="animate"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonVariants}
+        aria-label="WhatsApp"
+      >
+        <FaWhatsapp size={22} />
+      </motion.a>
 
       <footer ref={footerRef} className="relative">
         {/* Footer content */}
@@ -222,6 +223,7 @@ export default function Footer() {
             >
               {/* Facebook */}
               <motion.a
+                key="facebook"
                 href="https://www.facebook.com/sonicpackagingindustries"
                 className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-md hover:bg-[#145DBF] transition-colors"
                 whileHover="hover"
@@ -234,6 +236,7 @@ export default function Footer() {
 
               {/* Instagram */}
               <motion.a
+                key="instagram"
                 href="https://www.instagram.com/sonicpackagingindustries/"
                 className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center shadow-md hover:opacity-90 transition-opacity"
                 whileHover="hover"
@@ -246,6 +249,7 @@ export default function Footer() {
 
               {/* YouTube */}
               <motion.a
+                key="youtube"
                 href="https://www.youtube.com/@packagingmachinerybysonic"
                 className="w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center shadow-md hover:bg-[#CC0000] transition-colors"
                 whileHover="hover"
@@ -258,6 +262,7 @@ export default function Footer() {
 
               {/* Pinterest */}
               <motion.a
+                key="pinterest"
                 href="https://es.pinterest.com/sonicindustries/"
                 className="w-10 h-10 rounded-full bg-[#E60023] text-white flex items-center justify-center shadow-md hover:bg-[#BD001C] transition-colors"
                 whileHover="hover"
@@ -270,6 +275,7 @@ export default function Footer() {
 
               {/* LinkedIn */}
               <motion.a
+                key="linkedin"
                 href="https://in.linkedin.com/company/sonic-industries"
                 className="w-10 h-10 rounded-full bg-[#0077B5] text-white flex items-center justify-center shadow-md hover:bg-[#005582] transition-colors"
                 whileHover="hover"

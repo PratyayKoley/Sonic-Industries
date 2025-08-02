@@ -55,6 +55,8 @@ const CategoriesDashboard = () => {
         "Failed to load categories. Make sure you have a GET /api/categories endpoint."
       );
       setCategories([]);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -118,7 +118,7 @@ const AdminDashboard = () => {
                 label: `${user?.firstName} ${user?.lastName}`,
                 icon: (
                   <Image
-                    src={user?.prof_image_url || ""}
+                    src={user?.prof_image_url || "/next.svg"}
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
