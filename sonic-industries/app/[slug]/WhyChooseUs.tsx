@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect, useRef } from "react";
 import { Play, RotateCw, Truck, RefreshCw, Headphones, X } from "lucide-react";
 import { CategoryBackend } from "@/types";
@@ -142,7 +144,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
             {/* Video placeholder */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <Image
-                src={getYouTubeThumbnail(productData.yt_video_url || "") || ""}
+                src={getYouTubeThumbnail(productData.yt_video_url || "") || "/opengraph-image.png"}
                 alt="Product showcase video thumbnail"
                 className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                 width={1280}

@@ -1,3 +1,5 @@
+"use client"
+
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { Product, Specification, SpecRowProps } from "@/types";

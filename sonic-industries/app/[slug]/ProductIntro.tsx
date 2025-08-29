@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect, ComponentType } from "react";
 import { motion } from "framer-motion";
 import { CategoryBackend } from "@/types";

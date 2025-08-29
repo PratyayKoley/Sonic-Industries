@@ -1,3 +1,5 @@
+"use client"
+
 import { CategoryBackend } from "@/types";
 import { Ripple } from "../ui/ripple";
 import { useEffect } from "react";

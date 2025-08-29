@@ -1,8 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import axios from "axios";
 import Navbar from "./NavBar";
 import HeroSection from "./HeroSection";
 import About from "./About";
@@ -17,72 +12,91 @@ import Testimonials from "./Testimonials";
 import FAQs from "./FAQs";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
+import type { Metadata } from "next";
 import { CategoryBackend } from "@/types";
-import Head from "next/head";
+import { notFound } from "next/navigation";
 
-const ProductPage = () => {
-  const { slug } = useParams();
-  const [productData, setProductData] = useState<CategoryBackend | null>(null);
-  const [loading, setLoading] = useState(true);
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
-  useEffect(() => {
-    if (!slug) return;
-
-    setLoading(true);
-    axios
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`)
-      .then((res) => {
-        setProductData(res.data.category);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching product:", err);
-        setLoading(false);
-      });
-  }, [slug]);
-
-  // Don't render anything until data is loaded
-  if (loading || !productData) {
-    return (
-      <>
-        <Head>
-          <title>Loading... | Sonic Industries</title>
-        </Head>
-        <div>Loading...</div>
-      </>
+// Fetch product data (server-side)
+async function getProduct(slug: string): Promise<CategoryBackend | null> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`,
+      { cache: "no-store" } // ensure fresh data
     );
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.category;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
+  }
+}
+
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`,
+      { cache: "no-store" }
+    );
+
+    if (!res.ok) return [];
+    const data = await res.json();
+
+    return data.categories.map((cat: CategoryBackend) => ({
+      slug: cat.slug,
+    }));
+  } catch (error) {
+    console.error("Error fetching slugs:", error);
+    return [];
+  }
+}
+
+// ✅ Dynamic metadata for SEO
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+
+  return {
+    title: product ? `${product.name} | Sonic Industries` : "Sonic Industries",
+    description:
+      product?.description ||
+      "Explore high-quality packaging and coding machinery from Sonic Industries.",
+    openGraph: {
+      title: product?.name || "Sonic Industries",
+      description:
+        product?.description ||
+        "Explore high-quality packaging and coding machinery from Sonic Industries.",
+      url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${slug}`,
+      type: "website",
+      siteName: "Sonic Industries",
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/opengraph-image.png`,
+          width: 1200,
+          height: 630,
+          alt: "Sonic Industries Product Showcase",
+        },
+      ],
+    },
+  };
+}
+
+// ✅ Page itself
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params; // 👈 MUST await
+  const productData = await getProduct(slug);
+
+  if (!productData) {
+    notFound();
   }
 
   return (
     <>
-      <Head>
-        <title>{productData.name} | Sonic Industries</title>
-        <meta
-          name="description"
-          content={
-            productData.description ||
-            "Explore this product from Sonic Industries"
-          }
-        />
-        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/${slug}`} />
-
-        {/* Optional: Structured Data for Product */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Product",
-              name: productData.name,
-              description: productData.description,
-              brand: {
-                "@type": "Brand",
-                name: "Sonic Industries",
-              },
-            }),
-          }}
-        />
-      </Head>
       <Navbar />
       <HeroSection productData={productData} />
       <About />
@@ -99,6 +113,4 @@ const ProductPage = () => {
       <Footer />
     </>
   );
-};
-
-export default ProductPage;
+}
