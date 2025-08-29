@@ -62,27 +62,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(slug);
 
   return {
-    title: product ? `${product.name} | Sonic Industries` : "Sonic Industries",
+    title: product ? `${product.name}` : "Sonic Industries",
     description:
       product?.description ||
       "Explore high-quality packaging and coding machinery from Sonic Industries.",
-    openGraph: {
-      title: product?.name || "Sonic Industries",
-      description:
-        product?.description ||
-        "Explore high-quality packaging and coding machinery from Sonic Industries.",
-      url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${slug}`,
-      type: "website",
-      siteName: "Sonic Industries",
-      images: [
-        {
-          url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/opengraph-image.png`,
-          width: 1200,
-          height: 630,
-          alt: "Sonic Industries Product Showcase",
-        },
-      ],
-    },
+    // openGraph: {
+    //   title: product?.name || "Sonic Industries",
+    //   description:
+    //     product?.description ||
+    //     "Explore high-quality packaging and coding machinery from Sonic Industries.",
+    //   url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${slug}`,
+    //   type: "website",
+    //   siteName: "Sonic Industries",
+    //   images: [
+    //     {
+    //       url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/opengraph-image.png`,
+    //       width: 1200,
+    //       height: 630,
+    //       alt: "Sonic Industries Product Showcase",
+    //     },
+    //   ],
+    // },
   };
 }
 
