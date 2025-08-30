@@ -14,15 +14,24 @@ export const metadata: Metadata = {
     default: "Sonic Industries",
     template: "%s | Sonic Industries",
   },
-  description: "Sonic Industries specializes in advanced packaging and coding machinery in India. Discover high-quality sealing, labeling, and vacuum packaging equipment.",
-  keywords: ["packaging", "batch coding", "vacuum sealer", "industrial machinery", "sonic industries", "inkjet printer"],
+  description:
+    "Sonic Industries specializes in advanced packaging and coding machinery in India. Discover high-quality sealing, labeling, and vacuum packaging equipment.",
+  keywords: [
+    "packaging",
+    "batch coding",
+    "vacuum sealer",
+    "industrial machinery",
+    "sonic industries",
+    "inkjet printer",
+  ],
   authors: [
-    {name: "Pratyay Koley", url: "https://github.com/PratyayKoley"},
-    {name: "Kunal Barot", url: ""},
+    { name: "Pratyay Koley", url: "https://github.com/PratyayKoley" },
+    { name: "Kunal Barot", url: "" },
   ],
   openGraph: {
     title: "Sonic Industries",
-    description: "Sonic Industries - India's leading provider of packaging and coding machinery. Browse our product range including band sealers, vacuum packaging, and more.",
+    description:
+      "Sonic Industries - India's leading provider of packaging and coding machinery. Browse our product range including band sealers, vacuum packaging, and more.",
     url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}`,
     type: "website",
     siteName: "Sonic Industries",
@@ -34,6 +43,21 @@ export const metadata: Metadata = {
         alt: "Sonic Industries Product Showcase",
       },
     ],
+  },
+  twitter: {
+    title: "Sonic Industries",
+    description:
+      "Sonic Industries - India's leading provider of packaging and coding machinery. Browse our product range including band sealers, vacuum packaging, and more.",
+    images: [
+      {
+        url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/opengraph-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Sonic Industries Product Showcase",
+      },
+    ],
+    card: "summary_large_image",
+    creator: "Kunal Barot"
   },
 };
 
@@ -50,9 +74,7 @@ export default function RootLayout({
           href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css"
         />
       </head>
-      <body className={`${poppins.variable} antialiased`}>
-        {children}
-      </body>
+      <body className={`${poppins.variable} antialiased`}>{children}</body>
     </html>
   );
 }
