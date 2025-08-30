@@ -28,7 +28,7 @@ const getProduct = cache(
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`,
-        { cache: "no-store" }
+        { next: { revalidate: 3600 } }
       );
 
       if (!res.ok) return null;
