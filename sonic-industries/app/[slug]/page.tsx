@@ -16,6 +16,7 @@ import type { Metadata } from "next";
 import { CategoryBackend } from "@/types";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import Script from "next/script";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -45,7 +46,7 @@ export async function generateStaticParams() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`,
       {
-        next: { revalidate: 3600 }, 
+        next: { revalidate: 3600 },
       }
     );
 
@@ -121,6 +122,34 @@ export default async function ProductPage({ params }: Props) {
     <>
       <Navbar />
       <HeroSection productData={productData} />
+
+      {/* script ld json */}
+      <Script id="ld-json-category" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: productData.name,
+          description: productData.description,
+          url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${productData.slug}`,
+        })}
+      </Script>
+
+      {/* Breadcrumbs */}
+      <Script id="ld-json-breadcrumb" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: productData.name,
+              item: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${productData.slug}`,
+            },
+          ],
+        })}
+      </Script>
+
       <About />
       <Features productData={productData} />
       <PackagingInfo productData={productData} />
