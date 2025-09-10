@@ -122,9 +122,22 @@ export interface DealBackend {
   discountedPrice: number;
   rating?: number;
   expiresAt: Date;
-
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface LeadBackend {
+  _id: string;
+  subject: string;
+  content: string;
+  senderEmail: string;
+  senderName?: string;
+  receiverEmail: string;
+  receiverName?: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+  status: "new" | "in-progress" | "replied" | "closed";
 }
 
 export interface CategoryFeatures {
@@ -298,7 +311,7 @@ export type DealFormDataType = {
   imageUrl: string;
   mrp: number;
   discountedPrice: number;
-  rating: number; 
+  rating: number;
   expiresAt: string; // ISO date string
 };
 

@@ -3,8 +3,9 @@
 import CategoriesDashboard from "./CategoriesDashboard/page";
 import ProductDashboard from "./ProductsDashboard/page";
 import DealsDashboard from "./DealsDashboard/page";
+import LeadsDashboard from "./LeadsDashboard/page";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
-import { Boxes, LogOut, LayoutGrid, Tag } from "lucide-react";
+import { Boxes, LogOut, LayoutGrid, Tag, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -18,7 +19,7 @@ const AdminDashboard = () => {
     prof_image_url: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "products" | "categories" | "deals"
+    "products" | "categories" | "deals" | "leads"
   >("products");
 
   const handleLogout = () => {
@@ -42,6 +43,11 @@ const AdminDashboard = () => {
       label: "Deals",
       onClick: () => setActiveTab("deals"),
       icon: <Tag className="h-5 w-5 shrink-0 text-neutral-700" />,
+    },
+    {
+      label: "Leads",
+      onClick: () => setActiveTab("leads"),
+      icon: <Mail className="h-5 w-5 shrink-0 text-neutral-700" />,
     },
     {
       label: "Logout",
@@ -134,6 +140,7 @@ const AdminDashboard = () => {
         {activeTab === "products" && <ProductDashboard />}
         {activeTab === "categories" && <CategoriesDashboard />}
         {activeTab === "deals" && <DealsDashboard />}
+        {activeTab === "leads" && <LeadsDashboard />}
       </div>
     </div>
   );
