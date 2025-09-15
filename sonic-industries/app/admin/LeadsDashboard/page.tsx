@@ -11,23 +11,21 @@ import {
   Search,
   Archive,
   Trash2,
-  Reply,
-  Forward,
   User,
   AtSign,
   Clock,
 } from "lucide-react";
 import { LeadBackend } from "@/types";
+import OpenMail from "./OpenMail";
 
 const LeadsDashboard = () => {
   const [leads, setLeads] = useState<LeadBackend[]>([]);
   const [selectedLead, setSelectedLead] = useState<LeadBackend | null>(null);
+  const [isMailModalOpen, setIsMailModalOpen] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [filterType, setFilterType] = useState<string>("all");
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const leadsPerPage = 15;
@@ -39,8 +37,10 @@ const LeadsDashboard = () => {
   const loadAllLeads = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setLeads(response.data.leads || []);
     } catch {
@@ -89,6 +89,15 @@ const LeadsDashboard = () => {
             : lead
         )
       );
+
+      // Update selected lead if it's the one being updated
+      if (selectedLead?._id === leadId) {
+        setSelectedLead({
+          ...selectedLead,
+          status: status as LeadBackend["status"],
+        });
+      }
+
       setSuccess("Status updated successfully!");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
@@ -114,8 +123,11 @@ const LeadsDashboard = () => {
 
       setLeads(leads.filter((lead) => lead._id !== leadId));
       setSuccess("Lead deleted successfully!");
+
+      // Close modal if the deleted lead was selected
       if (selectedLead?._id === leadId) {
         setSelectedLead(null);
+        setIsMailModalOpen(false);
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
@@ -125,9 +137,15 @@ const LeadsDashboard = () => {
 
   const handleLeadClick = (lead: LeadBackend) => {
     setSelectedLead(lead);
+    setIsMailModalOpen(true);
     if (!lead.isRead) {
       markAsRead(lead._id);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsMailModalOpen(false);
+    setSelectedLead(null);
   };
 
   const toggleSelectLead = (leadId: string) => {
@@ -153,10 +171,7 @@ const LeadsDashboard = () => {
       lead.senderName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.content.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      filterStatus === "all" || lead.status === filterStatus;
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   // Pagination
@@ -200,19 +215,6 @@ const LeadsDashboard = () => {
         return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "text-red-600";
-      case "medium":
-        return "text-yellow-600";
-      case "low":
-        return "text-green-600";
-      default:
-        return "text-gray-600";
     }
   };
 
@@ -277,275 +279,179 @@ const LeadsDashboard = () => {
           </div>
         )}
 
-        <div className="flex gap-6">
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Search and Filters */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex-1 relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search leads..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Lead List */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              {/* List Header */}
-              <div className="p-4 border-b border-gray-200 flex items-center gap-4">
-                <input
-                  type="checkbox"
-                  checked={
-                    selectedLeads.length === filteredLeads.length &&
-                    filteredLeads.length > 0
-                  }
-                  onChange={selectAllLeads}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-600">
-                  {filteredLeads.length} of {leads.length} leads
-                </span>
-                {selectedLeads.length > 0 && (
-                  <div className="flex items-center gap-2 ml-auto">
-                    <span className="text-sm text-gray-600">
-                      {selectedLeads.length} selected
-                    </span>
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <Archive className="w-4 h-4 text-gray-600" />
-                    </button>
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <Trash2 className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Lead Items */}
-              <div className="divide-y divide-gray-200">
-                {loading ? (
-                  <div className="text-center py-12">
-                    <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-                    <p className="text-gray-600">Loading leads...</p>
-                  </div>
-                ) : paginatedLeads.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No leads found</p>
-                  </div>
-                ) : (
-                  paginatedLeads.map((lead) => (
-                    <div
-                      key={lead._id}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                        !lead.isRead ? "bg-blue-50" : ""
-                      } ${selectedLead?._id === lead._id ? "bg-blue-100" : ""}`}
-                      onClick={() => handleLeadClick(lead)}
-                    >
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedLeads.includes(lead._id)}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            toggleSelectLead(lead._id);
-                          }}
-                          className="rounded border-gray-300"
-                        />
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className={`font-medium ${
-                                !lead.isRead ? "text-gray-900" : "text-gray-700"
-                              }`}
-                            >
-                              {lead.senderName || lead.senderEmail}
-                            </span>
-                            <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                lead.status
-                              )}`}
-                            >
-                              {lead.status}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                            <span className="flex items-center gap-1">
-                              <AtSign className="w-3 h-3" />
-                              {lead.senderEmail}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <User className="w-3 h-3" />
-                              To: {lead.receiverEmail}
-                            </span>
-                          </div>
-                          <p
-                            className={`text-sm truncate ${
-                              !lead.isRead
-                                ? "font-medium text-gray-900"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {lead.subject}
-                          </p>
-                          <p className="text-xs text-gray-500 truncate mt-1">
-                            {lead.content}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {formatDate(lead.createdAt)}
-                          </span>
-                          {!lead.isRead && (
-                            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="p-4 border-t border-gray-200 flex items-center justify-between">
-                  <span className="text-sm text-gray-600">
-                    Showing {(currentPage - 1) * leadsPerPage + 1} to{" "}
-                    {Math.min(currentPage * leadsPerPage, filteredLeads.length)}{" "}
-                    of {filteredLeads.length} results
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-3 py-1 text-sm text-gray-600">
-                      {currentPage} of {totalPages}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
+        {/* Search and Filters */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex-1 relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Lead Detail Panel */}
-          {selectedLead && (
-            <div className="w-96 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Lead Details
-                </h3>
-                <button
-                  onClick={() => setSelectedLead(null)}
-                  className="p-1 hover:bg-gray-100 rounded"
-                >
-                  <X className="w-4 h-4 text-gray-600" />
+        {/* Lead List */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          {/* List Header */}
+          <div className="p-4 border-b border-gray-200 flex items-center gap-4">
+            <input
+              type="checkbox"
+              checked={
+                selectedLeads.length === filteredLeads.length &&
+                filteredLeads.length > 0
+              }
+              onChange={selectAllLeads}
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm text-gray-600">
+              {filteredLeads.length} of {leads.length} leads
+            </span>
+            {selectedLeads.length > 0 && (
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-sm text-gray-600">
+                  {selectedLeads.length} selected
+                </span>
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <Archive className="w-4 h-4 text-gray-600" />
+                </button>
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <Trash2 className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
+            )}
+          </div>
 
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">
-                    {selectedLead.subject}
-                  </h4>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        selectedLead.status
-                      )}`}
-                    >
-                      {selectedLead.status}
-                    </span>
-                  </div>
-                </div>
+          {/* Lead Items */}
+          <div className="divide-y divide-gray-200">
+            {loading ? (
+              <div className="text-center py-12">
+                <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
+                <p className="text-gray-600">Loading leads...</p>
+              </div>
+            ) : paginatedLeads.length === 0 ? (
+              <div className="text-center py-12">
+                <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No leads found</p>
+              </div>
+            ) : (
+              paginatedLeads.map((lead) => (
+                <OpenMail
+                  key={lead._id}
+                  lead={lead}
+                  onUpdateStatus={updateStatus}
+                  onDelete={deleteLead}
+                >
+                  <div
+                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                      !lead.isRead ? "bg-blue-50" : ""
+                    }`}
+                    onClick={() => {
+                      if (!lead.isRead) markAsRead(lead._id);
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedLeads.includes(lead._id)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          toggleSelectLead(lead._id);
+                        }}
+                        className="rounded border-gray-300"
+                      />
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">From:</span>
-                    <span className="font-medium">
-                      {selectedLead.senderName || selectedLead.senderEmail}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Email:</span>
-                    <span>{selectedLead.senderEmail}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">To:</span>
-                    <span>{selectedLead.receiverEmail}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Date:</span>
-                    <span>
-                      {new Date(selectedLead.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={`font-medium ${
+                              !lead.isRead ? "text-gray-900" : "text-gray-700"
+                            }`}
+                          >
+                            {lead.senderName || lead.senderEmail}
+                          </span>
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                              lead.status
+                            )}`}
+                          >
+                            {lead.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                          <span className="flex items-center gap-1">
+                            <AtSign className="w-3 h-3" />
+                            {lead.senderEmail}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <User className="w-3 h-3" />
+                            To: {lead.receiverEmail}
+                          </span>
+                        </div>
+                        <p
+                          className={`text-sm truncate ${
+                            !lead.isRead
+                              ? "font-medium text-gray-900"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {lead.subject}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate mt-1">
+                          {lead.content}
+                        </p>
+                      </div>
 
-                <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Message</h5>
-                  <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">
-                    {selectedLead.content}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h5 className="font-medium text-gray-900">Actions</h5>
-                  <div className="flex flex-col gap-2">
-                    <select
-                      value={selectedLead.status}
-                      onChange={(e) =>
-                        updateStatus(selectedLead._id, e.target.value)
-                      }
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="new">New</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="replied">Replied</option>
-                      <option value="closed">Closed</option>
-                    </select>
-                    <div className="flex gap-2">
-                      <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        <Reply className="w-4 h-4" />
-                        Reply
-                      </button>
-                      <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        <Forward className="w-4 h-4" />
-                        Forward
-                      </button>
+                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatDate(lead.createdAt)}
+                        </span>
+                        {!lead.isRead && (
+                          <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        )}
+                      </div>
                     </div>
-                    <button
-                      onClick={() => deleteLead(selectedLead._id)}
-                      className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete Lead
-                    </button>
                   </div>
-                </div>
+                </OpenMail>
+              ))
+            )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-gray-200 flex items-center justify-between">
+              <span className="text-sm text-gray-600">
+                Showing {(currentPage - 1) * leadsPerPage + 1} to{" "}
+                {Math.min(currentPage * leadsPerPage, filteredLeads.length)} of{" "}
+                {filteredLeads.length} results
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+                >
+                  Previous
+                </button>
+                <span className="px-3 py-1 text-sm text-gray-600">
+                  {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+                >
+                  Next
+                </button>
               </div>
             </div>
           )}
