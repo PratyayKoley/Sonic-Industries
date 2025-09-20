@@ -12,6 +12,7 @@ import CartRoutes from "./routes/cart-routes";
 import OrderRoutes from "./routes/orders-routes";
 import DealRoutes from "./routes/deal-routes";
 import LeadRoutes from "./routes/lead-routes";
+import PaymentRoutes from "./routes/payment-routes";
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api/cart", CartRoutes);
 app.use("/api/orders", OrderRoutes);
 app.use("/api/deals", DealRoutes);
 app.use("/api/leads", LeadRoutes);
+app.use("/api/payment", PaymentRoutes);
 
 // Server Connection
 app.get("/", (req: Request, res: Response): void => {

@@ -3,6 +3,7 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getProductByCategory,
   getProductBySlug,
   updateProduct,
 } from "../controllers/products-controller";
@@ -14,6 +15,7 @@ const router: Router = Router();
 router.get("/:slug", getProductBySlug);
 router.get("/", getAllProducts);
 router.post("/", authenticateJWT, authorizeRole("admin"), createProduct);
+router.post("/getProducts", getProductByCategory);
 router.put("/", authenticateJWT, authorizeRole("admin"), updateProduct);
 router.delete("/:slug", authenticateJWT, authorizeRole("admin"), deleteProduct);
 

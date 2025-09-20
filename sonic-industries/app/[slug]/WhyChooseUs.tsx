@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { Play, RotateCw, Truck, RefreshCw, Headphones, X } from "lucide-react";
@@ -99,9 +99,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
     const match = url.match(
       /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&?]+)/
     );
-    console.log(match);
     const videoId = match?.[1];
-    console.log(videoId);
     return videoId
       ? `https://img.youtube.com/vi/${videoId}/sddefault.jpg`
       : null;
@@ -144,7 +142,10 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
             {/* Video placeholder */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <Image
-                src={getYouTubeThumbnail(productData.yt_video_url || "") || "/opengraph-image.png"}
+                src={
+                  getYouTubeThumbnail(productData.yt_video_url || "") ||
+                  "/opengraph-image.png"
+                }
                 alt="Product showcase video thumbnail"
                 className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                 width={1280}

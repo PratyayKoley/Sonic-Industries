@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
+import Script from "next/script";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
       },
     ],
     card: "summary_large_image",
-    creator: "Kunal Barot"
+    creator: "Kunal Barot",
   },
 };
 
@@ -74,7 +75,13 @@ export default function RootLayout({
           href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css"
         />
       </head>
-      <body className={`${poppins.variable} antialiased`}>{children}</body>
+      <body className={`${poppins.variable} antialiased`}>
+        {children}
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
+      </body>
     </html>
   );
 }

@@ -155,7 +155,7 @@ export default async function ProductPage({ params }: Props) {
       <PackagingInfo productData={productData} />
       <Hotspots />
       <DealsOfWeek />
-      <ProductVariants />
+      <ProductVariants productData={productData} />
       <WhyChooseUs productData={productData} />
       <ProductComparison />
       <Testimonials />

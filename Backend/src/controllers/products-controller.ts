@@ -165,3 +165,39 @@ export const getAllProducts = async (
     });
   }
 };
+
+export const getProductByCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { categoryId } = req.body;
+
+    if (!categoryId) {
+      res.status(400).json({
+        message: "Category Id is required.",
+      });
+      return;
+    }
+
+    const products = await ProductModel.find({ categoryId: categoryId });
+
+    if (!products || products.length === 0) {
+      res.status(404).json({
+        message: "No products found for this category.",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Products fetched successfully.",
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    res.status(500).json({
+      message: "Failed to fetch products.",
+      error,
+    });
+  }
+};
