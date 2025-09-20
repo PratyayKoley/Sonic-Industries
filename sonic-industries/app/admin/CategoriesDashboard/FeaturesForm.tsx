@@ -144,16 +144,6 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                   
                   const filteredIcons = Object.entries(LucideIcons)
                     .filter(([name, IconComponent]) => {
-                      // Debug each step for truck search
-                      if (searchTerm === 'truck' && name.toLowerCase().includes('truck')) {
-                        console.log(`Found truck-related icon ${name}:`, {
-                          isFunction: typeof IconComponent === "function",
-                          isObject: typeof IconComponent === "object",
-                          hasInvalidName: ['createLucideIcon', 'default', 'LucideIcon'].some(invalid => name.includes(invalid)),
-                          matchesSearch: name.toLowerCase().includes(searchTerm)
-                        });
-                      }
-                      
                       // Filter out non-components (accept both functions and objects)
                       if (typeof IconComponent !== "function" && typeof IconComponent !== "object") return false;
                       if (IconComponent === null) return false;
@@ -168,8 +158,6 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                       return name.toLowerCase().includes(searchTerm);
                     })
                     .slice(0, 20); // Limit results for performance
-                  
-                  console.log('Final filtered icons for search:', filteredIcons.map(([name]) => name));
                   
                   return filteredIcons.map(([name, IconComponent]) => {
                     try {
