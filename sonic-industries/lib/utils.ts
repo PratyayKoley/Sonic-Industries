@@ -1,3 +1,4 @@
+import { RazorpayPaymentOrder, RazorpayPaymentResponse } from "@/types";
 import axios from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -6,8 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const initiatePayment = (orderData: any) => {
-  console.log(orderData);
+export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
   const options = {
     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     amount: orderData.order.amount,
@@ -22,8 +22,7 @@ export const initiatePayment = (orderData: any) => {
     name: "Sonic Industries",
     description: "Test Transaction",
     order_id: orderData.order.id,
-    handler: async function (response: any) {
-      console.log(response);
+    handler: async function (response: RazorpayPaymentResponse) {
       try {
         const verifyRes = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/verify-payment`,
@@ -54,6 +53,6 @@ export const initiatePayment = (orderData: any) => {
     },
   };
 
-  const rzp = new (window as any).Razorpay(options);
+  const rzp = new window.Razorpay(options);
   rzp.open();
 };

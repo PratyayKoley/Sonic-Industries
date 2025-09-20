@@ -21,7 +21,6 @@ import OpenMail from "./OpenMail";
 const LeadsDashboard = () => {
   const [leads, setLeads] = useState<LeadBackend[]>([]);
   const [selectedLead, setSelectedLead] = useState<LeadBackend | null>(null);
-  const [isMailModalOpen, setIsMailModalOpen] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -127,25 +126,11 @@ const LeadsDashboard = () => {
       // Close modal if the deleted lead was selected
       if (selectedLead?._id === leadId) {
         setSelectedLead(null);
-        setIsMailModalOpen(false);
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete lead");
     }
-  };
-
-  const handleLeadClick = (lead: LeadBackend) => {
-    setSelectedLead(lead);
-    setIsMailModalOpen(true);
-    if (!lead.isRead) {
-      markAsRead(lead._id);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setIsMailModalOpen(false);
-    setSelectedLead(null);
   };
 
   const toggleSelectLead = (leadId: string) => {

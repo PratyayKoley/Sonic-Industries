@@ -142,25 +142,6 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                 {(() => {
                   const searchTerm = iconSearch.toLowerCase().trim();
                   
-                  // Debug logging - show all available icons
-                  if (searchTerm === 'truck') {
-                    const allKeys = Object.keys(LucideIcons);
-                    console.log('Total LucideIcons keys:', allKeys.length);
-                    console.log('First 20 keys:', allKeys.slice(0, 20));
-                    console.log('Keys containing "truck":', allKeys.filter(name => name.toLowerCase().includes('truck')));
-                    console.log('Keys containing "Truck":', allKeys.filter(name => name.includes('Truck')));
-                    console.log('Keys containing "car":', allKeys.filter(name => name.toLowerCase().includes('car')));
-                    console.log('Keys containing "home":', allKeys.filter(name => name.toLowerCase().includes('home')));
-                    console.log('Truck icon exists?', 'Truck' in LucideIcons);
-                    console.log('Truck icon type:', typeof LucideIcons.Truck);
-                    
-                    // Test a few known icons
-                    console.log('Plus icon exists?', 'Plus' in LucideIcons);
-                    console.log('X icon exists?', 'X' in LucideIcons);
-                    console.log('Home icon exists?', 'Home' in LucideIcons);
-                    console.log('Car icon exists?', 'Car' in LucideIcons);
-                  }
-                  
                   const filteredIcons = Object.entries(LucideIcons)
                     .filter(([name, IconComponent]) => {
                       // Debug each step for truck search

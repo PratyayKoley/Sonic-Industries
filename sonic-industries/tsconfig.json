@@ -27,6 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "*.d.ts",
     "app/admin/ProductsDashboard"
 , "app/admin/DealsDashboard"  ],
   "exclude": ["node_modules"]

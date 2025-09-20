@@ -23,14 +23,17 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
 
   const handleBuyNow = async ({ productId }: { productId: string }) => {
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/create-order`, {
-        productId,
-        customer: {
-          name: "Customer Name",
-          email: "customer@example.com",
-          contact: "9999999999",
-        },
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/create-order`,
+        {
+          productId,
+          customer: {
+            name: "Customer Name",
+            email: "customer@example.com",
+            contact: "9999999999",
+          },
+        }
+      );
 
       const orderData = await res.data;
       initiatePayment(orderData);
@@ -39,23 +42,23 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
     }
   };
 
-  const fetchProducts = async () => {
-    try {
-      const products = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/getProducts`,
-        {
-          categoryId: productData._id,
-        }
-      );
-      setProducts(products.data.products);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/getProducts`,
+          {
+            categoryId: productData._id,
+          }
+        );
+        setProducts(products.data.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
     fetchProducts();
-  }, [productData]);
+  }, [productData._id]);
 
   const backgroundColors = [
     "bg-pink-200",

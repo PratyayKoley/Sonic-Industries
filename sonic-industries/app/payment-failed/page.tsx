@@ -1,37 +1,14 @@
 "use client";
 
 import React from "react";
-import { XCircle, Home, RefreshCw, Mail } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { XCircle, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const PaymentFailed: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const errorCode = searchParams.get("error_code");
-  const errorMessage = searchParams.get("error_message");
 
   const handleGoHome = () => {
     router.back();
-  };
-
-  const handleContactSupport = () => {
-    // Implement support contact logic
-    window.location.href = "mailto:support@yourcompany.com";
-  };
-
-  const getErrorDetails = (code: string | null) => {
-    switch (code) {
-      case "insufficient_funds":
-        return "Your account doesn't have sufficient funds for this transaction.";
-      case "card_declined":
-        return "Your card was declined. Please check your card details or try a different card.";
-      case "expired_card":
-        return "Your card has expired. Please use a valid card.";
-      case "network_error":
-        return "A network error occurred. Please check your connection and try again.";
-      default:
-        return "An unexpected error occurred during payment processing.";
-    }
   };
 
   return (
@@ -60,31 +37,8 @@ const PaymentFailed: React.FC = () => {
             😔 Something went wrong
           </p>
           <p className="text-lg text-gray-600 animate-fade-in-up animation-delay-400">
-            Don't worry, no charges have been made to your account.
+            Don&apos;t worry, no charges have been made to your account.
           </p>
-        </div>
-
-        {/* Error Details Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-red-100 shadow-lg animate-fade-in-up animation-delay-600">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-center gap-2">
-            <XCircle className="w-5 h-5 text-red-500" />
-            Error Details
-          </h3>
-          <div className="space-y-3 text-left">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-800 font-medium">
-                {errorMessage || getErrorDetails(errorCode)}
-              </p>
-              {errorCode && (
-                <p className="text-sm text-red-600 mt-2">
-                  Error Code:{" "}
-                  <span className="font-mono bg-red-100 px-2 py-1 rounded">
-                    {errorCode}
-                  </span>
-                </p>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Action Buttons */}

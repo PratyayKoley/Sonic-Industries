@@ -2,15 +2,11 @@
 
 import React from "react";
 import { CheckCircle, Home, Download } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Confetti } from "../ui/confetti";
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const paymentId = searchParams.get("payment_id");
-  const amount = searchParams.get("amount");
-  const currency = searchParams.get("currency") || "USD";
 
   const handleGoHome = () => {
     router.back();
@@ -61,52 +57,33 @@ const PaymentSuccess: React.FC = () => {
           </p>
         </div>
 
-        {/* Payment Details Card */}
-        {(paymentId || amount) && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-green-100 shadow-lg animate-fade-in-up animation-delay-600 relative z-20">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Transaction Details
-            </h3>
-            <div className="space-y-2 text-sm">
-              {amount && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Amount:</span>
-                  <span className="font-bold text-green-600 text-lg">
-                    {currency} {amount}
-                  </span>
-                </div>
-              )}
-              {paymentId && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Payment ID:</span>
-                  <span className="font-mono text-gray-800 bg-gray-100 px-2 py-1 rounded">
-                    {paymentId}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Status:</span>
-                <span className="text-green-600 font-semibold flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" />
-                  Completed
-                </span>
-              </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-green-100 shadow-lg animate-fade-in-up animation-delay-600 relative z-20">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Transaction Details
+          </h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Status:</span>
+              <span className="text-green-600 font-semibold flex items-center gap-1">
+                <CheckCircle className="w-4 h-4" />
+                Completed
+              </span>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-800 relative z-20">
           <button
             onClick={handleGoHome}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
           >
             <Home className="w-5 h-5" />
             Go Back
           </button>
           <button
             onClick={handleDownloadReceipt}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
           >
             <Download className="w-5 h-5" />
             Download Receipt

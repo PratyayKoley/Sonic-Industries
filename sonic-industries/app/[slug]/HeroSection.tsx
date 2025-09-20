@@ -9,8 +9,6 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ productData }: HeroSectionProps) {
-  console.log(productData);
-
   useEffect(() => {
     if (productData?.name) {
       document.title = `${productData.name} | Sonic Industries`;
