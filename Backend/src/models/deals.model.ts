@@ -9,6 +9,7 @@ const DealSchema = new Schema(
     discountedPrice: { type: Number, required: true },
     rating: { type: Number, default: 5 },
     expiresAt: { type: Date, required: true },
+    couponCode: { type: String, required: true, unique: true }
   },
   {
     timestamps: true,

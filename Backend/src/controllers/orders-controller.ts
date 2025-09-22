@@ -1,21 +1,16 @@
 import { Request, Response } from "express";
-import { Order, OrderModel } from "../models/orders.model";
+import { OrderModel } from "../models/orders.model";
 import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
+import { Product, ProductModel } from "../models/products.model";
+import { DealModel } from "../models/deals.model";
 
-export const getOrders = async (req: Request, res: Response): Promise<void> => {
+export const getAllOrders = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({
-        message: "Unauthorized",
-      });
-      return;
-    }
-
-    const orders = await OrderModel.find({ userId }).populate(
-      "order_items.productId"
-    );
+    const orders = await OrderModel.find().populate("order_items.productId");
 
     if (!orders || orders.length === 0) {
       res.status(404).json({
@@ -40,25 +35,37 @@ export const createOrder = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const CheckoutSecret =
+      process.env.JWT_CHECKOUT_SECRET ||
+      "kbdhiffhibdsiujhaihhiBHBhvGUVguguGUYgutGFutf";
+    const newOrderRequest = req.body;
 
-    if (!userId) {
-      res.status(401).json({
-        message: "Unauthorized",
+    if (
+      !newOrderRequest.sessionToken ||
+      !newOrderRequest.payment_method ||
+      !newOrderRequest.customer
+    ) {
+      res.status(400).json({
+        message: "Insufficient order details.",
       });
       return;
     }
 
-    const newOrderRequest: Order = req.body;
+    const decoded = jwt.verify(newOrderRequest.sessionToken, CheckoutSecret);
+    if (!decoded) {
+      res.status(401).json({
+        message: "Session expired or invalid",
+      });
+      return;
+    }
 
-    if (
-      !newOrderRequest ||
-      !newOrderRequest.order_items ||
-      !Array.isArray(newOrderRequest.order_items) ||
-      newOrderRequest.order_items.length === 0
-    ) {
-      res.status(400).json({
-        message: "Order Items are required.",
+    const productInfo: Product | null = await ProductModel.findById(
+      (decoded as { productId: string }).productId
+    );
+
+    if (!productInfo) {
+      res.status(404).json({
+        message: "Product associated with this session token not found.",
       });
       return;
     }
@@ -77,11 +84,58 @@ export const createOrder = async (
       }
     }
 
+    const total_price: number = productInfo.price * newOrderRequest.quantity;
+    const couponCode: string = newOrderRequest.couponCode || null;
+
+    let discount = 0;
+    let shipping = 0;
+    if (couponCode) {
+      const deal = await DealModel.findOne({ couponCode });
+      if (!deal) {
+        res.status(404).json({
+          message: "Invalid coupon code",
+        });
+        return;
+      }
+
+      const prevOrder = await OrderModel.findOne({
+        couponCode: deal._id,
+        "order_items.productId": productInfo._id,
+        "customer.email": newOrderRequest.customer.email,
+      });
+      if (prevOrder) {
+        res.status(400).json({
+          message: "You have already availed this offer",
+        });
+        return;
+      }
+
+      discount = deal.discountedPrice;
+    }
+
     // Add orderNumber and userId to the new order request
     const orderToSave = {
-      ...newOrderRequest,
-      userId,
       orderNumber,
+      sessionToken: newOrderRequest.sessionToken,
+      customer: {
+        firstName: newOrderRequest.customer.firstName,
+        lastName: newOrderRequest.customer.lastName,
+        email: newOrderRequest.customer.email,
+        phone: newOrderRequest.customer.phone,
+      },
+      payment_method: "cod",
+      total_price: total_price,
+      discount: discount,
+      final_price: total_price + shipping - discount,
+      shipping_address: { ...newOrderRequest.customer.shippingAddress },
+      billing_address: { ...newOrderRequest.customer.billingAddress },
+      order_items: {
+        productId: productInfo._id,
+        categoryId: productInfo.categoryId,
+        quantity: newOrderRequest.quantity,
+        price: productInfo.price,
+        name: productInfo.name,
+      },
     };
 
     const newOrder = await OrderModel.create(orderToSave);
@@ -102,14 +156,8 @@ export const updateOrder = async (
 ): Promise<void> => {
   try {
     const { orderId } = req.params;
-    const userId = req.user?.userId;
-    const allowedUpdates = ["status", "payment_status", "payment_method"];
+    const allowedUpdates = ["status", "payment_status"];
     const updates: Partial<Record<string, any>> = {};
-
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
 
     if (!orderId) {
       res.status(400).json({ message: "Order ID is required." });
@@ -120,13 +168,6 @@ export const updateOrder = async (
 
     if (!order) {
       res.status(404).json({ message: "Order not found." });
-      return;
-    }
-
-    if (order.userId.toString() !== userId) {
-      res
-        .status(403)
-        .json({ message: "You are not authorized to update this order." });
       return;
     }
 
@@ -167,14 +208,6 @@ export const deleteOrder = async (
 ): Promise<void> => {
   try {
     const { orderId } = req.params;
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({
-        message: "Unauthorized",
-      });
-      return;
-    }
 
     if (!orderId) {
       res.status(400).json({
@@ -188,13 +221,6 @@ export const deleteOrder = async (
     if (!order) {
       res.status(404).json({
         message: "Order not found.",
-      });
-      return;
-    }
-
-    if (order.userId.toString() !== userId) {
-      res.status(403).json({
-        message: "You are not authorized to delete this order.",
       });
       return;
     }

@@ -44,9 +44,9 @@ export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
       }
     },
     prefill: {
-      name: orderData.customer.name,
-      email: orderData.customer.email,
-      contact: orderData.customer.contact,
+      name: orderData.customerData.name,
+      email: orderData.customerData.email,
+      contact: orderData.customerData.phone,
     },
     theme: {
       color: "#3399cc",

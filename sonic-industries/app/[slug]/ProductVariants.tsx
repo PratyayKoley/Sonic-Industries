@@ -12,7 +12,7 @@ import Image from "next/image";
 import { CategoryBackend, ProductBackend } from "@/types";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { initiatePayment } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface ProductVariantsProps {
   productData: CategoryBackend;
@@ -20,25 +20,19 @@ interface ProductVariantsProps {
 
 export default function ProductVariants({ productData }: ProductVariantsProps) {
   const [products, setProducts] = useState<ProductBackend[]>([]);
+  const router = useRouter();
 
   const handleBuyNow = async ({ productId }: { productId: string }) => {
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/create-order`,
-        {
-          productId,
-          customer: {
-            name: "Customer Name",
-            email: "customer@example.com",
-            contact: "9999999999",
-          },
-        }
+      const SessionTokenRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/checkout`,
+        { productId }
       );
 
-      const orderData = await res.data;
-      initiatePayment(orderData);
-    } catch (err) {
-      console.error("Payment failed", err);
+      const { checkoutSessionToken } = SessionTokenRes.data;
+      router.push(`/checkout?token=${checkoutSessionToken}`);
+    } catch (error) {
+      console.error("Error initiating checkout:", error);
     }
   };
 

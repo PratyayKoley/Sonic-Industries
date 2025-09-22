@@ -5,11 +5,12 @@ import ProductDashboard from "./ProductsDashboard/page";
 import DealsDashboard from "./DealsDashboard/page";
 import LeadsDashboard from "./LeadsDashboard/page";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
-import { Boxes, LogOut, LayoutGrid, Tag, Mail } from "lucide-react";
+import { Boxes, LogOut, LayoutGrid, Tag, Mail, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import OrdersDashboard from "./OrdersDashboard/page";
 
 const AdminDashboard = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const AdminDashboard = () => {
     prof_image_url: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "products" | "categories" | "deals" | "leads"
+    "products" | "categories" | "deals" | "leads" | "orders"
   >("products");
 
   const handleLogout = () => {
@@ -43,6 +44,11 @@ const AdminDashboard = () => {
       label: "Deals",
       onClick: () => setActiveTab("deals"),
       icon: <Tag className="h-5 w-5 shrink-0 text-neutral-700" />,
+    },
+    {
+      label: "Orders",
+      onClick: () => setActiveTab("orders"),
+      icon: <ShoppingCart className="h-5 w-5 shrink-0 text-neutral-700" />,
     },
     {
       label: "Leads",
@@ -141,6 +147,7 @@ const AdminDashboard = () => {
         {activeTab === "categories" && <CategoriesDashboard />}
         {activeTab === "deals" && <DealsDashboard />}
         {activeTab === "leads" && <LeadsDashboard />}
+        {activeTab === "orders" && <OrdersDashboard />}
       </div>
     </div>
   );

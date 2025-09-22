@@ -120,6 +120,7 @@ export interface DealBackend {
   imageUrl?: string;
   mrp: number;
   discountedPrice: number;
+  couponCode: string;
   rating?: number;
   expiresAt: Date;
   createdAt?: string;
@@ -138,6 +139,58 @@ export interface LeadBackend {
   createdAt: string;
   updatedAt: string;
   status: "new" | "in-progress" | "replied" | "closed";
+}
+
+export interface OrderModelBackend {
+  _id: string;
+  orderNumber: string;
+  sessionToken: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  status: "pending" | "shipped" | "delivered" | "cancelled";
+  payment_status: "pending" | "paid" | "failed" | "refunded";
+  payment_method: "cod" | "razorpay";
+  razorpay?: {
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
+    paidAt?: Date;
+  };
+  couponCode?: string;
+  total_price: number;
+  shipping_fee: number;
+  discount: number;
+  final_price: number;
+  shipping_address: {
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  billing_address: {
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  order_items: {
+    productId: string;
+    categoryId: string;
+    quantity: number;
+    price: number;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CategoryFeatures {
@@ -351,6 +404,13 @@ export type CreateDealProps = {
   activeFormTab: DealFormTab;
 };
 
+export interface OrdersDashboardProps {
+  order: OrderModelBackend;
+  onClose: () => void;
+  onUpdateStatus: (id: string, status: string, payment_status: string) => void;
+  onDelete: (id: string) => void;
+}
+
 export type DealFormTab = "basic" | "pricing" | "image-rating";
 export type FormTab = "basic" | "features" | "labels" | "video" | "packaging";
 export type ProductFormTab =
@@ -378,10 +438,10 @@ export interface RazorpayPaymentOrder {
     receipt: string;
     status: string;
   };
-  customer: {
+  customerData: {
     name: string;
     email: string;
-    contact: string;
+    phone: string;
   };
 }
 
