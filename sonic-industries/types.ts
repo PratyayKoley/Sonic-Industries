@@ -439,7 +439,8 @@ export interface RazorpayPaymentOrder {
     status: string;
   };
   customerData: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
   };
@@ -449,4 +450,19 @@ export interface RazorpayPaymentResponse {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
+}
+
+export interface RazorpayPaymentFailedResponse {
+  error: {
+    code: string;
+    description: string;
+    field: any;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: {
+      payment_id: string;
+      order_id: string;
+    };
+  };
 }

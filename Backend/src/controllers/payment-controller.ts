@@ -183,6 +183,7 @@ export const verifyPayment = async (
         $set: {
           payment_status: "paid",
           "razorpay.razorpay_payment_id": response.razorpay_payment_id,
+          "razorpay.paidAt": new Date().toISOString(),
         },
       }
     );
@@ -284,6 +285,7 @@ export const markPaymentFailed = async (
       {
         $set: {
           payment_status: "failed",
+          status: "cancelled",
         },
       }
     );
@@ -327,6 +329,7 @@ export const razorpayWebhook = async (
         $set: {
           payment_status: "paid",
           "razorpay.razorpay_payment_id": payment.id,
+          "razorpay.paidAt": new Date().toISOString(),
         },
       }
     );
@@ -336,6 +339,7 @@ export const razorpayWebhook = async (
       {
         $set: {
           payment_status: "failed",
+          status: "cancelled",
         },
       }
     );

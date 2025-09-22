@@ -1,4 +1,8 @@
-import { RazorpayPaymentOrder, RazorpayPaymentResponse } from "@/types";
+import {
+  RazorpayPaymentFailedResponse,
+  RazorpayPaymentOrder,
+  RazorpayPaymentResponse,
+} from "@/types";
 import axios from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -8,6 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
+  console.log(orderData);
   const options = {
     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     amount: orderData.order.amount,
@@ -44,7 +49,7 @@ export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
       }
     },
     prefill: {
-      name: orderData.customerData.name,
+      name: `${orderData.customerData.firstName} ${orderData.customerData.lastName}`,
       email: orderData.customerData.email,
       contact: orderData.customerData.phone,
     },
@@ -55,13 +60,16 @@ export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
 
   const rzp = new window.Razorpay(options);
 
-  rzp.on("payment.failed", function (response) {
-    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/mark-failed`, {
-      orderId: orderData.order.id,
-      reason: response.error.description,
-    });
+  rzp.on("payment.failed", function (response: RazorpayPaymentFailedResponse) {
+    axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/mark-failed`,
+      {
+        orderId: orderData.order.id,
+        reason: response.error.description,
+      }
+    );
     window.location.href = "/payment-failed";
   });
-  
+
   rzp.open();
 };
