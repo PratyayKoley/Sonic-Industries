@@ -247,7 +247,7 @@ const CreateProduct = ({
           <div>
             <span className="font-medium text-gray-700">Price:</span>
             <span className="ml-2">
-              {formData.price > 0 ? `₹${formData.price}` : "Not set"}
+              {formData.price > 0 ? `₹{formData.price}` : "Not set"}
             </span>
           </div>
           <div>

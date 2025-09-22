@@ -53,7 +53,7 @@ export function OrderSummary({
             <h3 className="font-medium text-gray-900 text-sm mb-1">
               {product.name}
             </h3>
-            <p className="text-sm text-gray-600 mb-2">${product.price}</p>
+            <p className="text-sm text-gray-600 mb-2">₹{product.price}</p>
 
             {/* Quantity Controls */}
             <div className="flex items-center space-x-2">
@@ -110,24 +110,24 @@ export function OrderSummary({
       <div className="space-y-3 mb-4 border-t pt-5">
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700">Order Subtotal</span>
-          <span className="text-sm font-medium">${totalPrice.toFixed(2)}</span>
+          <span className="text-sm font-medium">₹{totalPrice.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700">Est. Delivery</span>
-          <span className="text-sm font-medium">${shippingFee.toFixed(2)}</span>
+          <span className="text-sm font-medium">₹{shippingFee.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700">Est. Tax</span>
-          <span className="text-sm font-medium">$4.49</span>
+          <span className="text-sm font-medium">₹4.49</span>
         </div>
 
         {discount > 0 && (
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-700">Promotion</span>
             <span className="text-sm font-medium text-green-600">
-              -${discount.toFixed(2)}
+              -₹{discount.toFixed(2)}
             </span>
           </div>
         )}
@@ -135,7 +135,7 @@ export function OrderSummary({
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700">Pre-Tax Total</span>
           <span className="text-sm font-medium">
-            ${(finalPrice + 4.49).toFixed(2)}
+            ₹{(finalPrice + 4.49).toFixed(2)}
           </span>
         </div>
 
@@ -145,7 +145,7 @@ export function OrderSummary({
               Total Savings
             </span>
             <span className="text-sm font-semibold text-red-600">
-              ${discount > 0 ? `${discount.toFixed(2)}` : "0.00"}
+              ₹{discount > 0 ? `${discount.toFixed(2)}` : "0.00"}
             </span>
           </div>
         </div>

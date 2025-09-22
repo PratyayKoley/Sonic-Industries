@@ -54,5 +54,14 @@ export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
   };
 
   const rzp = new window.Razorpay(options);
+
+  rzp.on("payment.failed", function (response) {
+    axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/mark-failed`, {
+      orderId: orderData.order.id,
+      reason: response.error.description,
+    });
+    window.location.href = "/payment-failed";
+  });
+  
   rzp.open();
 };

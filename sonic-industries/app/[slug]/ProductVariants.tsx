@@ -157,10 +157,10 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
                     {/* Price */}
                     <div className="flex items-center mb-2">
                       <span className="text-xl font-bold text-indigo-600 mr-2">
-                        ${product.price}
+                        ₹{product.price}
                       </span>
                       <span className="text-sm text-gray-500 line-through">
-                        ${product.mrp}
+                        ₹{product.mrp}
                       </span>
                     </div>
 

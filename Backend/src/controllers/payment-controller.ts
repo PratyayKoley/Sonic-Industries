@@ -126,8 +126,8 @@ export const createRazorPayOrder = async (
     const newOrder = await OrderModel.create({
       ...orderToSave,
       razorpay: {
-        razorpay_order_id: RazorpayOrder.id
-      }
+        razorpay_order_id: RazorpayOrder.id,
+      },
     });
 
     res.status(200).json({
@@ -175,6 +175,17 @@ export const verifyPayment = async (
       return;
     }
 
+    await OrderModel.updateOne(
+      {
+        "razorpay.razorpay_order_id": response.razorpay_order_id,
+      },
+      {
+        $set: {
+          payment_status: "paid",
+          "razorpay.razorpay_payment_id": response.razorpay_payment_id,
+        },
+      }
+    );
     res.status(200).json({
       success: true,
       message: "Payment verified successfully",
@@ -258,4 +269,77 @@ export const verifyCheckoutSession = async (
       error,
     });
   }
+};
+
+export const markPaymentFailed = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { orderId, reason } = req.body;
+    await OrderModel.updateOne(
+      {
+        "razorpay.razorpay_order_id": orderId,
+      },
+      {
+        $set: {
+          payment_status: "failed",
+        },
+      }
+    );
+    res.status(200).json({
+      message: reason,
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+    });
+  }
+};
+
+export const razorpayWebhook = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+  const signature = req.headers["x-razorpay-signature"] as string;
+  const body = JSON.stringify(req.body);
+
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(body)
+    .digest("hex");
+
+  if (signature !== expectedSignature) {
+    res.status(400).json({ message: "Invalid signature" });
+    return;
+  }
+
+  const event = req.body.event;
+  const payment = req.body.payload.payment.entity;
+
+  if (event === "payment.captured") {
+    await OrderModel.updateOne(
+      { "razorpay.razorpay_order_id": payment.order_id },
+      {
+        $set: {
+          payment_status: "paid",
+          "razorpay.razorpay_payment_id": payment.id,
+        },
+      }
+    );
+  } else if (event === "payment.failed") {
+    await OrderModel.updateOne(
+      { "razorpay.razorpay_order_id": payment.order_id },
+      {
+        $set: {
+          payment_status: "failed",
+        },
+      }
+    );
+  }
+
+  res.status(200).json({ status: "ok" });
 };

@@ -147,10 +147,10 @@ export default function DealsOfWeek() {
                 {/* Pricing */}
                 <div className="flex items-center mb-6">
                   <span className="text-4xl font-bold text-indigo-600 mr-3">
-                    ${currentDealData.salePrice}
+                    ₹{currentDealData.salePrice}
                   </span>
                   <span className="text-xl text-gray-500 line-through">
-                    ${currentDealData.originalPrice}
+                    ₹{currentDealData.originalPrice}
                   </span>
                 </div>
 

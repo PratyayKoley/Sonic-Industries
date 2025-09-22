@@ -270,7 +270,7 @@ const OrderDetailModal = ({
                   Unit Price
                 </label>
                 <p className="text-sm text-gray-900">
-                  ${order.order_items.price}
+                  ₹{order.order_items.price}
                 </p>
               </div>
             </div>
@@ -286,23 +286,23 @@ const OrderDetailModal = ({
               <div className="flex justify-between">
                 <span className="text-sm text-gray-700">Subtotal:</span>
                 <span className="text-sm text-gray-900">
-                  ${order.total_price}
+                  ₹{order.total_price}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-700">Shipping Fee:</span>
                 <span className="text-sm text-gray-900">
-                  ${order.shipping_fee}
+                  ₹{order.shipping_fee}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-700">Discount:</span>
-                <span className="text-sm text-red-600">-${order.discount}</span>
+                <span className="text-sm text-red-600">-₹{order.discount}</span>
               </div>
               <hr className="border-gray-300" />
               <div className="flex justify-between font-semibold">
                 <span className="text-gray-900">Total:</span>
-                <span className="text-gray-900">${order.final_price}</span>
+                <span className="text-gray-900">₹{order.final_price}</span>
               </div>
             </div>
           </div>
@@ -710,7 +710,7 @@ const OrdersDashboard = () => {
                           {order.order_items.quantity})
                         </span>
                         <span className="font-medium">
-                          ${order.final_price}
+                          ₹{order.final_price}
                         </span>
                         <span>{formatDate(order.createdAt)}</span>
                       </div>
