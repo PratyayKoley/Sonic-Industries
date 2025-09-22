@@ -1,6 +1,6 @@
 import { ProductBackend } from "@/types";
-import {  Wallet } from "lucide-react";
-import { SiRazorpay } from 'react-icons/si';
+import { Wallet } from "lucide-react";
+import { SiRazorpay } from "react-icons/si";
 import { useState } from "react";
 
 interface OrderSummaryProps {
@@ -165,7 +165,9 @@ export function OrderSummary({
             }`}
           >
             <SiRazorpay className="w-8 h-8 text-blue-600" />
-            <span className="mt-2 font-medium text-sm text-center">Razorpay</span>
+            <span className="mt-2 font-medium text-sm text-center">
+              Razorpay
+            </span>
           </div>
 
           {/* Cash on Delivery */}
@@ -178,7 +180,9 @@ export function OrderSummary({
             }`}
           >
             <Wallet className="w-8 h-8 text-green-600" />
-            <span className="mt-2 font-medium text-sm text-center">Cash on Delivery</span>
+            <span className="mt-2 font-medium text-sm text-center">
+              Cash on Delivery
+            </span>
           </div>
         </div>
 
@@ -189,13 +193,25 @@ export function OrderSummary({
               selected === "razorpay" ? onRazorpayCheckout : onCodCheckout
             }
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className={`w-full flex items-center justify-center gap-2 py-3 px-5 rounded-lg font-semibold shadow-md transition-colors cursor-pointer
+      ${
+        selected === "razorpay"
+          ? "bg-[#1a3c92] hover:bg-[#0f2c6a] text-white"
+          : "bg-green-600 hover:bg-green-700 text-white"
+      }
+      ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+    `}
           >
-            {isLoading
-              ? "Processing..."
-              : selected === "razorpay"
-              ? "Proceed with Razorpay"
-              : "Confirm Cash on Delivery"}
+            {isLoading ? (
+              "Processing..."
+            ) : selected === "razorpay" ? (
+              <>
+                <SiRazorpay className="w-5 h-5" />
+                <span>Pay Now</span>
+              </>
+            ) : (
+              <span>Cash on Delivery</span>
+            )}
           </button>
         )}
       </div>
