@@ -28,6 +28,7 @@ const DealsDashboard = () => {
     discountedPrice: 0,
     rating: 0,
     expiresAt: "",
+    couponCode: "",
   });
 
   useEffect(() => {
@@ -98,6 +99,7 @@ const DealsDashboard = () => {
       discountedPrice: deal.discountedPrice || 0,
       rating: deal.rating || 0,
       expiresAt: deal.expiresAt ? new Date(deal.expiresAt).toISOString() : "",
+      couponCode: deal.couponCode || "",
     });
     setIsEditing(true);
     setActiveFormTab("basic");

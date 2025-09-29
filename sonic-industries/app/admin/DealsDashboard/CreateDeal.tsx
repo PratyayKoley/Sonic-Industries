@@ -75,6 +75,7 @@ const CreateDeal = ({
       discountedPrice: 0,
       rating: 0,
       expiresAt: "",
+      couponCode: "",
     });
     setIsEditing(false);
     setSelectedDeal(null);

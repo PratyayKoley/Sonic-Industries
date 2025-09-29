@@ -366,6 +366,7 @@ export type DealFormDataType = {
   discountedPrice: number;
   rating: number;
   expiresAt: string; // ISO date string
+  couponCode: string;
 };
 
 export type DealEditingModalProps = {
