@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { Product, ProductModel } from "../models/products.model";
 import { DealModel } from "../models/deals.model";
+import { handleSuccessfulOrderEmail } from "../config/MailActions";
 
 export const getAllOrders = async (
   req: Request,
@@ -139,6 +140,7 @@ export const createOrder = async (
     };
 
     const newOrder = await OrderModel.create(orderToSave);
+    await handleSuccessfulOrderEmail(newOrder.orderNumber, true);
 
     res.status(200).json({
       message: "Order created successfully.",

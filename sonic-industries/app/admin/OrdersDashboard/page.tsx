@@ -407,7 +407,7 @@ const OrdersDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setOrders(response.data.orders || []);
+      setOrders(response.data.items || []);
     } catch {
       setError(
         "Failed to load orders. Make sure you have a GET /api/orders endpoint."

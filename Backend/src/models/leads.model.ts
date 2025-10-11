@@ -9,10 +9,10 @@ const LeadSchema = new Schema(
     receiverEmail: { type: String, required: true, index: true },
     receiverName: { type: String, trim: true },
     isRead: { type: Boolean, default: false },
-    status: {
+    mailType: {
       type: String,
-      enum: ["new", "in-progress", "replied", "closed"],
-      default: "new",
+      enum: ["order", "inquiry"],
+      required: true,
     },
   },
   {

@@ -12,7 +12,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
-  console.log(orderData);
   const options = {
     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     amount: orderData.order.amount,

@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { OrderModel } from "../models/orders.model";
 import { DealModel } from "../models/deals.model";
+import { handleSuccessfulOrderEmail } from "../config/MailActions";
 
 const CheckoutSecret =
   process.env.JWT_CHECKOUT_SECRET ||
@@ -187,6 +188,8 @@ export const verifyPayment = async (
         },
       }
     );
+
+    await handleSuccessfulOrderEmail(response.razorpay_payment_id);
     res.status(200).json({
       success: true,
       message: "Payment verified successfully",
@@ -333,6 +336,8 @@ export const razorpayWebhook = async (
         },
       }
     );
+
+    await handleSuccessfulOrderEmail(payment.order_id);
   } else if (event === "payment.failed") {
     await OrderModel.updateOne(
       { "razorpay.razorpay_order_id": payment.order_id },

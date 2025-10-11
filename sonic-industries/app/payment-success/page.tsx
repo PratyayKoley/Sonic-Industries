@@ -3,7 +3,6 @@
 import React from "react";
 import { CheckCircle, Home, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Confetti } from "../ui/confetti";
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
@@ -18,19 +17,9 @@ const PaymentSuccess: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Confetti positioned behind everything */}
 
       {/* Main content with higher z-index */}
       <div className="max-w-2xl w-full text-center relative z-10">
-        <div className="absolute">
-          <Confetti
-            options={{
-              particleCount: 200,
-              spread: 120,
-              origin: { y: 0.5 },
-            }}
-          />
-        </div>
         {/* Animated Success Icon */}
         <div className="relative mb-8">
           <div className="flex justify-center mb-6">
