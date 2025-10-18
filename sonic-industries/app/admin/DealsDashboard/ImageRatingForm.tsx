@@ -1,12 +1,20 @@
+"use client";
+
 import { DealFormDataType } from "@/types";
 import { Calendar, Check, Image as ImageIcon, Star } from "lucide-react";
+import { useState } from "react";
 
 interface ImageRatingFormProps {
   formData: DealFormDataType;
   setFormData: React.Dispatch<React.SetStateAction<DealFormDataType>>;
+  setImageFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
-const ImageRatingForm = ({ formData, setFormData }: ImageRatingFormProps) => {
+const ImageRatingForm = ({
+  formData,
+  setFormData,
+  setImageFile,
+}: ImageRatingFormProps) => {
   const handleChange = (
     field: keyof DealFormDataType,
     value: string | number
@@ -15,6 +23,11 @@ const ImageRatingForm = ({ formData, setFormData }: ImageRatingFormProps) => {
       ...formData,
       [field]: value,
     });
+  };
+
+  const handleFileUpload = (file: File) => {
+    setImageFile(file);
+    setFormData((prev: any) => ({ ...prev, imageUrl: "" }));
   };
 
   const formatDateForInput = (dateStr: string) => {
@@ -64,6 +77,14 @@ const ImageRatingForm = ({ formData, setFormData }: ImageRatingFormProps) => {
               placeholder="https://example.com/image.jpg"
               className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 text-gray-800 placeholder-gray-500 shadow-sm hover:shadow-md"
             />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                e.target.files && handleFileUpload(e.target.files[0])
+              }
+              className="ml-2"
+            />
           </div>
           {formData.imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -76,7 +97,7 @@ const ImageRatingForm = ({ formData, setFormData }: ImageRatingFormProps) => {
                 target.src =
                   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NyA0OEg5M1Y1NEg4N1Y0OFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+CjwvcGF0aD4KPC9zdmc+Cg==";
               }}
-            /> 
+            />
           )}
         </div>
 

@@ -4,6 +4,7 @@ import { CreateDealProps, DealFormTab } from "@/types";
 import BasicForm from "./BasicForm";
 import PricingForm from "./PricingForm";
 import ImageRatingForm from "./ImageRatingForm";
+import { useState } from "react";
 
 const CreateDeal = ({
   formData,
@@ -20,8 +21,10 @@ const CreateDeal = ({
   setActiveFormTab,
   deals,
 }: CreateDealProps) => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const handleCreate = async () => {
-    if (!formData.title.trim() || !formData.imageUrl.trim()) {
+    if (!formData.title.trim()) {
       setError("Title and image URL are required");
       return;
     }
@@ -32,30 +35,62 @@ const CreateDeal = ({
     try {
       const token = localStorage.getItem("token");
 
-      // Transform the data to match the MongoDB schema
-      const transformedData = {
-        title: formData.title,
-        description: formData.description,
-        imageUrl: formData.imageUrl,
-        mrp: formData.mrp,
-        discountedPrice: formData.discountedPrice,
-        rating: formData.rating,
-        expiresAt: new Date(formData.expiresAt).toISOString(),
-        couponCode: formData.couponCode,
-      };
+      let response;
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
-        transformedData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      if (imageFile) {
+        // 🧾 Case 1: File upload
+        const formDataToSend = new FormData();
+        formDataToSend.append("title", formData.title);
+        formDataToSend.append("description", formData.description);
+        formDataToSend.append("mrp", formData.mrp.toString());
+        formDataToSend.append(
+          "discountedPrice",
+          formData.discountedPrice.toString()
+        );
+        formDataToSend.append("rating", formData.rating.toString());
+        formDataToSend.append(
+          "expiresAt",
+          new Date(formData.expiresAt).toISOString()
+        );
+        formDataToSend.append("couponCode", formData.couponCode);
+        formDataToSend.append("imageFile", imageFile); // 👈 the actual file
 
-      setDeals([...deals, response.data.newDeal]);
+        response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
+          formDataToSend,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // 🌐 Case 2: URL upload
+        const transformedData = {
+          title: formData.title,
+          description: formData.description,
+          imageUrl: formData.imageUrl, // 👈 plain URL
+          mrp: formData.mrp,
+          discountedPrice: formData.discountedPrice,
+          rating: formData.rating,
+          expiresAt: new Date(formData.expiresAt).toISOString(),
+          couponCode: formData.couponCode,
+        };
+
+        response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
+          transformedData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
+      setDeals([...deals, response.data.deal]);
       setSuccess("Deal created successfully!");
       resetForm();
       setActiveTab("browse");
@@ -97,7 +132,11 @@ const CreateDeal = ({
         return <PricingForm formData={formData} setFormData={setFormData} />;
       case "image-rating":
         return (
-          <ImageRatingForm formData={formData} setFormData={setFormData} />
+          <ImageRatingForm
+            formData={formData}
+            setFormData={setFormData}
+            setImageFile={setImageFile}
+          />
         );
       default:
         return <BasicForm formData={formData} setFormData={setFormData} />;
@@ -133,7 +172,7 @@ const CreateDeal = ({
         <button
           onClick={handleCreate}
           disabled={
-            loading || !formData.title.trim() || !formData.imageUrl.trim()
+            loading || !formData.title.trim()
           }
           className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
         >

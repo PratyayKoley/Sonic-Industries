@@ -1,6 +1,9 @@
+"use client";
+
 import { Save } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { DealBackend, DealEditingModalProps } from "@/types";
+import { useState } from "react";
 
 const EditingModal = ({
   selectedDeal,

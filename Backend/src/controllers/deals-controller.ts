@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { DealModel, Deal } from "../models/deals.model";
+import { UploadApiResponse } from "cloudinary";
+import cloudinary from "../config/cloudinary";
+import axios from "axios";
 
 export const getAllDeals = async (
   req: Request,
@@ -52,7 +55,8 @@ export const createDeal = async (
   res: Response
 ): Promise<void> => {
   try {
-    const dealData: Deal = req.body;
+    const dealData = req.body as Partial<Deal>;
+
     if (!dealData || Object.keys(dealData).length === 0) {
       res.status(400).json({
         message: "Deal data is required.",
@@ -60,8 +64,51 @@ export const createDeal = async (
       return;
     }
 
-    const newDeal = await DealModel.create(dealData);
-    res.status(201).json({ message: "Deal created successfully", deal: newDeal });
+    let imageUrl: string | undefined;
+
+    if (req.file) {
+      const uploadResult: UploadApiResponse = await new Promise(
+        (resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "deals" },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result as UploadApiResponse);
+            }
+          );
+          stream.end(req.file?.buffer);
+        }
+      );
+      imageUrl = uploadResult.secure_url;
+    } else if (dealData.imageUrl) {
+      const imageResponse = await axios.get(dealData.imageUrl, {
+        responseType: "arraybuffer",
+      });
+
+      const uploadResult: UploadApiResponse = await new Promise(
+        (resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "deals" },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result as UploadApiResponse);
+            }
+          );
+          stream.end(Buffer.from(imageResponse.data, "binary"));
+        }
+      );
+      imageUrl = uploadResult.secure_url;
+    }
+
+    if (!imageUrl) {
+      res.status(400).json({ message: "Image (file or URL) is required." });
+      return;
+    }
+
+    const newDeal = await DealModel.create({ ...dealData, imageUrl });
+    res
+      .status(201)
+      .json({ message: "Deal created successfully", deal: newDeal });
   } catch (error) {
     console.error("Error creating deal:", error);
     res.status(500).json({ message: "Failed to create deal", error });
@@ -122,9 +169,7 @@ export const deleteDeal = async (
       res.status(404).json({ message: "Deal not found" });
       return;
     }
-    res
-      .status(200)
-      .json({ message: "Deal deleted successfully", deletedDeal });
+    res.status(200).json({ message: "Deal deleted successfully", deletedDeal });
   } catch (error) {
     console.error("Error deleting deal:", error);
     res.status(500).json({ message: "Failed to delete deal", error });
