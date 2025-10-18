@@ -2,7 +2,6 @@
 
 import { DealFormDataType } from "@/types";
 import { Calendar, Check, Image as ImageIcon, Star } from "lucide-react";
-import { useState } from "react";
 
 interface ImageRatingFormProps {
   formData: DealFormDataType;
@@ -27,7 +26,7 @@ const ImageRatingForm = ({
 
   const handleFileUpload = (file: File) => {
     setImageFile(file);
-    setFormData((prev: any) => ({ ...prev, imageUrl: "" }));
+    setFormData((prev: DealFormDataType) => ({ ...prev, imageUrl: "" }));
   };
 
   const formatDateForInput = (dateStr: string) => {
