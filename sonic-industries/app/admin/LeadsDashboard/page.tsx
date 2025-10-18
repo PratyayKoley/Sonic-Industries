@@ -72,38 +72,6 @@ const LeadsDashboard = () => {
     }
   };
 
-  const updateStatus = async (leadId: string, status: string) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads/${leadId}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setLeads(
-        leads.map((lead) =>
-          lead._id === leadId
-            ? { ...lead, status: status as LeadBackend["status"] }
-            : lead
-        )
-      );
-
-      // Update selected lead if it's the one being updated
-      if (selectedLead?._id === leadId) {
-        setSelectedLead({
-          ...selectedLead,
-          status: status as LeadBackend["status"],
-        });
-      }
-
-      setSuccess("Status updated successfully!");
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      setError(error.response?.data?.message || "Failed to update status");
-    }
-  };
-
   const deleteLead = async (leadId: string) => {
     if (
       !confirm(
@@ -185,21 +153,6 @@ const LeadsDashboard = () => {
         month: "short",
         day: "numeric",
       });
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-        return "bg-blue-100 text-blue-800";
-      case "in-progress":
-        return "bg-yellow-100 text-yellow-800";
-      case "replied":
-        return "bg-green-100 text-green-800";
-      case "closed":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -328,7 +281,6 @@ const LeadsDashboard = () => {
                 <OpenMail
                   key={lead._id}
                   lead={lead}
-                  onUpdateStatus={updateStatus}
                   onDelete={deleteLead}
                 >
                   <div
@@ -358,13 +310,6 @@ const LeadsDashboard = () => {
                             }`}
                           >
                             {lead.senderName || lead.senderEmail}
-                          </span>
-                          <span
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                              lead.status
-                            )}`}
-                          >
-                            {lead.status}
                           </span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">

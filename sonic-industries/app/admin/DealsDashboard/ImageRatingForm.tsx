@@ -1,6 +1,5 @@
 import { DealFormDataType } from "@/types";
 import { Calendar, Check, Image as ImageIcon, Star } from "lucide-react";
-import Image from "next/image";
 
 interface ImageRatingFormProps {
   formData: DealFormDataType;
@@ -67,19 +66,17 @@ const ImageRatingForm = ({ formData, setFormData }: ImageRatingFormProps) => {
             />
           </div>
           {formData.imageUrl && (
-            <div className="mt-4 p-4 bg-white/50 rounded-lg">
-              <Image
-                src={formData.imageUrl}
-                alt="Preview"
-                className="w-full h-32 object-cover rounded-lg"
-                width={500}
-                height={200}
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NyA0OEg5M1Y1NEg4N1Y0OFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+CjwvcGF0aD4KPC9zdmc+Cg==";
-                }}
-              />
-            </div>
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={formData.imageUrl}
+              alt="Preview"
+              className="w-full h-32 object-cover rounded-lg"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                target.src =
+                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NyA0OEg5M1Y1NEg4N1Y0OFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+CjwvcGF0aD4KPC9zdmc+Cg==";
+              }}
+            /> 
           )}
         </div>
 

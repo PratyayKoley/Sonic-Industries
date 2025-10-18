@@ -138,7 +138,7 @@ export interface LeadBackend {
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
-  status: "new" | "in-progress" | "replied" | "closed";
+  mailType: "order" | "inquiry";
 }
 
 export interface OrderModelBackend {

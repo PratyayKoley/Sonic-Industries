@@ -44,11 +44,12 @@ export function OrderSummary({
       {/* Product Display */}
       <div className="mb-5">
         <div className="flex space-x-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={"/api/placeholder/80/80"}
             alt={product.name}
             className="w-20 h-20 object-cover border rounded"
-          />
+          /> 
           <div className="flex-1">
             <h3 className="font-medium text-gray-900 text-sm mb-1">
               {product.name}

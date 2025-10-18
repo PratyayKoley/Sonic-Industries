@@ -41,6 +41,7 @@ const CreateDeal = ({
         discountedPrice: formData.discountedPrice,
         rating: formData.rating,
         expiresAt: new Date(formData.expiresAt).toISOString(),
+        couponCode: formData.couponCode,
       };
 
       const response = await axios.post(

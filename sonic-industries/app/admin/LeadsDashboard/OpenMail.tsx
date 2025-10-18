@@ -3,8 +3,6 @@ import {
   Mail,
   AtSign,
   Clock,
-  Reply,
-  Forward,
   Trash2,
   ArrowLeft,
 } from "lucide-react";
@@ -19,14 +17,12 @@ import {
 
 interface OpenMailProps {
   lead: LeadBackend;
-  onUpdateStatus: (leadId: string, status: string) => void;
   onDelete: (leadId: string) => void;
   children: React.ReactNode;
 }
 
 const OpenMail: React.FC<OpenMailProps> = ({
   lead,
-  onUpdateStatus,
   onDelete,
   children,
 }) => {
@@ -96,10 +92,11 @@ const OpenMail: React.FC<OpenMailProps> = ({
               <div className="flex items-center space-x-2">
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                    lead.status
+                    lead.mailType
                   )}`}
                 >
-                  {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                  {lead.mailType.charAt(0).toUpperCase() +
+                    lead.mailType.slice(1)}
                 </span>
               </div>
             </div>
@@ -180,37 +177,9 @@ const OpenMail: React.FC<OpenMailProps> = ({
 
               <div className="space-y-4">
                 {/* Status Selector */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={lead.status}
-                    onChange={(e) => onUpdateStatus(lead._id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="new">New</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="replied">Replied</option>
-                    <option value="closed">Closed</option>
-                  </select>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="space-y-2">
-                  <button className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                    <Reply className="w-4 h-4" />
-                    Reply to Lead
-                  </button>
-
-                  <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Forward className="w-4 h-4" />
-                    Forward
-                  </button>
-                </div>
 
                 {/* Danger Zone */}
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4">
                   <button
                     onClick={() => onDelete(lead._id)}
                     className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
