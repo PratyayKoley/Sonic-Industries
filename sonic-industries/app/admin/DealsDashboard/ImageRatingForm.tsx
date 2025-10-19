@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/app/ui/input";
 import { DealFormDataType } from "@/types";
 import { Calendar, Check, Image as ImageIcon, Star } from "lucide-react";
 
@@ -68,21 +69,24 @@ const ImageRatingForm = ({
             Image URL
           </label>
           <div className="relative">
-            <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <ImageIcon className="absolute left-4 top-8 -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none" />
             <input
               type="url"
               value={formData.imageUrl}
               onChange={(e) => handleChange("imageUrl", e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 text-gray-800 placeholder-gray-500 shadow-sm hover:shadow-md"
+              className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl 
+               focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 
+               text-gray-800 placeholder-gray-500 shadow-sm hover:shadow-md relative z-0"
             />
-            <input
+            <Input
+              id="picture"
               type="file"
               accept="image/*"
               onChange={(e) =>
                 e.target.files && handleFileUpload(e.target.files[0])
               }
-              className="ml-2"
+              className="ml-2 mt-2"
             />
           </div>
           {formData.imageUrl && (
@@ -106,7 +110,7 @@ const ImageRatingForm = ({
               Rating
             </label>
             <div className="relative">
-              <Star className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Star className="absolute left-4 top-7.5 -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none" />
               <input
                 type="number"
                 value={formData.rating || ""}
@@ -117,7 +121,9 @@ const ImageRatingForm = ({
                 min="0"
                 max="5"
                 step="0.1"
-                className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 text-gray-800 placeholder-gray-500 shadow-sm hover:shadow-md"
+                className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl 
+               focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 
+               text-gray-800 placeholder-gray-500 shadow-sm hover:shadow-md relative z-0"
               />
             </div>
             <div className="mt-2 flex gap-1">
@@ -144,7 +150,7 @@ const ImageRatingForm = ({
               Expires At
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Calendar className="absolute left-4 top-7.5 -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none" />
               <input
                 type="datetime-local"
                 value={formatDateForInput(formData.expiresAt)}

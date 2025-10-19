@@ -117,10 +117,13 @@ export interface DealBackend {
   _id: string;
   title: string;
   description?: string;
+  dealType: string;
   imageUrl?: string;
-  mrp: number;
+  mrp?: number;
+  discountPercent?: number;
   discountedPrice: number;
   couponCode: string;
+  productName?: string;
   rating?: number;
   expiresAt: Date;
   createdAt?: string;
@@ -362,11 +365,14 @@ export type DealFormDataType = {
   title: string;
   description: string;
   imageUrl: string;
-  mrp: number;
+  dealType: string;
+  mrp?: number;
+  discountPercent?: number;
   discountedPrice: number;
   rating: number;
   expiresAt: string; // ISO date string
   couponCode: string;
+  productName?: string;
 };
 
 export type DealEditingModalProps = {
@@ -403,6 +409,7 @@ export type CreateDealProps = {
   setSelectedDeal: (deal: DealBackend | null) => void;
   setActiveFormTab: (tab: DealFormTab) => void;
   activeFormTab: DealFormTab;
+  products: ProductBackend[];
 };
 
 export interface OrdersDashboardProps {

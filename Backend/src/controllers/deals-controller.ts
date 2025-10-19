@@ -70,7 +70,12 @@ export const createDeal = async (
       const uploadResult: UploadApiResponse = await new Promise(
         (resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
-            { folder: "deals" },
+            { folder: "deals",
+              transformation: [{
+                fetch_format: "auto", 
+                quality: "auto"
+              }],
+            },
             (error, result) => {
               if (error) return reject(error);
               resolve(result as UploadApiResponse);
@@ -88,7 +93,12 @@ export const createDeal = async (
       const uploadResult: UploadApiResponse = await new Promise(
         (resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
-            { folder: "deals" },
+            { folder: "deals",
+              transformation: [{
+                fetch_format: "auto", 
+                quality: "auto"
+              }],
+            },
             (error, result) => {
               if (error) return reject(error);
               resolve(result as UploadApiResponse);

@@ -20,12 +20,23 @@ const CreateDeal = ({
   activeFormTab,
   setActiveFormTab,
   deals,
+  products,
 }: CreateDealProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [dealType, setDealType] = useState<"general" | "product" | "">("");
 
   const handleCreate = async () => {
-    if (!formData.title.trim()) {
-      setError("Title and image URL are required");
+    if (
+      !formData.title.trim() ||
+      !formData.discountedPrice ||
+      !formData.couponCode
+    ) {
+      setError("Title, discounted price, and coupon code are required");
+      return;
+    }
+
+    if (!dealType) {
+      setError("Please select a deal type first");
       return;
     }
 
@@ -42,18 +53,32 @@ const CreateDeal = ({
         const formDataToSend = new FormData();
         formDataToSend.append("title", formData.title);
         formDataToSend.append("description", formData.description);
-        formDataToSend.append("mrp", formData.mrp.toString());
-        formDataToSend.append(
-          "discountedPrice",
-          formData.discountedPrice.toString()
-        );
         formDataToSend.append("rating", formData.rating.toString());
         formDataToSend.append(
           "expiresAt",
           new Date(formData.expiresAt).toISOString()
         );
         formDataToSend.append("couponCode", formData.couponCode);
+        formDataToSend.append("dealType", formData.dealType);
         formDataToSend.append("imageFile", imageFile); // 👈 the actual file
+        if (formData.dealType === "product") {
+          formDataToSend.append("mrp", formData.mrp!.toString());
+          formDataToSend.append(
+            "discountPercent",
+            formData.discountPercent!.toString()
+          );
+          formDataToSend.append(
+            "discountedPrice",
+            formData.discountedPrice.toString()
+          );
+          formDataToSend.append("productName", formData.productName!);
+        } else {
+          // general deal — only discountedPrice matters
+          formDataToSend.append(
+            "discountedPrice",
+            formData.discountedPrice.toString()
+          );
+        }
 
         response = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
@@ -71,11 +96,21 @@ const CreateDeal = ({
           title: formData.title,
           description: formData.description,
           imageUrl: formData.imageUrl, // 👈 plain URL
-          mrp: formData.mrp,
-          discountedPrice: formData.discountedPrice,
+          dealType: formData.dealType,
           rating: formData.rating,
           expiresAt: new Date(formData.expiresAt).toISOString(),
           couponCode: formData.couponCode,
+
+          ...(formData.dealType === "product"
+            ? {
+                mrp: formData.mrp!,
+                discountPercent: formData.discountPercent!,
+                discountedPrice: formData.discountedPrice,
+                productName: formData.productName!,
+              }
+            : {
+                discountedPrice: formData.discountedPrice,
+              }),
         };
 
         response = await axios.post(
@@ -107,11 +142,14 @@ const CreateDeal = ({
       title: "",
       description: "",
       imageUrl: "",
+      dealType: "",
       mrp: 0,
+      discountPercent: 0,
       discountedPrice: 0,
       rating: 0,
       expiresAt: "",
       couponCode: "",
+      productName: "",
     });
     setIsEditing(false);
     setSelectedDeal(null);
@@ -127,9 +165,22 @@ const CreateDeal = ({
   const renderActiveForm = () => {
     switch (activeFormTab) {
       case "basic":
-        return <BasicForm formData={formData} setFormData={setFormData} />;
+        return (
+          <BasicForm
+            formData={formData}
+            setFormData={setFormData}
+            dealType={dealType}
+            products={products}
+          />
+        );
       case "pricing":
-        return <PricingForm formData={formData} setFormData={setFormData} />;
+        return (
+          <PricingForm
+            formData={formData}
+            setFormData={setFormData}
+            dealType={dealType}
+          />
+        );
       case "image-rating":
         return (
           <ImageRatingForm
@@ -139,12 +190,52 @@ const CreateDeal = ({
           />
         );
       default:
-        return <BasicForm formData={formData} setFormData={setFormData} />;
+        return (
+          <BasicForm
+            formData={formData}
+            setFormData={setFormData}
+            dealType={dealType}
+            products={products}
+          />
+        );
     }
   };
 
   return (
     <div className="max-w-4xl">
+      {/* Select Deal Type */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
+        <h3 className="font-semibold text-gray-800 mb-2">Select Deal Type *</h3>
+        <div className="flex gap-4">
+          <button
+            onClick={() => {
+              setDealType("general"),
+                setFormData((prev) => ({ ...prev, dealType: "general", productName: "", mrp: 0, discountPercent: 0 }));
+            }}
+            className={`px-4 py-2 rounded-md border ${
+              dealType === "general"
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            General Deal
+          </button>
+          <button
+            onClick={() => {
+              setDealType("product"),
+                setFormData((prev) => ({ ...prev, dealType: "product", discountedPrice: 0}));
+            }}
+            className={`px-4 py-2 rounded-md border ${
+              dealType === "product"
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Product Deal
+          </button>
+        </div>
+      </div>
+
       {/* Form Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="flex space-x-8">
@@ -171,9 +262,7 @@ const CreateDeal = ({
       <div className="flex gap-3 pt-6 border-t border-gray-200">
         <button
           onClick={handleCreate}
-          disabled={
-            loading || !formData.title.trim()
-          }
+          disabled={loading || !formData.title.trim()}
           className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -195,6 +284,12 @@ const CreateDeal = ({
             <span className="font-medium text-gray-700">Name:</span>
             <span className="ml-2">{formData.title || "Not set"}</span>
           </div>
+          {dealType === "product" && (
+            <div>
+              <span className="font-medium text-gray-700">Product Name:</span>
+              <span className="ml-2">{formData.productName || "Not set"}</span>
+            </div>
+          )}
           <div>
             <span className="font-medium text-gray-700">Description:</span>
             <span className="ml-2">{formData.description || "Not set"}</span>

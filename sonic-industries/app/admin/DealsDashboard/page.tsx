@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { X, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
-import { DealBackend } from "@/types";
+import { DealBackend, DealFormDataType, ProductBackend } from "@/types";
 import CreateDeal from "./CreateDeal";
 import EditingModal from "./EditingModal";
 import SearchAllDeals from "./SearchAllDeals";
 
 const DealsDashboard = () => {
   const [deals, setDeals] = useState<DealBackend[]>([]);
+  const [products, setProducts] = useState<ProductBackend[]>([]);
   const [selectedDeal, setSelectedDeal] = useState<DealBackend | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -20,19 +21,23 @@ const DealsDashboard = () => {
     "basic" | "pricing" | "image-rating"
   >("basic");
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<DealFormDataType>({
     title: "",
     description: "",
     imageUrl: "",
+    dealType: "",
     mrp: 0,
+    discountPercent: 0,
     discountedPrice: 0,
     rating: 0,
     expiresAt: "",
     couponCode: "",
+    productName: "",
   });
 
   useEffect(() => {
     loadAllDeals();
+    loadAllProducts();
   }, []);
 
   const loadAllDeals = async () => {
@@ -65,7 +70,7 @@ const DealsDashboard = () => {
     setError("");
 
     try {
-      const token = localStorage.getItem("token"); // Adjust this based on your auth implementation
+      const token = localStorage.getItem("token");
 
       await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`,
@@ -95,7 +100,9 @@ const DealsDashboard = () => {
       title: deal.title,
       description: deal.description || "",
       imageUrl: deal.imageUrl || "",
+      dealType: deal.dealType || "",
       mrp: deal.mrp || 0,
+      discountPercent: deal.discountPercent || 0,
       discountedPrice: deal.discountedPrice || 0,
       rating: deal.rating || 0,
       expiresAt: deal.expiresAt ? new Date(deal.expiresAt).toISOString() : "",
@@ -108,6 +115,18 @@ const DealsDashboard = () => {
   const clearMessages = () => {
     setError("");
     setSuccess("");
+  };
+
+  const loadAllProducts = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`
+      );
+      setProducts(response.data.products || []);
+    } catch (err) {
+      const error = err as Error;
+      console.error("Failed to load products:", error);
+    }
   };
 
   const CreateDealProps = {
@@ -124,6 +143,7 @@ const DealsDashboard = () => {
     setActiveFormTab,
     deals,
     activeFormTab,
+    products,
   };
 
   const EditingModalProps = {
