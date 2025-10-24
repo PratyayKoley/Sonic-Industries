@@ -3,6 +3,7 @@ import { DealModel, Deal } from "../models/deals.model";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "../config/cloudinary";
 import axios from "axios";
+import { isDealApplicable } from "../utils/couponCode";
 
 export const getAllDeals = async (
   req: Request,
@@ -24,29 +25,28 @@ export const getAllDeals = async (
   }
 };
 
-export const getDealById = async (
+export const validateCoupon = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { couponCode, productId, email } = req.body;
 
-    if (!id) {
-      res.status(400).json({
-        message: "ID parameter is required.",
-      });
+    if (!couponCode || !productId || !email) {
+      res.status(400).json({ message: "Missing fields." });
       return;
     }
+    
+    const { valid, message, discount } = await isDealApplicable(
+      couponCode,
+      productId,
+      email
+    );
 
-    const deal = await DealModel.findById(id);
-    if (!deal) {
-      res.status(404).json({ message: "Deal not found" });
-      return;
-    }
-    res.status(200).json({ message: "Deal fetched successfully", deal });
+    res.status(200).json({ valid, message, discount });
   } catch (error) {
-    console.error("Error fetching deal:", error);
-    res.status(500).json({ message: "Failed to fetch deal", error });
+    console.error("Error validating coupon:", error);
+    res.status(500).json({ message: "Error validating coupon" });
   }
 };
 
@@ -184,4 +184,4 @@ export const deleteDeal = async (
     console.error("Error deleting deal:", error);
     res.status(500).json({ message: "Failed to delete deal", error });
   }
-};
+}; 

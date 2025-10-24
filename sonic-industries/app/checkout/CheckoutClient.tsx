@@ -37,6 +37,7 @@ export default function CheckoutClient() {
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
   const [customer, setCustomer] = useState<CustomerData>({
     firstName: "",
     lastName: "",
@@ -119,26 +120,45 @@ export default function CheckoutClient() {
     setQuantity((prev) => Math.min(10, Math.max(1, prev + delta)));
   };
 
-  const applyCoupon = () => {
+  const applyCoupon = async () => {
     if (coupon.trim()) {
-      setDiscount(10);
+      try {
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/validate`,
+          {
+            couponCode: coupon,
+            productId: product._id,
+            email: customer.email,
+          }
+        );
+        const { valid, message, discount } = await res.data;
+
+        if (!valid) {
+          setMessage(message || "Invalid coupon code.");
+          setDiscount(discount);
+          return;
+        }
+        setDiscount(discount);
+      } catch (error) {
+        console.error("Coupon validation failed:", error);
+        setMessage(
+          message || "Something went wrong while validating the coupon."
+        );
+      }
     }
   };
 
   const handleCodCheckout = async () => {
     setIsLoading(true);
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`,
-        {
-          sessionToken,
-          customer: {
-            ...customer,
-          },
-          payment_method: "cod",
-          quantity,
-        }
-      );
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`, {
+        sessionToken,
+        customer: {
+          ...customer,
+        },
+        payment_method: "cod",
+        quantity,
+      });
       alert("Order placed successfully!");
     } catch (error) {
       console.error("COD checkout failed:", error);
@@ -241,6 +261,7 @@ export default function CheckoutClient() {
               shippingFee={shippingFee}
               finalPrice={finalPrice}
               isLoading={isLoading}
+              message={message}
               onQuantityChange={handleQuantityChange}
               onCouponChange={setCoupon}
               onApplyCoupon={applyCoupon}

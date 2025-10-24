@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { Phone, Mail, MapPin } from "lucide-react";
 
 export default function ContactUs() {
@@ -10,6 +11,7 @@ export default function ContactUs() {
     message: "",
   });
   const [isVisible, setIsVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const sectionRef = useRef(null);
 
   const handleChange = (
@@ -18,23 +20,38 @@ export default function ContactUs() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Message sent successfully!");
-    setFormData({
-      name: "",
-      email: "",
-      message: "",
-    });
+
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads`,
+        formData
+      );
+
+      if (res.data.success) {
+        alert("✅ Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -44,21 +61,17 @@ export default function ContactUs() {
       },
       { threshold: 0.1 }
     );
-
-    const currentSection = sectionRef.current; 
-
+    const currentSection = sectionRef.current;
     if (currentSection) {
       observer.observe(currentSection);
     }
-
     return () => {
       if (currentSection) {
-        observer.unobserve(currentSection); 
+        observer.unobserve(currentSection);
       }
     };
   }, []);
 
-  // Contact information cards data
   const contactCards = [
     {
       id: 1,
@@ -88,8 +101,7 @@ export default function ContactUs() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-3">Contact Us</h2>
           <p className="text-center text-gray-600 max-w-3xl mx-auto">
-            Prepared is me marianne pleasure likewise debating. Wonder an unable
-            except better stairs do ye admire. His secure called esteem praise.
+            Have questions or inquiries? We&apos;d love to hear from you.
           </p>
         </div>
 
@@ -99,17 +111,15 @@ export default function ContactUs() {
             <div
               key={card.id}
               className={`bg-white rounded-lg shadow-lg p-8 text-center transform transition-all duration-700 
-                ${
-                  isVisible
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-10 opacity-0"
-                }`}
+              ${
+                isVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-10 opacity-0"
+              }`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <div className="flex justify-center mb-4">
-                {/* Rotating dotted circle with icon */}
                 <div className="relative w-16 h-16 flex items-center justify-center">
-                  {/* Rotating outer circle */}
                   <div
                     className="absolute inset-0 rounded-full border border-dashed border-purple-400 animate-spin"
                     style={{
@@ -118,7 +128,6 @@ export default function ContactUs() {
                         index % 2 === 0 ? "normal" : "reverse",
                     }}
                   ></div>
-                  {/* Static inner circle with icon */}
                   <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
                     {card.icon}
                   </div>
@@ -135,7 +144,7 @@ export default function ContactUs() {
           ))}
         </div>
 
-        {/* Contact Form and Map Section */}
+        {/* Contact Form & Map */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Form */}
           <div
@@ -155,7 +164,7 @@ export default function ContactUs() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Your Name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
                   required
                 />
               </div>
@@ -166,7 +175,7 @@ export default function ContactUs() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter Your Email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
                   required
                 />
               </div>
@@ -177,20 +186,23 @@ export default function ContactUs() {
                   onChange={handleChange}
                   placeholder="Write your message here"
                   rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
                   required
                 ></textarea>
               </div>
               <button
                 type="submit"
-                className="bg-blue-600 text-white font-bold py-3 px-8 rounded-md hover:bg-blue-700 transition-colors duration-300 uppercase cursor-pointer"
+                disabled={isSubmitting}
+                className={`${
+                  isSubmitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                } text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 uppercase cursor-pointer`}
               >
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
 
-          {/* Map Section - Updated with Google Maps iframe */}
+          {/* Map */}
           <div
             className={`bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-700 
               ${
@@ -200,16 +212,14 @@ export default function ContactUs() {
               }`}
             style={{ transitionDelay: "400ms" }}
           >
-            <div className="relative w-full h-full min-h-[400px]">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.6990232557923!2d72.81300262498675!3d19.425406081852454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9ef038b322f%3A0xe02b3de42dd9dc44!2sSonic%20Industries!5e0!3m2!1sen!2sin!4v1745071411343!5m2!1sen!2sin"
-                width="100%"
-                height="100%"
-                style={{ border: 0, position: "absolute", top: 0, left: 0 }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.6990232557923!2d72.81300262498675!3d19.425406081852454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9ef038b322f%3A0xe02b3de42dd9dc44!2sSonic%20Industries!5e0!3m2!1sen!2sin!4v1745071411343!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
       </div>

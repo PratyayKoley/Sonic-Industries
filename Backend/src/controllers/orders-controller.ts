@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { Product, ProductModel } from "../models/products.model";
 import { DealModel } from "../models/deals.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
+import { isDealApplicable } from "../utils/couponCode";
 
 export const getAllOrders = async (
   req: Request,
@@ -88,31 +89,12 @@ export const createOrder = async (
     const total_price: number = productInfo.price * newOrderRequest.quantity;
     const couponCode: string = newOrderRequest.couponCode || null;
 
-    let discount = 0;
     let shipping = 0;
-    if (couponCode) {
-      const deal = await DealModel.findOne({ couponCode });
-      if (!deal) {
-        res.status(404).json({
-          message: "Invalid coupon code",
-        });
-        return;
-      }
-
-      const prevOrder = await OrderModel.findOne({
-        couponCode: deal._id,
-        "order_items.productId": productInfo._id,
-        "customer.email": newOrderRequest.customer.email,
-      });
-      if (prevOrder) {
-        res.status(400).json({
-          message: "You have already availed this offer",
-        });
-        return;
-      }
-
-      discount = deal.discountedPrice;
-    }
+    const { discount } = await isDealApplicable(
+      couponCode,
+      productInfo._id.toString(),
+      newOrderRequest.customer.email
+    );
 
     // Add orderNumber and userId to the new order request
     const orderToSave = {

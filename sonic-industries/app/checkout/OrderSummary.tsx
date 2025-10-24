@@ -12,6 +12,7 @@ interface OrderSummaryProps {
   shippingFee: number;
   finalPrice: number;
   isLoading: boolean;
+  message: string;
   onQuantityChange: (delta: number) => void;
   onCouponChange: (value: string) => void;
   onApplyCoupon: () => void;
@@ -28,6 +29,7 @@ export function OrderSummary({
   shippingFee,
   finalPrice,
   isLoading,
+  message,
   onQuantityChange,
   onCouponChange,
   onApplyCoupon,
@@ -49,7 +51,7 @@ export function OrderSummary({
             src={"/api/placeholder/80/80"}
             alt={product.name}
             className="w-20 h-20 object-cover border rounded"
-          /> 
+          />
           <div className="flex-1">
             <h3 className="font-medium text-gray-900 text-sm mb-1">
               {product.name}
@@ -100,11 +102,7 @@ export function OrderSummary({
           </button>
         </div>
 
-        {discount > 0 && (
-          <div className="mt-2 text-sm text-green-600">
-            Coupon applied successfully!
-          </div>
-        )}
+        <div className="mt-2 text-sm text-green-600">{message}</div>  
       </div>
 
       {/* Price Breakdown */}

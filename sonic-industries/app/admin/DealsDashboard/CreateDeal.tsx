@@ -209,8 +209,14 @@ const CreateDeal = ({
         <div className="flex gap-4">
           <button
             onClick={() => {
-              setDealType("general"),
-                setFormData((prev) => ({ ...prev, dealType: "general", productName: "", mrp: 0, discountPercent: 0 }));
+              setDealType("general");
+              setFormData((prev) => ({
+                ...prev,
+                dealType: "general",
+                productName: "",
+                mrp: 0,
+                discountPercent: 0,
+              }));
             }}
             className={`px-4 py-2 rounded-md border ${
               dealType === "general"
@@ -222,8 +228,12 @@ const CreateDeal = ({
           </button>
           <button
             onClick={() => {
-              setDealType("product"),
-                setFormData((prev) => ({ ...prev, dealType: "product", discountedPrice: 0}));
+              setDealType("product");
+              setFormData((prev) => ({
+                ...prev,
+                dealType: "product",
+                discountedPrice: 0,
+              }));
             }}
             className={`px-4 py-2 rounded-md border ${
               dealType === "product"

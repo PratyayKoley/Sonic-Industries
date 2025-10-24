@@ -317,3 +317,106 @@ export const getAdminEmailTemplate = (order: any): string => {
 </html>
   `;
 };
+
+// Inquiry Email Template for Admin
+export const getInquiryEmailTemplate = (senderName: string, email: string, message: string) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Inquiry Received</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f4f4;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <!-- Main Container -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="650" style="margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 35px 30px; border-radius: 8px 8px 0 0;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">💬 New Inquiry Received</h1>
+                    <p style="margin: 8px 0 0; color: #ffffff; font-size: 15px; opacity: 0.95;">Someone has reached out to you</p>
+                  </td>
+                  <td style="text-align: right; vertical-align: middle;">
+                    <div style="background-color: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                      <span style="color: #ffffff; font-size: 13px; font-weight: 600;">${new Date().toLocaleString()}</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Sender Information -->
+          <tr>
+            <td style="padding: 30px 30px 25px;">
+              <h2 style="margin: 0 0 15px; color: #111827; font-size: 18px; font-weight: 600;">Sender Information</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="50%" style="padding: 10px 0; vertical-align: top;">
+                          <p style="margin: 0 0 5px; color: #6b7280; font-size: 13px;">Name</p>
+                          <p style="margin: 0; color: #111827; font-size: 15px; font-weight: 600;">${senderName}</p>
+                        </td>
+                        <td width="50%" style="padding: 10px 0; vertical-align: top;">
+                          <p style="margin: 0 0 5px; color: #6b7280; font-size: 13px;">Email Address</p>
+                          <p style="margin: 0; color: #111827; font-size: 15px; font-weight: 600;"><a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a></p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Message Content -->
+          <tr>
+            <td style="padding: 0 30px 25px;">
+              <h2 style="margin: 0 0 15px; color: #111827; font-size: 18px; font-weight: 600;">Message</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid #e5e7eb; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 25px; background-color: #ffffff;">
+                    <p style="margin: 0; color: #374151; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${message}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Quick Action -->
+          <tr>
+            <td style="padding: 0 30px 30px; text-align: center;">
+              <a href="mailto:${email}?subject=Re: Your Inquiry" style="display: inline-block; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 15px; font-weight: 600;">Reply to ${senderName}</a>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 30px; background-color: #f9fafb; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb; text-align: center;">
+              <p style="margin: 0; color: #6b7280; font-size: 13px;">
+                This is an automated notification from your inquiry system.
+              </p>
+              <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">
+                © ${new Date().getFullYear()} Sonic Industries Admin Panel
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+};

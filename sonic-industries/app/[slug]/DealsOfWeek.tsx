@@ -1,58 +1,26 @@
-"use client"
+"use client";
 
+import { DealBackend } from "@/types";
+import axios from "axios";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 export default function DealsOfWeek() {
   const [currentDeal, setCurrentDeal] = useState(0);
+  const [deals, setDeals] = useState<DealBackend[]>([]);
 
-  const deals = [
-    {
-      id: 1,
-      name: "Smart Watch (Blue)",
-      image: "/smartwatch3.png",
-      description:
-        "Premium smartwatch with health tracking, GPS, and 7-day battery life. Water resistant up to 50 meters.",
-      originalPrice: 250,
-      salePrice: 99,
-      rating: 5,
-      timeLeft: { days: "02", hours: "23", minutes: "59", seconds: "09" },
-    },
-    {
-      id: 2,
-      name: "Wireless Earbuds Pro",
-      image: "/earbuds.png",
-      description:
-        "Active noise cancellation, premium sound quality, and 30-hour battery life with charging case.",
-      originalPrice: 199,
-      salePrice: 79,
-      rating: 5,
-      timeLeft: { days: "01", hours: "15", minutes: "32", seconds: "45" },
-    },
-    {
-      id: 3,
-      name: "Fitness Tracker Elite",
-      image: "/fitness-tracker.png",
-      description:
-        "Advanced fitness tracking with heart rate monitoring, sleep analysis, and smartphone integration.",
-      originalPrice: 179,
-      salePrice: 69,
-      rating: 4,
-      timeLeft: { days: "03", hours: "08", minutes: "17", seconds: "22" },
-    },
-    {
-      id: 4,
-      name: "Smart Home Hub",
-      image: "/smart-hub.png",
-      description:
-        "Control all your smart devices from one central hub. Voice control and app integration included.",
-      originalPrice: 149,
-      salePrice: 59,
-      rating: 5,
-      timeLeft: { days: "00", hours: "18", minutes: "43", seconds: "56" },
-    },
-  ];
+  const fetchDeals = async () => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`
+    );
+    const data: DealBackend[] = await res.data.deals;
+    setDeals(data);
+  };
+
+  useEffect(() => {
+    fetchDeals();
+  }, []);
 
   const nextDeal = useCallback(() => {
     setCurrentDeal((prev) => (prev + 1) % deals.length);
@@ -72,7 +40,36 @@ export default function DealsOfWeek() {
     return () => clearInterval(interval);
   }, [nextDeal]);
 
+  if (deals.length === 0)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-500">Loading deals...</p>
+      </div>
+    );
+
   const currentDealData = deals[currentDeal];
+
+  const getTimeLeft = (expiresAt: Date) => {
+    const now = new Date();
+    const expire = new Date(expiresAt);
+    const diff = expire.getTime() - now.getTime();
+    if (diff <= 0)
+      return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return {
+      days: days.toString().padStart(2, "0"),
+      hours: hours.toString().padStart(2, "0"),
+      minutes: minutes.toString().padStart(2, "0"),
+      seconds: seconds.toString().padStart(2, "0"),
+    };
+  };
+
+  const timeLeft = getTimeLeft(currentDealData.expiresAt);
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-12 px-4">
@@ -96,20 +93,17 @@ export default function DealsOfWeek() {
               <div className="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
                 <div className="relative">
                   <Image
-                    alt={currentDealData.name}
+                    alt={currentDealData.title || "Deal Image"}
                     className="max-w-full h-64 md:h-80 object-contain transition-transform duration-300 hover:scale-105"
-                    src={currentDealData.image}
+                    src={currentDealData.imageUrl || "/placeholder.png"}
                     width={500}
                     height={500}
                   />
                   <div className="absolute top-0 right-0 bg-red-500 text-white px-3 py-1 rounded-bl-lg font-bold text-sm">
-                    {Math.round(
-                      ((currentDealData.originalPrice -
-                        currentDealData.salePrice) /
-                        currentDealData.originalPrice) *
-                        100
-                    )}
-                    % OFF
+                    {currentDealData.dealType === "product" &&
+                    currentDealData.discountPercent
+                      ? `${Math.round(currentDealData.discountPercent)}% OFF`
+                      : "Limited Offer"}
                   </div>
                 </div>
               </div>
@@ -122,7 +116,7 @@ export default function DealsOfWeek() {
                     <Star
                       key={index}
                       className={`w-5 h-5 ${
-                        index < currentDealData.rating
+                        index < (currentDealData.rating ?? 0)
                           ? "text-yellow-400 fill-yellow-400"
                           : "text-gray-300"
                       }`}
@@ -130,29 +124,44 @@ export default function DealsOfWeek() {
                     />
                   ))}
                   <span className="ml-2 text-sm text-gray-600">
-                    ({currentDealData.rating}.0)
+                    ({currentDealData.rating ?? 0}.0)
                   </span>
                 </div>
 
-                {/* Product Name */}
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                  {currentDealData.name}
-                </h2>
+                {currentDealData.dealType === "product" ? (
+                  <>
+                    {/* PRODUCT DEAL SECTION */}
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                      {currentDealData.productName}
+                    </h2>
 
-                {/* Description */}
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  {currentDealData.description}
-                </p>
-
-                {/* Pricing */}
-                <div className="flex items-center mb-6">
-                  <span className="text-4xl font-bold text-indigo-600 mr-3">
-                    ₹{currentDealData.salePrice}
-                  </span>
-                  <span className="text-xl text-gray-500 line-through">
-                    ₹{currentDealData.originalPrice}
-                  </span>
-                </div>
+                    <div className="flex items-center mb-6">
+                      <span className="text-4xl font-bold text-indigo-600 mr-3">
+                        ₹{currentDealData.discountedPrice}
+                      </span>
+                      {currentDealData.mrp && (
+                        <span className="text-xl text-gray-500 line-through">
+                          ₹{currentDealData.mrp}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* GENERAL DEAL SECTION */}
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                      {currentDealData.title}
+                    </h2>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      {currentDealData.description}
+                    </p>
+                    <div className="flex items-center mb-6">
+                      <span className="text-3xl font-semibold text-indigo-600">
+                        Flat ₹{currentDealData.discountedPrice} off
+                      </span>
+                    </div>
+                  </>
+                )}
 
                 {/* Countdown Timer */}
                 <div className="mb-8">
@@ -160,21 +169,19 @@ export default function DealsOfWeek() {
                     Deal expires in:
                   </p>
                   <div className="flex justify-between max-w-sm">
-                    {Object.entries(currentDealData.timeLeft).map(
-                      ([key, value], index) => (
-                        <div
-                          key={index}
-                          className="text-center p-3 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
-                        >
-                          <div className="text-2xl font-bold text-gray-800">
-                            {value}
-                          </div>
-                          <div className="text-xs text-gray-600 capitalize">
-                            {key}
-                          </div>
+                    {Object.entries(timeLeft).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className="text-center p-3 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
+                      >
+                        <div className="text-2xl font-bold text-gray-800">
+                          {value}
                         </div>
-                      )
-                    )}
+                        <div className="text-xs text-gray-600 capitalize">
+                          {key}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

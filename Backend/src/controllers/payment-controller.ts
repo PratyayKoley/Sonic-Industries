@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { OrderModel } from "../models/orders.model";
 import { DealModel } from "../models/deals.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
+import { isDealApplicable } from "../utils/couponCode";
 
 const CheckoutSecret =
   process.env.JWT_CHECKOUT_SECRET ||
@@ -66,31 +67,13 @@ export const createRazorPayOrder = async (
     const total_price: number = product.price * newOrderRequest.quantity;
     const couponCode: string = newOrderRequest.couponCode || null;
 
-    let discount = 0;
     let shipping = 0;
-    if (couponCode) {
-      const deal = await DealModel.findOne({ couponCode });
-      if (!deal) {
-        res.status(404).json({
-          message: "Invalid coupon code",
-        });
-        return;
-      }
 
-      const prevOrder = await OrderModel.findOne({
-        couponCode: deal._id,
-        "order_items.productId": product._id,
-        "customer.email": newOrderRequest.customer.email,
-      });
-      if (prevOrder) {
-        res.status(400).json({
-          message: "You have already availed this offer",
-        });
-        return;
-      }
-
-      discount = deal.discountedPrice;
-    }
+    const { discount } = await isDealApplicable(
+      couponCode,
+      product._id.toString(),
+      newOrderRequest.customer.email
+    );
 
     const orderToSave = {
       orderNumber,

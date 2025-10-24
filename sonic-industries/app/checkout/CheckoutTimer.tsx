@@ -9,6 +9,7 @@ interface JwtPayload {
 }
 
 const CheckoutTimer: React.FC<{ token: string }> = ({ token }) => {
+  const [, setExpiryTime] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const router = useRouter();
 
@@ -16,21 +17,28 @@ const CheckoutTimer: React.FC<{ token: string }> = ({ token }) => {
     try {
       const decoded: JwtPayload = jwtDecode(token);
       const expiry = decoded.exp * 1000;
-      const now = Date.now();
-      const remaining = Math.max(0, expiry - now);
+      setExpiryTime(expiry);
 
-      setTimeLeft(Math.floor(remaining / 1000));
+      const updateRemaining = () => {
+        const now = Date.now();
+        const remaining = Math.max(0, expiry - now);
+        setTimeLeft(Math.floor(remaining / 1000));
 
-      const interval = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            router.back(); 
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+        if (remaining <= 0) {
+          router.back();
+        }
+      };
+
+      // Update every second — this is fine even if throttled
+      const interval = setInterval(updateRemaining, 1000);
+      updateRemaining(); // initial run
+
+      // ALSO handle when tab becomes visible again
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          updateRemaining();
+        }
+      });
 
       return () => clearInterval(interval);
     } catch (error) {
@@ -44,9 +52,7 @@ const CheckoutTimer: React.FC<{ token: string }> = ({ token }) => {
   return (
     <div className="mt-4 text-center text-sm text-red-600 font-medium">
       {timeLeft > 0 ? (
-        <>
-          Session expires in {minutes}:{seconds.toString().padStart(2, "0")}
-        </>
+        <>Session expires in {minutes}:{seconds.toString().padStart(2, "0")}</>
       ) : (
         <>⚠️ Session expired. Redirecting…</>
       )}

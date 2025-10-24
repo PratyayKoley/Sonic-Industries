@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { Lead, LeadModel } from "../models/leads.model";
+import { sendMail } from "../config/mailer";
+import { getInquiryEmailTemplate } from "../config/Emails";
 
 export const getAllLeads = async (
   req: Request,
@@ -26,21 +28,41 @@ export const createLead = async (
   res: Response
 ): Promise<void> => {
   try {
-    const leadData: Lead = req.body;
-    if (!leadData || Object.keys(leadData).length === 0) {
-      res.status(400).json({
-        message: "Deal data is required.",
-      });
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      res.status(400).json({ success: false, message: "Missing required fields" });
       return;
     }
 
-    const newLead = await LeadModel.create(leadData);
-    res
-      .status(201)
-      .json({ message: "Lead created successfully", lead: newLead });
+    const mailType: string = "inquiry";
+    const receiverEmail: string = process.env.EMAIL_USER as string;
+    const receiverName: string = "Sonic Industries";
+
+    const newLead: Lead = await LeadModel.create({
+      subject: `New Inquiry from ${name}`,
+      content: message,
+      senderEmail: email,
+      senderName: name,
+      receiverEmail,
+      receiverName,
+      mailType,
+    });
+
+    await sendMail({
+      to: receiverEmail,
+      subject: `New Inquiry from ${name}`,
+      html: getInquiryEmailTemplate(name, email, message),
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Lead created successfully and mail sent",
+      lead: newLead,
+    });
   } catch (error) {
     console.error("Error creating lead:", error);
-    res.status(500).json({ message: "Failed to create lead", error });
+    res.status(500).json({ success: false, message: "Failed to create lead", error });
   }
 };
 

@@ -54,15 +54,24 @@ export const handleSuccessfulOrderEmail = async (
     mailType: "order",
   });
 
+  // send to customer
   await sendMail({
     to: order.customer?.email as string,
     subject: `Your Order ${order.orderNumber} is Confirmed!`,
     html: getCustomerEmailTemplate(order),
   });
 
+  // send to admin
   await sendMail({
     to: process.env.EMAIL_USER as string,
     subject: `New Order Placed - ${order.orderNumber}`,
     html: getAdminEmailTemplate(order), 
   });
 };
+
+export const handleInquiryEmail = async (
+  req: Request, 
+  res: Response
+): Promise<void> => {
+  
+}
