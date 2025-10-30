@@ -24,23 +24,10 @@ const CategorySchema = new Schema(
     ],
 
     yt_video_url: { type: String },
-
-    packaged: 
-      {
-        items: [
-          {
-            name: { type: String },
-            desc: { type: String },
-          },
-        ],
-        length: { type: Number, required: true },
-        width: { type: Number, required: true },
-        height: { type: Number, required: true },
-      }
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export type Category = InferSchemaType<typeof CategorySchema> & {

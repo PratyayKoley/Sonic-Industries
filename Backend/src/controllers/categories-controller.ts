@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { Category, CategoryModel } from "../models/categories.model";
+import { Product, ProductModel } from "../models/products.model";
+import axios from "axios";
 
 export const getCategoryBySlug = async (
   req: Request,
@@ -78,6 +80,13 @@ export const createCategory = async (
     }
 
     const newCategory = await CategoryModel.create(categoryData);
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${newCategory.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
+
     res.status(201).json({
       message: "Category created successfully.",
       newCategory,
@@ -115,6 +124,14 @@ export const updateCategory = async (
       });
       return;
     }
+
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${updatedCategory.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
+
     res.status(200).json({
       message: "Category updated successfully.",
       updatedCategory,
@@ -150,6 +167,13 @@ export const deleteCategory = async (
       return;
     }
 
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${deletedCategory.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
+
     res.status(200).json({
       message: "Category deleted successfully.",
       deletedCategory,
@@ -161,5 +185,35 @@ export const deleteCategory = async (
       message: "Failed to delete category.",
       error,
     });
+  }
+};
+
+export const getCategoryImages = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const category = await CategoryModel.findById(id);
+    if (!category) {
+      res.status(404).json({
+        message: "Category not found",
+      });
+      return;
+    }
+
+    const allProducts: Product[] = await ProductModel.find({ categoryId: id });
+    const allImages = allProducts.flatMap((p) => p.images);
+
+    const uniqueImages = Array.from(new Set<string>(allImages));
+    res.status(201).json({
+      message: `Found ${uniqueImages.length} images for category ${category.name}`,
+      images: uniqueImages,
+      products: allProducts,
+    });
+  } catch (error) {
+    console.error("Error fetching category images: ", error);
+    res.status(500).json({ message: "Failed to fetch category images", error });
   }
 };

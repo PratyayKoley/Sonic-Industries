@@ -10,18 +10,8 @@ const ProductSchema = new Schema(
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
 
     price: { type: Number, required: true },
-    mrp: { type: Number }, // MRP (original)
-    stock: { type: Number, required: true },
     images: [{ type: String }], // image URLs
     rating: { type: Number, default: 0, min: 0, max: 5 },
-    num_reviews: { type: Number, default: 0 },
-    sku: { type: String },
-
-    size: { type: String },
-    color: { type: String },
-    material: { type: String },
-    countryOfOrigin: { type: String },
-    hsnCode: { type: String },
 
     features: [
       {

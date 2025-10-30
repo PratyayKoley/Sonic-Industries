@@ -1,12 +1,22 @@
 import { Request, Response } from "express";
 import { Product, ProductModel } from "../models/products.model";
+import { UploadApiResponse } from "cloudinary";
+import cloudinary from "../config/cloudinary";
+import { Category, CategoryModel } from "../models/categories.model";
+import axios from "axios";
 
 export const createProduct = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const productData: Product = req.body;
+    const productData: Product = {
+      ...req.body,
+      price: Number(req.body.price),
+      rating: Number(req.body.rating),
+      features: JSON.parse(req.body.features || "[]"),
+      packaging: JSON.parse(req.body.packaging || "{}"),
+    };
     if (!productData || Object.keys(productData).length === 0) {
       res.status(400).json({
         message: "Product data is required.",
@@ -14,7 +24,54 @@ export const createProduct = async (
       return;
     }
 
+    const categoryData: Category | null = await CategoryModel.findById(
+      productData.categoryId
+    );
+    if (!categoryData || Object.keys(categoryData).length === 0) {
+      res.status(400).json({
+        message: "Category Id is not valid.",
+      });
+      return;
+    }
+
+    const uploadedImages: string[] = [];
+
+    if (req.files && Array.isArray(req.files)) {
+      for (const file of req.files as Express.Multer.File[]) {
+        const uploadResult: UploadApiResponse = await new Promise(
+          (resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              {
+                folder: `category/${categoryData.name}/${productData.name}`,
+                transformation: [
+                  {
+                    fetch_format: "auto",
+                    quality: "auto",
+                  },
+                ],
+              },
+              (error, result) => {
+                if (error) return reject(error);
+                resolve(result as UploadApiResponse);
+              }
+            );
+            stream.end(file.buffer);
+          }
+        );
+
+        uploadedImages.push(uploadResult.secure_url);
+      }
+    }
+
+    productData.images = uploadedImages;
     const newProduct = await ProductModel.create(productData);
+
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${categoryData.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
     res.status(201).json({
       message: "Product created successfully.",
       newProduct,
@@ -89,6 +146,18 @@ export const updateProduct = async (
       });
       return;
     }
+
+    const populatedProduct = await updatedProduct.populate<{
+      categoryId: Category;
+    }>("categoryId");
+
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${populatedProduct.categoryId.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
+
     res.status(200).json({
       message: "Product updated successfully.",
       updatedProduct,
@@ -124,6 +193,17 @@ export const deleteProduct = async (
       });
       return;
     }
+
+    const populatedProduct = await deletedProduct.populate<{
+      categoryId: Category;
+    }>("categoryId");
+
+    await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
+      params: {
+        path: `/${populatedProduct.categoryId.slug}`,
+        secret: process.env.REVALIDATE_SECRET,
+      },
+    });
 
     res.status(200).json({
       message: "Product deleted successfully.",

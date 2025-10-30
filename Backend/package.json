@@ -17,6 +17,7 @@
     "@types/cors": "^2.8.18",
     "@types/jsonwebtoken": "^9.0.9",
     "argon2": "^0.43.0",
+    "axios": "^1.12.2",
     "body-parser": "^2.2.0",
     "cloudinary": "^2.7.0",
     "crypto": "^1.0.1",

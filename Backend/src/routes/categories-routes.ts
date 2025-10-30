@@ -4,6 +4,7 @@ import {
   deleteCategory,
   getAllCategories,
   getCategoryBySlug,
+  getCategoryImages,
   updateCategory,
 } from "../controllers/categories-controller";
 import { authenticateJWT } from "../middleware/authMiddleware";
@@ -16,5 +17,6 @@ router.get("/", getAllCategories);
 router.post("/", authenticateJWT, authorizeRole("admin"), createCategory);
 router.put("/", authenticateJWT, authorizeRole("admin"), updateCategory);
 router.delete("/:slug", authenticateJWT, authorizeRole("admin"), deleteCategory);
+router.get("/:id/images", getCategoryImages);
 
 export default router;
