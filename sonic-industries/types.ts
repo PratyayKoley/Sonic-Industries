@@ -64,18 +64,8 @@ export interface ProductBackend {
   categoryId: string;
 
   price: number;
-  mrp?: number;
-  stock: number;
   images: string[];
   rating: number;
-  num_reviews: number;
-  sku?: string;
-
-  size?: string;
-  color?: string;
-  material?: string;
-  countryOfOrigin?: string;
-  hsnCode?: string;
 
   features?: {
     name?: string;
@@ -106,9 +96,6 @@ export interface CategoryBackend {
   labels?: CategoryLabels[];
 
   yt_video_url?: string;
-
-  packaged?: CategoryPackaged;
-
   createdAt?: string;
   updatedAt?: string;
 }
@@ -209,18 +196,6 @@ export interface CategoryLabels {
   desc?: string;
 }
 
-export interface PackagedItems {
-  name?: string;
-  desc?: string;
-}
-
-export interface CategoryPackaged {
-  items?: PackagedItems[];
-  length: number;
-  width: number;
-  height: number;
-}
-
 export type SearchAllCategoryProps = {
   categories: CategoryBackend[];
   startEdit: (category: CategoryBackend) => void;
@@ -242,7 +217,6 @@ export type FormDataType = {
   features: CategoryFeatures[];
   labels: CategoryLabels[];
   yt_video_url: string;
-  packaged: CategoryPackaged[];
 };
 
 export type EditingModalProps = {
@@ -286,6 +260,12 @@ export type ProductPackaged = {
   height: number;
 };
 
+export type ProductImage = {
+  file: File | null;
+  preview: string;
+  isNew: boolean;
+};
+
 export type ProductFormDataType = {
   name: string;
   slug: string;
@@ -295,24 +275,19 @@ export type ProductFormDataType = {
   categoryId: string;
 
   price: number;
-  mrp: number;
-  stock: number;
-  images: string[];
+  images: ProductImage[];
   rating: number;
-  num_reviews: number;
-  sku: string;
-
-  size: string;
-  color: string;
-  material: string;
-  countryOfOrigin: string;
-  hsnCode: string;
 
   features: ProductFeatures[];
 
   packaging: ProductPackaged;
 
   yt_video_url: string;
+};
+
+export type CategoryImages = {
+  products: ProductBackend[];
+  images: string[];
 };
 
 export type ProductSearchBySlugProps = {
@@ -420,11 +395,10 @@ export interface OrdersDashboardProps {
 }
 
 export type DealFormTab = "basic" | "pricing" | "image-rating";
-export type FormTab = "basic" | "features" | "labels" | "video" | "packaging";
+export type FormTab = "basic" | "features" | "labels" | "video";
 export type ProductFormTab =
   | "basic"
   | "features"
-  | "details"
   | "video"
   | "packaging"
   | "pricing";

@@ -4,8 +4,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Heart, Bell, MapPin, Bluetooth, Cloud, Video } from "lucide-react";
-import { Hotspot } from "@/types";
+import { CategoryBackend, CategoryImages, Hotspot } from "@/types";
 import Image from "next/image";
+
+interface HotspotsProps {
+  productData: CategoryBackend;
+  allProductData: CategoryImages;
+}
+
 
 const hotspots = [
   {
@@ -76,7 +82,7 @@ const hotspots = [
   },
 ];
 
-export default function Hotspots() {
+export default function Hotspots({productData, allProductData}: HotspotsProps) {
   const [activeHotspot, setActiveHotspot] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -177,7 +183,7 @@ export default function Hotspots() {
 
     return (
       <div className="mt-8 pt-4 border-t border-gray-200">
-        <h3 className="text-xl font-semibold text-center mb-4">All Features</h3>
+        <h3 className="text-xl font-semibold text-center mb-4">All Features {productData.name}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {hotspots.map((hotspot) => (
             <div
@@ -246,8 +252,8 @@ export default function Hotspots() {
           {/* Watch Image */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
-            initial={{ opacity: 1, scale: 1, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: [0, -3, 0] }}
+            initial={{ opacity: 1, scale: 1.15, y: 0 }}
+            animate={{ opacity: 1, scale: 1.2, y: [0, -3, 0] }}
             transition={{
               opacity: { duration: 1, repeat: 0 },
               scale: { duration: 1, repeat: 0 },
@@ -260,8 +266,8 @@ export default function Hotspots() {
             }}
           >
             <Image
-              src="/smartwatch4.png"
-              alt="Smartwatch with features"
+              src={allProductData.images[1]}
+              alt="Labelling Image"
               className="max-w-full max-h-full object-contain"
               width={500}
               height={500}

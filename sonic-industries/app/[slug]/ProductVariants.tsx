@@ -159,9 +159,6 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
                       <span className="text-xl font-bold text-indigo-600 mr-2">
                         ₹{product.price}
                       </span>
-                      <span className="text-sm text-gray-500 line-through">
-                        ₹{product.mrp}
-                      </span>
                     </div>
 
                     {/* Product Name */}

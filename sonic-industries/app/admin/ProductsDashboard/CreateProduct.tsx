@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import { CreateProductProps, ProductFormTab } from "@/types";
 import BasicForm from "./BasicForm";
 import PricingForm from "./PricingForm";
-import DetailsForm from "./DetailsForm";
 import FeaturesForm from "./FeaturesForm";
 import PackagingForm from "./PackagingForm";
 import VideoForm from "./VideoForm";
@@ -45,44 +44,44 @@ const CreateProduct = ({
     try {
       const token = localStorage.getItem("token");
 
-      // Transform the data to match the MongoDB schema
-      const transformedData = {
-        name: formData.name,
-        slug: formData.slug,
-        description: formData.description,
-        tagline: formData.tagline,
-        categoryId: formData.categoryId,
-        price: formData.price,
-        mrp: formData.mrp || undefined,
-        stock: formData.stock,
-        images: formData.images.filter((img) => img.trim() !== ""),
-        rating: formData.rating || 0,
-        num_reviews: formData.num_reviews || 0,
-        sku: formData.sku || undefined,
-        size: formData.size || undefined,
-        color: formData.color || undefined,
-        material: formData.material || undefined,
-        countryOfOrigin: formData.countryOfOrigin || undefined,
-        hsnCode: formData.hsnCode || undefined,
-        features: formData.features.map((feature) => ({
-          name: feature.name,
-          weight: feature.weight,
-        })),
-        packaging: {
-          length: formData.packaging.length || 0,
-          width: formData.packaging.width || 0,
-          height: formData.packaging.height || 0,
-        },
-        yt_video_url: formData.yt_video_url || undefined,
-      };
+      // Build FormData (append scalar fields individually)
+      const payload = new FormData();
+      payload.append("name", formData.name);
+      payload.append("slug", formData.slug);
+      if (formData.description) payload.append("description", formData.description);
+      if (formData.tagline) payload.append("tagline", formData.tagline);
+      payload.append("categoryId", formData.categoryId);
+      payload.append("price", String(formData.price));
+      payload.append("rating", String(formData.rating || 0));
+      // features and packaging might be objects/arrays -> stringify them
+      payload.append("features", JSON.stringify(formData.features || []));
+      payload.append("packaging", JSON.stringify(formData.packaging || {}));
+      if (formData.yt_video_url) payload.append("yt_video_url", formData.yt_video_url);
+
+      // Append only NEW files (hybrid array: string | {file, preview})
+      const images = formData.images || [];
+      const existingImageUrls: string[] = [];
+
+      images.forEach((img) => {
+        if (typeof img === "string") {
+          existingImageUrls.push(img);
+        } else if (img.file instanceof File) {
+          payload.append("images", img.file);
+        }
+      });
+
+      // Send existing image URLs as separate field so backend can keep them without re-upload
+      if (existingImageUrls.length > 0) {
+        payload.append("existingImages", JSON.stringify(existingImageUrls));
+      }
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`,
-        transformedData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            // DO NOT set Content-Type here — axios/browser sets multipart boundary
           },
         }
       );
@@ -107,17 +106,8 @@ const CreateProduct = ({
       tagline: "",
       categoryId: "",
       price: 0,
-      mrp: 0,
-      stock: 0,
       images: [],
       rating: 0,
-      num_reviews: 0,
-      sku: "",
-      size: "",
-      color: "",
-      material: "",
-      countryOfOrigin: "",
-      hsnCode: "",
       features: [],
       packaging: {
         length: 0,
@@ -134,7 +124,6 @@ const CreateProduct = ({
   const tabs: { key: ProductFormTab; label: string }[] = [
     { key: "basic", label: "Basic Info" },
     { key: "pricing", label: "Pricing & Stock" },
-    { key: "details", label: "Details" },
     { key: "features", label: "Features" },
     { key: "packaging", label: "Packaging" },
     { key: "video", label: "Video" },
@@ -152,8 +141,6 @@ const CreateProduct = ({
         );
       case "pricing":
         return <PricingForm formData={formData} setFormData={setFormData} />;
-      case "details":
-        return <DetailsForm formData={formData} setFormData={setFormData} />;
       case "features":
         return <FeaturesForm formData={formData} setFormData={setFormData} />;
       case "packaging":
@@ -239,29 +226,17 @@ const CreateProduct = ({
           <div>
             <span className="font-medium text-gray-700">Category:</span>
             <span className="ml-2">
-              {formData.categoryId
-                ? getCategoryName(formData.categoryId)
-                : "Not set"}
+              {formData.categoryId ? getCategoryName(formData.categoryId) : "Not set"}
             </span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Price:</span>
-            <span className="ml-2">
-              {formData.price > 0 ? `₹{formData.price}` : "Not set"}
-            </span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Stock:</span>
-            <span className="ml-2">{formData.stock}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">SKU:</span>
-            <span className="ml-2">{formData.sku || "Not set"}</span>
+            <span className="ml-2">{formData.price > 0 ? `₹ ${formData.price}` : "Not set"}</span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Images:</span>
             <span className="ml-2">
-              {formData.images.filter((img) => img.trim() !== "").length}
+              {formData.images ? formData.images.length : 0}
             </span>
           </div>
           <div>
@@ -270,18 +245,12 @@ const CreateProduct = ({
           </div>
           <div>
             <span className="font-medium text-gray-700">Video:</span>
-            <span className="ml-2">
-              {formData.yt_video_url ? "Set" : "Not set"}
-            </span>
+            <span className="ml-2">{formData.yt_video_url ? "Set" : "Not set"}</span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Packaging:</span>
             <span className="ml-2">
-              {formData.packaging.length > 0 ||
-              formData.packaging.width > 0 ||
-              formData.packaging.height > 0
-                ? "Set"
-                : "Not set"}
+              {formData.packaging.length > 0 || formData.packaging.width > 0 || formData.packaging.height > 0 ? "Set" : "Not set"}
             </span>
           </div>
         </div>

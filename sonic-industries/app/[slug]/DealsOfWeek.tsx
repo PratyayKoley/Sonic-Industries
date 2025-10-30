@@ -165,6 +165,14 @@ export default function DealsOfWeek() {
 
                 {/* Countdown Timer */}
                 <div className="mb-8">
+                  <div className="flex items-center">
+                    <p className="text-sm text-gray-700 font-semibold mb-1">
+                      Use Coupon:
+                    </p>
+                    <p className="text-lg font-bold text-indigo-700 tracking-wider">
+                      {currentDealData.couponCode || "NO COUPON"}
+                    </p>
+                  </div>
                   <p className="text-sm text-gray-600 mb-3 font-medium">
                     Deal expires in:
                   </p>

@@ -2,7 +2,6 @@ import Navbar from "./NavBar";
 import HeroSection from "./HeroSection";
 import About from "./About";
 import Features from "./ProductIntro";
-import PackagingInfo from "./PackagingInfo";
 import Hotspots from "./Hotspots";
 import DealsOfWeek from "./DealsOfWeek";
 import ProductVariants from "./ProductVariants";
@@ -13,7 +12,7 @@ import FAQs from "./FAQs";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
 import type { Metadata } from "next";
-import { CategoryBackend } from "@/types";
+import { CategoryBackend, CategoryImages } from "@/types";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import Script from "next/script";
@@ -37,6 +36,28 @@ const getProduct = cache(
     } catch (error) {
       console.error("Error fetching product:", error);
       return null;
+    }
+  }
+);
+
+const getAllProductsUnderCategory = cache(
+  async (id: string | undefined): Promise<CategoryImages> => {
+    if (!id) return { products: [], images: [] };
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${id}/images`,
+        { next: { revalidate: 3600 } }
+      );
+
+      if (!res.ok) return { products: [], images: [] };
+      const data = await res.json();
+      return {
+        products: Array.isArray(data.products) ? data.products : [],
+        images: Array.isArray(data.images) ? data.images : [],
+      };
+    } catch (error) {
+      console.error("Error fetching products under category:", error);
+      return { products: [], images: [] };
     }
   }
 );
@@ -111,8 +132,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // ✅ Page itself
 export default async function ProductPage({ params }: Props) {
-  const { slug } = await params; // 👈 MUST await
-  const productData = await getProduct(slug);
+  const { slug } = await params; // 👈 MUST await?
+  const productData: CategoryBackend | null = await getProduct(slug);
+  const allProductData = await getAllProductsUnderCategory(productData?._id);
 
   if (!productData) {
     notFound();
@@ -121,7 +143,7 @@ export default async function ProductPage({ params }: Props) {
   return (
     <>
       <Navbar />
-      <HeroSection productData={productData} />
+      <HeroSection productData={productData} allProductData={allProductData} />
 
       {/* script ld json */}
       <Script id="ld-json-category" type="application/ld+json">
@@ -151,9 +173,8 @@ export default async function ProductPage({ params }: Props) {
       </Script>
 
       <About />
-      <Features productData={productData} />
-      <PackagingInfo productData={productData} />
-      <Hotspots />
+      <Features productData={productData} allProductData={allProductData} />
+      <Hotspots productData={productData} allProductData={allProductData} />
       <DealsOfWeek />
       <ProductVariants productData={productData} />
       <WhyChooseUs productData={productData} />

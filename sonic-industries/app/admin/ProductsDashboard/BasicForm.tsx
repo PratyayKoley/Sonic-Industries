@@ -1,5 +1,7 @@
-import { CategoryBackend, ProductFormDataType } from "@/types";
-import { Plus, X } from "lucide-react";
+import { CategoryBackend, ProductFormDataType, ProductImage } from "@/types";
+import { Upload, X } from "lucide-react";
+import Image from "next/image";
+import React, { useEffect, useRef } from "react";
 
 interface BasicFormProps {
   formData: ProductFormDataType;
@@ -8,54 +10,74 @@ interface BasicFormProps {
 }
 
 const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
-  const generateSlug = (name: string) => {
-    return name
+  const generateSlug = (name: string) =>
+    name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleNameChange = (name: string) => {
-    setFormData((prev: typeof formData) => ({
-      ...prev,
-      name,
-      slug: generateSlug(name),
-    }));
+    setFormData((prev) => ({ ...prev, name, slug: generateSlug(name) }));
   };
 
-  const addImage = () => {
-    setFormData((prev: typeof formData) => ({
+  // track created objectURLs so we can revoke them
+  const createdObjectUrls = useRef<Set<string>>(new Set());
+
+  const handleFileChange = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const fileItems: ProductImage[] = Array.from(files).map((file) => {
+      const preview = URL.createObjectURL(file);
+      createdObjectUrls.current.add(preview);
+      return { file, preview, isNew: true };
+    });
+
+    setFormData((prev) => ({
       ...prev,
-      images: [...(prev.images || []), ""],
+      images: [...(prev.images || []), ...fileItems],
     }));
   };
 
   const removeImage = (index: number) => {
-    setFormData((prev: typeof formData) => ({
-      ...prev,
-      images: prev.images?.filter((_, i: number) => i !== index) || [],
-    }));
+    setFormData((prev) => {
+      const next = prev.images?.filter((_, i) => i !== index) || [];
+      return { ...prev, images: next };
+    });
   };
 
-  const updateImage = (index: number, value: string) => {
-    setFormData((prev: typeof formData) => ({
-      ...prev,
-      images: prev.images?.map((img: string, i: number) => (i === index ? value : img)) || [],
-    }));
+  const cancelAllImages = () => {
+    // revoke all created object URLs for new images
+    createdObjectUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    createdObjectUrls.current.clear();
+
+    setFormData((prev) => ({ ...prev, images: [] }));
   };
 
-
+  // revoke object URLs when component unmounts or when images change (cleanup)
+  useEffect(() => {
+    const urls = createdObjectUrls.current;
+    return () => {
+      urls.forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {}
+      });
+      urls.clear();
+    };
+  }, []);
 
   return (
     <div className="space-y-4">
+      {/* Name + Slug */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -78,10 +100,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
             type="text"
             value={formData.slug || ""}
             onChange={(e) =>
-              setFormData((prev: typeof formData) => ({
-                ...prev,
-                slug: e.target.value,
-              }))
+              setFormData((prev) => ({ ...prev, slug: e.target.value }))
             }
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="product-slug"
@@ -92,8 +111,12 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
         </div>
       </div>
 
+      {/* Category */}
       <div>
-        <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="categoryId"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Category *
         </label>
         <select
@@ -113,6 +136,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
         </select>
       </div>
 
+      {/* Tagline */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Tagline
@@ -121,16 +145,14 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
           type="text"
           value={formData.tagline || ""}
           onChange={(e) =>
-            setFormData((prev: typeof formData) => ({
-              ...prev,
-              tagline: e.target.value,
-            }))
+            setFormData((prev) => ({ ...prev, tagline: e.target.value }))
           }
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Short product tagline"
         />
       </div>
 
+      {/* Description */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description
@@ -138,10 +160,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
         <textarea
           value={formData.description || ""}
           onChange={(e) =>
-            setFormData((prev: typeof formData) => ({
-              ...prev,
-              description: e.target.value,
-            }))
+            setFormData((prev) => ({ ...prev, description: e.target.value }))
           }
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -149,48 +168,101 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
         />
       </div>
 
-      {/* Images Section */}
+      {/* Images Upload Section */}
       <div>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-3">
           <label className="block text-sm font-medium text-gray-700">
             Product Images
           </label>
-          <button
-            type="button"
-            onClick={addImage}
-            className="flex items-center gap-2 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Image
-          </button>
-        </div>
-        
-        <div className="space-y-2">
-          {formData.images?.map((image: string, index: number) => (
-            <div key={index} className="flex gap-2">
-              <input
-                type="url"
-                value={image}
-                onChange={(e) => updateImage(index, e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+
+          <div className="flex items-center gap-3">
+            {formData.images && formData.images.length > 0 && (
               <button
                 type="button"
-                onClick={() => removeImage(index)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                onClick={cancelAllImages}
+                className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
+                Cancel All
               </button>
-            </div>
-          ))}
-          
-          {(!formData.images || formData.images.length === 0) && (
-            <div className="text-sm text-gray-500 py-2">
-              No images added yet. Click &quot;Add Image&quot; to start.
-            </div>
-          )}
+            )}
+
+            <label className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors">
+              <Upload className="w-4 h-4" />
+              <span>Upload Images</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFileChange(e.target.files)}
+              />
+            </label>
+          </div>
         </div>
+
+        {/* Image Previews */}
+        {formData.images && formData.images.length > 0 ? (
+          <div className="flex flex-wrap gap-3">
+            {formData.images.map((img, index) => {
+              // if img is string -> existing Cloudinary URL
+              if (typeof img === "string") {
+                return (
+                  <div
+                    key={index}
+                    className="relative w-32 h-32 border rounded-lg overflow-hidden"
+                  >
+                    <Image
+                      src={img}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 bg-white/80 text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors cursor-pointer"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              }
+
+              // else it's a NewImageItem
+              const preview = img.preview;
+              return (
+                <div
+                  key={index}
+                  className="relative w-32 h-32 border rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // revoke this object's URL before removing
+                      try {
+                        if (img.isNew) URL.revokeObjectURL(preview);
+                        createdObjectUrls.current.delete(preview);
+                      } catch {}
+                      removeImage(index);
+                    }}
+                    className="absolute top-1 right-1 bg-white/80 text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500 py-2">
+            No images uploaded yet. Click &quot;Upload Images&quot; to add.
+          </p>
+        )}
       </div>
     </div>
   );

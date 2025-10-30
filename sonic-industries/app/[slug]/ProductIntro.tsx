@@ -2,14 +2,15 @@
 
 import { useState, useEffect, ComponentType } from "react";
 import { motion } from "framer-motion";
-import { CategoryBackend } from "@/types";
+import { CategoryBackend, CategoryImages } from "@/types";
 import * as LucideIcons from "lucide-react";
 
 interface ProductIntroProps {
   productData: CategoryBackend;
+  allProductData: CategoryImages
 }
 
-export default function ProductIntro({ productData }: ProductIntroProps) {
+export default function ProductIntro({ productData, allProductData }: ProductIntroProps) {
   const [, setScrollPosition] = useState(0);
 
   useEffect(() => {
@@ -34,10 +35,10 @@ export default function ProductIntro({ productData }: ProductIntroProps) {
             viewport={{ once: true }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            {/* <motion.img
-              src={productData.images[1]}
-              alt="Smart Watch"
-              className="w-4/5 md:w-3/4 lg:w-2/3"
+            <motion.img
+              src={allProductData.images[1]}
+              alt="Product Image"
+              className="w-full md:w-5/6 lg:w-3/4"
               animate={{ y: [0, -10, 0] }}
               transition={{
                 duration: 2,
@@ -45,7 +46,7 @@ export default function ProductIntro({ productData }: ProductIntroProps) {
                 repeatType: "loop",
                 ease: "easeInOut",
               }}
-            /> */}
+            />
           </motion.div>
 
           {/* Text and Features */}

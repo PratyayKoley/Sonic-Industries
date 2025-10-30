@@ -48,7 +48,7 @@ export function OrderSummary({
         <div className="flex space-x-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={"/api/placeholder/80/80"}
+            src={product.images[0]}
             alt={product.name}
             className="w-20 h-20 object-cover border rounded"
           />

@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductBackend, ProductSearchBySlugProps } from "@/types";
-import { Trash2, Edit2, Search, Star, Package, DollarSign } from "lucide-react";
+import { Trash2, Edit2, Search, Star, DollarSign } from "lucide-react";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
@@ -47,9 +47,9 @@ const SearchBySlug = ({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -60,9 +60,7 @@ const SearchBySlug = ({
       <Star
         key={index}
         className={`w-4 h-4 ${
-          index < rating
-            ? "text-yellow-400 fill-current"
-            : "text-gray-300"
+          index < rating ? "text-yellow-400 fill-current" : "text-gray-300"
         }`}
       />
     ));
@@ -125,9 +123,6 @@ const SearchBySlug = ({
                         </p>
                       )}
                       <p className="text-gray-600 mb-2">Slug: {product.slug}</p>
-                      {product.sku && (
-                        <p className="text-gray-600 mb-2">SKU: {product.sku}</p>
-                      )}
                     </div>
 
                     {/* Price and Rating */}
@@ -138,16 +133,8 @@ const SearchBySlug = ({
                           {formatPrice(product.price)}
                         </span>
                       </div>
-                      {product.mrp && product.mrp > product.price && (
-                        <p className="text-sm text-gray-500 line-through">
-                          MRP: {formatPrice(product.mrp)}
-                        </p>
-                      )}
                       <div className="flex items-center gap-1 mt-2">
                         {renderStars(product.rating)}
-                        <span className="text-sm text-gray-600 ml-1">
-                          ({product.num_reviews} reviews)
-                        </span>
                       </div>
                     </div>
                   </div>
@@ -157,45 +144,12 @@ const SearchBySlug = ({
                     <p className="text-gray-700 mb-4">{product.description}</p>
                   )}
 
-                  {/* Additional Info */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                    <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm text-gray-600">
-                        Stock: {product.stock}
-                      </span>
-                    </div>
-                    {product.size && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Size:</span> {product.size}
-                      </div>
-                    )}
-                    {product.color && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Color:</span> {product.color}
-                      </div>
-                    )}
-                    {product.material && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Material:</span> {product.material}
-                      </div>
-                    )}
-                    {product.countryOfOrigin && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Origin:</span> {product.countryOfOrigin}
-                      </div>
-                    )}
-                    {product.hsnCode && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">HSN:</span> {product.hsnCode}
-                      </div>
-                    )}
-                  </div>
-
                   {/* Features */}
                   {product.features && product.features.length > 0 && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Features:</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        Features:
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {product.features.map((feature, index) => (
                           <span
@@ -213,16 +167,22 @@ const SearchBySlug = ({
                   {/* Packaging Info */}
                   {product.packaging && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Packaging:</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        Packaging:
+                      </h4>
                       <div className="text-sm text-gray-600 space-y-1">
                         {product.packaging.items && (
                           <p>Items: {product.packaging.items}</p>
                         )}
-                        {product.packaging.length && product.packaging.width && product.packaging.height && (
-                          <p>
-                            Dimensions: {product.packaging.length} × {product.packaging.width} × {product.packaging.height}
-                          </p>
-                        )}
+                        {product.packaging.length &&
+                          product.packaging.width &&
+                          product.packaging.height && (
+                            <p>
+                              Dimensions: {product.packaging.length} ×{" "}
+                              {product.packaging.width} ×{" "}
+                              {product.packaging.height}
+                            </p>
+                          )}
                       </div>
                     </div>
                   )}
@@ -236,8 +196,12 @@ const SearchBySlug = ({
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm"
                       >
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M23.498 6.186a2.998 2.998 0 0 0-2.113-2.113C19.505 3.546 12 3.546 12 3.546s-7.505 0-9.385.527A2.998 2.998 0 0 0 .502 6.186C0 8.066 0 12 0 12s0 3.934.502 5.814a2.998 2.998 0 0 0 2.113 2.113c1.88.527 9.385.527 9.385.527s7.505 0 9.385-.527a2.998 2.998 0 0 0 2.113-2.113C24 15.934 24 12 24 12s0-3.934-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M23.498 6.186a2.998 2.998 0 0 0-2.113-2.113C19.505 3.546 12 3.546 12 3.546s-7.505 0-9.385.527A2.998 2.998 0 0 0 .502 6.186C0 8.066 0 12 0 12s0 3.934.502 5.814a2.998 2.998 0 0 0 2.113 2.113c1.88.527 9.385.527 9.385.527s7.505 0 9.385-.527a2.998 2.998 0 0 0 2.113-2.113C24 15.934 24 12 24 12s0-3.934-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                         </svg>
                         Watch Video
                       </a>

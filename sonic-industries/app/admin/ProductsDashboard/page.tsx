@@ -8,6 +8,7 @@ import {
   ProductFeatures,
   ProductPackaged,
   CategoryBackend,
+  ProductImage,
 } from "@/types";
 import CreateProduct from "./CreateProduct";
 import SearchBySlug from "./SearchBySlug";
@@ -29,7 +30,7 @@ const ProductsDashboard = () => {
     "browse"
   );
   const [activeFormTab, setActiveFormTab] = useState<
-    "basic" | "pricing" | "details" | "features" | "packaging" | "video"
+    "basic" | "pricing" | "features" | "packaging" | "video"
   >("basic");
 
   const [formData, setFormData] = useState({
@@ -39,17 +40,8 @@ const ProductsDashboard = () => {
     tagline: "",
     categoryId: "",
     price: 0,
-    mrp: 0,
-    stock: 0,
-    images: [] as string[],
+    images: [] as ProductImage[],
     rating: 0,
-    num_reviews: 0,
-    sku: "",
-    size: "",
-    color: "",
-    material: "",
-    countryOfOrigin: "",
-    hsnCode: "",
     features: [] as ProductFeatures[],
     packaging: {
       length: 0,
@@ -88,7 +80,7 @@ const ProductsDashboard = () => {
       );
       setCategories(response.data.categories || []);
     } catch (err) {
-      const error = err as Error
+      const error = err as Error;
       console.error("Failed to load categories:", error);
     }
   };
@@ -116,9 +108,7 @@ const ProductsDashboard = () => {
       }
 
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${
-          productToDelete.slug
-        }`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${productToDelete.slug}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,17 +138,12 @@ const ProductsDashboard = () => {
       tagline: product.tagline || "",
       categoryId: product.categoryId || "",
       price: product.price || 0,
-      mrp: product.mrp || 0,
-      stock: product.stock || 0,
-      images: product.images || [],
+      images: product.images.map((url) => ({
+        file: null,
+        preview: url,
+        isNew: false,
+      })),
       rating: product.rating || 0,
-      num_reviews: product.num_reviews || 0,
-      sku: product.sku || "",
-      size: product.size || "",
-      color: product.color || "",
-      material: product.material || "",
-      countryOfOrigin: product.countryOfOrigin || "",
-      hsnCode: product.hsnCode || "",
       features: product.features || [],
       packaging: {
         length: product.packaging?.length ?? 0,

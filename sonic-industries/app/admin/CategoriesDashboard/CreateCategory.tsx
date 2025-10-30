@@ -5,7 +5,6 @@ import BasicForm from "./BasicForm";
 import FeaturesForm from "./FeaturesForm";
 import LabelsForm from "./LabelsForm";
 import VideoForm from "./VideoForm";
-import PackagingForm from "./PackagingForm";
 
 const CreateCategory = ({
   formData,
@@ -39,27 +38,18 @@ const CreateCategory = ({
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
-        features: formData.features.map(feature => ({
+        features: formData.features.map((feature) => ({
           image: feature.image || undefined,
           name: feature.name,
           desc: feature.desc || undefined,
         })),
-        labels: formData.labels.map(label => ({
+        labels: formData.labels.map((label) => ({
           x: label.x,
           y: label.y,
           name: label.name,
           desc: label.desc || undefined,
         })),
         yt_video_url: formData.yt_video_url,
-        packaged: formData.packaged.map(pkg => ({
-          items: pkg.items?.map(item => ({
-            name: item.name,
-            desc: item.desc || undefined,
-          })),
-          length: pkg.length,
-          width: pkg.width,
-          height: pkg.height,
-        })),
       };
 
       const response = await axios.post(
@@ -93,7 +83,6 @@ const CreateCategory = ({
       features: [],
       labels: [],
       yt_video_url: "",
-      packaged: [],
     });
     setIsEditing(false);
     setSelectedCategory(null);
@@ -105,7 +94,6 @@ const CreateCategory = ({
     { key: "features", label: "Features" },
     { key: "labels", label: "Labels" },
     { key: "video", label: "Video" },
-    { key: "packaging", label: "Packaging" },
   ];
 
   const renderActiveForm = () => {
@@ -118,8 +106,6 @@ const CreateCategory = ({
         return <LabelsForm formData={formData} setFormData={setFormData} />;
       case "video":
         return <VideoForm formData={formData} setFormData={setFormData} />;
-      case "packaging":
-        return <PackagingForm formData={formData} setFormData={setFormData} />;
       default:
         return <BasicForm formData={formData} setFormData={setFormData} />;
     }
@@ -147,9 +133,7 @@ const CreateCategory = ({
       </div>
 
       {/* Form Content */}
-      <div className="mb-6">
-        {renderActiveForm()}
-      </div>
+      <div className="mb-6">{renderActiveForm()}</div>
 
       {/* Action Buttons */}
       <div className="flex gap-3 pt-6 border-t border-gray-200">
@@ -191,11 +175,9 @@ const CreateCategory = ({
           </div>
           <div>
             <span className="font-medium text-gray-700">Video:</span>
-            <span className="ml-2">{formData.yt_video_url ? "Set" : "Not set"}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Packages:</span>
-            <span className="ml-2">{formData.packaged.length}</span>
+            <span className="ml-2">
+              {formData.yt_video_url ? "Set" : "Not set"}
+            </span>
           </div>
         </div>
       </div>

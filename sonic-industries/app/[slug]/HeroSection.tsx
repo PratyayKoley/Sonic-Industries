@@ -1,20 +1,24 @@
-"use client"
+"use client";
 
-import { CategoryBackend } from "@/types";
+import { CategoryBackend, CategoryImages } from "@/types";
 import { Ripple } from "../ui/ripple";
 import { useEffect } from "react";
 
 interface HeroSectionProps {
   productData: CategoryBackend;
+  allProductData: CategoryImages;
 }
 
-export default function HeroSection({ productData }: HeroSectionProps) {
+export default function HeroSection({
+  productData,
+  allProductData,
+}: HeroSectionProps) {
   useEffect(() => {
     if (productData?.name) {
       document.title = `${productData.name} | Sonic Industries`;
     }
   }, [productData]);
-  
+
   return (
     <section
       className="min-h-screen w-full bg-white flex items-center justify-center px-4 py-12"
@@ -51,11 +55,14 @@ export default function HeroSection({ productData }: HeroSectionProps) {
               className="absolute inset-0 w-full h-full"
             />
             <div className="relative z-10 flex items-center justify-center h-full">
-              {/* <img
-                // src={}
-                alt="Digital smartwatch showing text conversation"
-                className="h-48 sm:h-60 md:h-72 lg:h-80 xl:h-96 w-auto object-contain"
-              /> */}
+              <div className="relative w-full h-[500px] -mt-48">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={allProductData.images[0]}
+                  alt="Product"
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>

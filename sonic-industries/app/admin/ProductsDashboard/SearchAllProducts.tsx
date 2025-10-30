@@ -1,5 +1,5 @@
 import { ProductBackend, CategoryBackend, SearchAllProductProps } from "@/types";
-import { Edit2, Trash2, Star, Package, IndianRupee } from "lucide-react";
+import { Edit2, Trash2, Star, IndianRupee } from "lucide-react";
 import Image from "next/image";
 
 const SearchAllProducts = ({
@@ -98,19 +98,6 @@ const SearchAllProducts = ({
                   {formatPrice(product.price)}
                 </span>
               </div>
-              {product.mrp && product.mrp > product.price && (
-                <span className="text-sm text-gray-500 line-through">
-                  {formatPrice(product.mrp)}
-                </span>
-              )}
-            </div>
-
-            {/* Stock Status */}
-            <div className="flex items-center gap-2">
-              <Package className="w-4 h-4 text-gray-500" />
-              <span className={`text-sm ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-              </span>
             </div>
 
             {/* Rating */}
@@ -119,15 +106,7 @@ const SearchAllProducts = ({
                 <div className="flex items-center gap-1">
                   {renderStars(product.rating)}
                 </div>
-                <span className="text-sm text-gray-600">
-                  ({product.num_reviews || 0} reviews)
-                </span>
               </div>
-            )}
-
-            {/* SKU */}
-            {product.sku && (
-              <p className="text-xs text-gray-500">SKU: {product.sku}</p>
             )}
 
             {/* Description */}
@@ -136,25 +115,6 @@ const SearchAllProducts = ({
                 {product.description}
               </p>
             )}
-
-            {/* Product Details */}
-            <div className="flex flex-wrap gap-2 text-xs">
-              {product.size && (
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                  Size: {product.size}
-                </span>
-              )}
-              {product.color && (
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                  Color: {product.color}
-                </span>
-              )}
-              {product.material && (
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                  Material: {product.material}
-                </span>
-              )}
-            </div>
           </div>
 
           {/* Action Buttons */}
