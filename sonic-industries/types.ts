@@ -13,14 +13,11 @@ export interface FeatureCardProps {
 }
 
 export interface Hotspot {
-  id: number;
-  x: number;
+  _id: string;
+  x?: number;
   y?: number;
-  title?: string;
   description?: string;
-  color?: string;
-  lineColor?: string;
-  icon?: JSX.Element;
+  name?: string;
 }
 
 export type Product = {
@@ -190,6 +187,7 @@ export interface CategoryFeatures {
 }
 
 export interface CategoryLabels {
+  _id: string;
   x?: number;
   y?: number;
   name?: string;

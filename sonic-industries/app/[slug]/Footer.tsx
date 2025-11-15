@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, spring } from "framer-motion";
@@ -193,19 +193,20 @@ export default function Footer() {
             >
               <div className="mb-4">
                 <div className="flex items-center">
-                  <div className="w-10 h-12 relative mr-2">
+                  <div className="w-12 h-auto relative mr-2">
                     <Image
-                      src="/favicon.ico"
+                      src="/Sonic Logo.png"
                       alt="Logo"
                       width={48}
                       height={48}
-                      className="w-12 h-12"
+                      className="w-12 h-16"
                     />
                   </div>
-                  <div className="text-2xl font-bold text-purple-600 flex items-center gap-2">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">
-                      SONIC INDUSTRIES
-                    </span>
+                  <div className="text-2xl font-medium tracking-wider text-purple-600">
+                    <div className="text-transparent bg-clip-text bg-black">
+                      SONIC
+                    </div>
+                    <div className="text-transparent bg-clip-text bg-black">INDUSTRIES</div>
                   </div>
                 </div>
               </div>

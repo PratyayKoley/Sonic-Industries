@@ -3,9 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, easeOut } from "framer-motion";
-import { FAQItem } from "@/types";
+import { CategoryImages, FAQItem } from "@/types";
 
-export default function FAQs() {
+interface FAQsProps {
+  allProductData: CategoryImages;
+}
+
+export default function FAQs({allProductData}: FAQsProps) {
   const [openItem, setOpenItem] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -288,9 +292,9 @@ export default function FAQs() {
 
               {/* The actual image with hover effects */}
               <motion.img
-                src="/FAQ_image.png"
-                alt="Yellow smartwatch"
-                className="w-full max-w-lg h-auto object-contain cursor-pointer"
+                src={allProductData.images[4]}
+                alt="Product Info"
+                className="w-full max-w-lg h-96 object-contain cursor-pointer"
                 style={{
                   filter: "drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.1))",
                 }}

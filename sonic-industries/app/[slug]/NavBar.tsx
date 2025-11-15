@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -47,17 +47,22 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="flex justify-between items-center px-4 md:px-8 py-4">
-        <div className="text-xl md:text-2xl font-bold text-purple-600 flex items-center gap-2">
-          <Image
-            src="/favicon.ico"
-            alt="Logo"
-            className="w-8 h-8 md:w-10 md:h-10"
-            width={48}
-            height={48}
-          />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-300">
-            SONIC INDUSTRIES
-          </span>
+        <div className="text-xl md:text-2xl font-bold text-black flex items-center">
+          <div className="w-12 h-16 relative mr-2">
+            <Image
+              src="/Sonic Logo.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="w-12 h-16"
+            />
+          </div>
+          <div className="text-2xl font-medium tracking-wider text-purple-600">
+            <div className="text-transparent bg-clip-text bg-black">SONIC</div>
+            <div className="text-transparent bg-clip-text bg-black">
+              INDUSTRIES
+            </div>
+          </div>
         </div>
 
         {/* Animated Mobile Menu Button */}

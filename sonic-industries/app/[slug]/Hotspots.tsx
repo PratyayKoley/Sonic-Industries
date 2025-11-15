@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Heart, Bell, MapPin, Bluetooth, Cloud, Video } from "lucide-react";
 import { CategoryBackend, CategoryImages, Hotspot } from "@/types";
 import Image from "next/image";
 
@@ -12,78 +11,20 @@ interface HotspotsProps {
   allProductData: CategoryImages;
 }
 
-
-const hotspots = [
-  {
-    id: 1,
-    x: 28,
-    y: 48,
-    title: "Heart Monitor",
-    description:
-      "Track your health with real-time heart rate monitoring and instant alerts for irregularities.",
-    color: "bg-red-500",
-    lineColor: "bg-red-500",
-    icon: <Heart size={24} strokeWidth={1.5} className="text-white" />,
-  },
-  {
-    id: 2,
-    x: 28,
-    y: 24,
-    title: "Video Calls",
-    description:
-      "Make quick video calls directly from your smartwatch with the integrated camera.",
-    color: "bg-blue-500",
-    lineColor: "bg-blue-500",
-    icon: <Video size={24} strokeWidth={1.5} className="text-white" />,
-  },
-  {
-    id: 3,
-    x: 28,
-    y: 72,
-    title: "Bluetooth",
-    description:
-      "Seamlessly connect to your devices for music, calls, and data sync.",
-    color: "bg-indigo-500",
-    lineColor: "bg-indigo-500",
-    icon: <Bluetooth size={24} strokeWidth={1.5} className="text-white" />,
-  },
-  {
-    id: 4,
-    x: 65,
-    y: 24,
-    title: "Notification Alert",
-    description:
-      "Stay connected with instant notifications and customizable alert settings.",
-    color: "bg-amber-500",
-    lineColor: "bg-amber-500",
-    icon: <Bell size={24} strokeWidth={1.5} className="text-white" />,
-  },
-  {
-    id: 5,
-    x: 65,
-    y: 48,
-    title: "Location Tracking",
-    description:
-      "Never lose your way with built-in GPS tracking and location services.",
-    color: "bg-green-500",
-    lineColor: "bg-green-500",
-    icon: <MapPin size={24} strokeWidth={1.5} className="text-white" />,
-  },
-  {
-    id: 6,
-    x: 65,
-    y: 72,
-    title: "Weather Updates",
-    description:
-      "Get real-time weather forecasts and alerts directly on your wrist.",
-    color: "bg-purple-500",
-    lineColor: "bg-purple-500",
-    icon: <Cloud size={24} strokeWidth={1.5} className="text-white" />,
-  },
+const COLORS = [
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-indigo-500",
+  "bg-amber-500",
+  "bg-green-500",
+  "bg-purple-500",
 ];
 
-export default function Hotspots({productData, allProductData}: HotspotsProps) {
-  const [activeHotspot, setActiveHotspot] = useState<number | null>(null);
+export default function Hotspots({
+  productData,
+  allProductData,
+}: HotspotsProps) {
+  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isMobile, setIsMobile] = useState(false);
@@ -132,11 +73,15 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isMobile) {
+    if (isMobile && productData.labels && productData.labels.length > 0) {
       interval = setInterval(() => {
         setActiveHotspot((current) => {
-          if (current === null) return 1;
-          return current >= hotspots.length ? 1 : current + 1;
+          const labels = productData.labels ?? [];
+          if (labels.length === 0) return null;
+          const currentIndex = labels.findIndex((h) => h._id === current);
+          const nextIndex =
+            currentIndex === -1 ? 0 : (currentIndex + 1) % labels.length;
+          return labels[nextIndex]._id;
         });
       }, 3000);
     }
@@ -144,7 +89,7 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isMobile]);
+  }, [isMobile, productData.labels]);
 
   // Calculate line angle and length
   const calculateLine = (hotspot: Hotspot) => {
@@ -156,7 +101,7 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
     );
     const lineLength = isMobile ? baseLength * 0.6 : baseLength;
 
-    const cardPosition = getCardPosition(hotspot.x);
+    const cardPosition = getCardPosition(hotspot.x ?? 0);
 
     return {
       length: lineLength,
@@ -171,7 +116,7 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
   };
 
   // Handle click for mobile (toggle hotspot)
-  const handleHotspotInteraction = (id: number) => {
+  const handleHotspotInteraction = (id: string) => {
     if (isMobile) {
       setActiveHotspot(activeHotspot === id ? null : id);
     }
@@ -183,39 +128,31 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
 
     return (
       <div className="mt-8 pt-4 border-t border-gray-200">
-        <h3 className="text-xl font-semibold text-center mb-4">All Features {productData.name}</h3>
+        <h3 className="text-xl font-semibold text-center mb-4">
+          All Features {productData.name}
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {hotspots.map((hotspot) => (
+          {productData.labels?.map((hotspot) => (
             <div
-              key={`mobile-${hotspot.id}`}
+              key={`mobile-${hotspot._id}`}
               className={`p-4 rounded-lg cursor-pointer transition-all ${
-                activeHotspot === hotspot.id
-                  ? `${hotspot.color} text-white`
+                activeHotspot === hotspot._id
+                  ? "text-white"
                   : "bg-gray-100 hover:bg-gray-200"
               }`}
-              onClick={() => setActiveHotspot(hotspot.id)}
+              onClick={() => setActiveHotspot(hotspot._id)}
             >
               <div className="flex items-center mb-2">
-                <div
-                  className={`p-2 mr-3 rounded-full ${
-                    activeHotspot === hotspot.id ? "bg-white/20" : hotspot.color
-                  }`}
-                >
-                  {React.cloneElement(hotspot.icon, {
-                    color: activeHotspot === hotspot.id ? "white" : "white",
-                    size: 20,
-                  })}
-                </div>
-                <h4 className="font-medium">{hotspot.title}</h4>
+                <h4 className="font-medium">{hotspot.name}</h4>
               </div>
               <p
                 className={`text-sm ${
-                  activeHotspot === hotspot.id
+                  activeHotspot === hotspot._id
                     ? "text-white/90"
                     : "text-gray-600"
                 }`}
               >
-                {hotspot.description}
+                {hotspot.desc}
               </p>
             </div>
           ))}
@@ -275,13 +212,15 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
           </motion.div>
 
           {/* Hotspots */}
-          {hotspots.map((hotspot) => {
+          {productData.labels?.map((hotspot, index) => {
             const line = calculateLine(hotspot);
-            const cardPosition = getCardPosition(hotspot.x);
+            const cardPosition = getCardPosition(hotspot.x ?? 0);
+            const color = COLORS[index % COLORS.length];
+            const lineColor = color;
 
             return (
               <div
-                key={hotspot.id}
+                key={hotspot._id}
                 className="absolute"
                 style={{
                   left: `${hotspot.x}%`,
@@ -291,7 +230,7 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
               >
                 {/* Pulsing effect for inactive hotspots */}
                 <motion.div
-                  className={`absolute w-3 h-3 md:w-4 md:h-4 rounded-full ${hotspot.color} opacity-30`}
+                  className={`absolute w-3 h-3 md:w-4 md:h-4 rounded-full ${color} opacity-30`}
                   animate={{
                     scale: [1, 1.8, 1],
                     opacity: [0.3, 0.1, 0.3],
@@ -310,28 +249,30 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
 
                 {/* Hotspot dot */}
                 <motion.div
-                  className={`w-3 h-3 md:w-4 md:h-4 rounded-full ${
-                    hotspot.color
+                  className={`w-1 h-1 md:w-2 md:h-2 rounded-full ${
+                    color
                   } cursor-pointer z-10 relative ${
-                    activeHotspot === hotspot.id
+                    activeHotspot === hotspot._id
                       ? "ring-2 ring-white ring-opacity-70"
                       : ""
                   }`}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => handleHotspotInteraction(hotspot.id)}
-                  onMouseEnter={() => !isMobile && setActiveHotspot(hotspot.id)}
+                  onClick={() => handleHotspotInteraction(hotspot._id)}
+                  onMouseEnter={() =>
+                    !isMobile && setActiveHotspot(hotspot._id)
+                  }
                   onMouseLeave={() => !isMobile && setActiveHotspot(null)}
                 />
 
                 {/* Connecting line and info card */}
                 <AnimatePresence>
-                  {activeHotspot === hotspot.id && (
+                  {activeHotspot === hotspot._id && (
                     <>
                       {/* Connecting line */}
                       <motion.div
                         className={`absolute top-1/2 h-0.5 ${
-                          hotspot.lineColor
+                          lineColor
                         } origin-${
                           cardPosition === "left" ? "right" : "left"
                         } z-0`}
@@ -379,20 +320,6 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
                       >
                         <motion.div className="flex flex-col items-center">
                           <div
-                            className={`flex items-center justify-center rounded-full mb-2 ${
-                              hotspot.color
-                            } ${!isMobile ? "p-4" : "p-2"}`}
-                          >
-                            <div
-                              className={`${
-                                !isMobile ? "text-3xl" : "text-xs"
-                              }`}
-                            >
-                              {hotspot.icon}
-                            </div>
-                          </div>
-
-                          <div
                             className={`text-center bg-white rounded-lg ${
                               !isMobile ? "p-4" : ""
                             }`}
@@ -404,11 +331,11 @@ export default function Hotspots({productData, allProductData}: HotspotsProps) {
                                   : "text-xs font-light w-[4.4rem] break-words"
                               }`}
                             >
-                              {hotspot.title}
+                              {hotspot.name}
                             </h3>
                             {!isMobile && (
                               <p className="text-xs md:text-sm text-gray-600">
-                                {hotspot.description}
+                                {hotspot.desc}
                               </p>
                             )}
                           </div>

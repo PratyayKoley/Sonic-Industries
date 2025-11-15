@@ -14,7 +14,6 @@ import Footer from "./Footer";
 import type { Metadata } from "next";
 import { CategoryBackend, CategoryImages } from "@/types";
 import { notFound } from "next/navigation";
-import { cache } from "react";
 import Script from "next/script";
 
 type Props = {
@@ -22,45 +21,43 @@ type Props = {
 };
 
 // Fetch product data (server-side)
-const getProduct = cache(
-  async (slug: string): Promise<CategoryBackend | null> => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`,
-        { next: { revalidate: 3600 } }
-      );
+const getProduct = async (slug: string): Promise<CategoryBackend | null> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`,
+      { next: { revalidate: 3600 } }
+    );
 
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.category;
-    } catch (error) {
-      console.error("Error fetching product:", error);
-      return null;
-    }
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.category;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
   }
-);
+};
 
-const getAllProductsUnderCategory = cache(
-  async (id: string | undefined): Promise<CategoryImages> => {
-    if (!id) return { products: [], images: [] };
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${id}/images`,
-        { next: { revalidate: 3600 } }
-      );
+const getAllProductsUnderCategory = async (
+  id: string | undefined
+): Promise<CategoryImages> => {
+  if (!id) return { products: [], images: [] };
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${id}/images`,
+      { next: { revalidate: 3600 } }
+    );
 
-      if (!res.ok) return { products: [], images: [] };
-      const data = await res.json();
-      return {
-        products: Array.isArray(data.products) ? data.products : [],
-        images: Array.isArray(data.images) ? data.images : [],
-      };
-    } catch (error) {
-      console.error("Error fetching products under category:", error);
-      return { products: [], images: [] };
-    }
+    if (!res.ok) return { products: [], images: [] };
+    const data = await res.json();
+    return {
+      products: Array.isArray(data.products) ? data.products : [],
+      images: Array.isArray(data.images) ? data.images : [],
+    };
+  } catch (error) {
+    console.error("Error fetching products under category:", error);
+    return { products: [], images: [] };
   }
-);
+};
 
 export async function generateStaticParams() {
   try {
@@ -180,7 +177,7 @@ export default async function ProductPage({ params }: Props) {
       <WhyChooseUs productData={productData} />
       <ProductComparison />
       <Testimonials />
-      <FAQs />
+      <FAQs allProductData={allProductData} />
       <ContactUs />
       <Footer />
     </>

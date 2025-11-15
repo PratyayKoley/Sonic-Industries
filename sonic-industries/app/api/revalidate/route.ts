@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       { status: 400 }
     );
   }
-
+  console.log(path);
   revalidatePath(path);
 
   return NextResponse.json({

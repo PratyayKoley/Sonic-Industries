@@ -81,7 +81,6 @@ const CreateProduct = ({
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            // DO NOT set Content-Type here — axios/browser sets multipart boundary
           },
         }
       );

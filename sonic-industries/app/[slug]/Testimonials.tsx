@@ -17,7 +17,7 @@ export default function Testimonials() {
       id: 1,
       name: "Natha Roy",
       position: "CEO of Apple",
-      avatar: "/image1.png",
+      avatar: "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189141/1_ckeuna.jpg",
       rating: 5,
       content:
         "Do play they miss give so up. Words to up style of since world. Way own uncommonly travelling now acceptance bed compliment solicitude. We leaf to snug on no need.",
@@ -26,7 +26,7 @@ export default function Testimonials() {
       id: 2,
       name: "Sarah Johnson",
       position: "CTO of Microsoft",
-      avatar: "/image2.png",
+      avatar: "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg",
       rating: 5,
       content:
         "Peculiar trifling absolute and wandered vicinity property yet. The and collecting motionless difficulty son. His hearing staying ten colonel met. Word drew six easy four dear cold deny.",
@@ -319,7 +319,7 @@ export default function Testimonials() {
                 whileHover="hover"
               >
                 <Image
-                  src="/image1.png"
+                  src="https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg"
                   alt="Client avatar"
                   className="w-full h-full rounded-full object-cover"
                   width={64}

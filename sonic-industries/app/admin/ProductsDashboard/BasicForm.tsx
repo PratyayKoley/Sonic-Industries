@@ -215,6 +215,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
                     <Image
                       src={img}
                       alt={`Preview ${index + 1}`}
+                      fill
                       className="w-full h-full object-cover"
                     />
                     <button
@@ -238,6 +239,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
                   <Image
                     src={preview}
                     alt={`Preview ${index + 1}`}
+                    fill
                     className="w-full h-full object-cover"
                   />
                   <button

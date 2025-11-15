@@ -5,6 +5,7 @@ import axios from "axios";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DealsOfWeek() {
   const [currentDeal, setCurrentDeal] = useState(0);
@@ -85,121 +86,125 @@ export default function DealsOfWeek() {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative">
-          {/* Main Deal Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-5xl mx-auto transition-all duration-500 transform hover:shadow-2xl">
-            <div className="flex flex-col md:flex-row">
-              {/* Product Image */}
-              <div className="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-                <div className="relative">
-                  <Image
-                    alt={currentDealData.title || "Deal Image"}
-                    className="max-w-full h-64 md:h-80 object-contain transition-transform duration-300 hover:scale-105"
-                    src={currentDealData.imageUrl || "/placeholder.png"}
-                    width={500}
-                    height={500}
-                  />
-                  <div className="absolute top-0 right-0 bg-red-500 text-white px-3 py-1 rounded-bl-lg font-bold text-sm">
-                    {currentDealData.dealType === "product" &&
-                    currentDealData.discountPercent
-                      ? `${Math.round(currentDealData.discountPercent)}% OFF`
-                      : "Limited Offer"}
-                  </div>
-                </div>
-              </div>
-
-              {/* Product Details */}
-              <div className="md:w-1/2 p-8 flex flex-col justify-center">
-                {/* Rating */}
-                <div className="flex items-center mb-3">
-                  {[...Array(5)].map((_, index) => (
-                    <Star
-                      key={index}
-                      className={`w-5 h-5 ${
-                        index < (currentDealData.rating ?? 0)
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                      aria-hidden="true"
+        <div className="relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentDeal}
+              initial={{ opacity: 0, x: 80 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -80 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-5xl mx-auto transition-all duration-500 transform hover:shadow-2xl"
+            >
+              <div className="flex flex-col md:flex-row">
+                {/* Product Image */}
+                <div className="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+                  <div className="relative">
+                    <Image
+                      alt={currentDealData.title || "Deal Image"}
+                      className="max-w-full h-64 md:h-80 object-contain transition-transform duration-300 hover:scale-105"
+                      src={currentDealData.imageUrl || "/placeholder.png"}
+                      width={500}
+                      height={500}
                     />
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600">
-                    ({currentDealData.rating ?? 0}.0)
-                  </span>
+                    <div className="absolute top-0 right-0 bg-red-500 text-white px-3 py-1 rounded-bl-lg font-bold text-sm">
+                      {currentDealData.dealType === "product" &&
+                      currentDealData.discountPercent
+                        ? `${Math.round(currentDealData.discountPercent)}% OFF`
+                        : "Limited Offer"}
+                    </div>
+                  </div>
                 </div>
 
-                {currentDealData.dealType === "product" ? (
-                  <>
-                    {/* PRODUCT DEAL SECTION */}
-                    <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                      {currentDealData.productName}
-                    </h2>
-
-                    <div className="flex items-center mb-6">
-                      <span className="text-4xl font-bold text-indigo-600 mr-3">
-                        ₹{currentDealData.discountedPrice}
-                      </span>
-                      {currentDealData.mrp && (
-                        <span className="text-xl text-gray-500 line-through">
-                          ₹{currentDealData.mrp}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* GENERAL DEAL SECTION */}
-                    <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                      {currentDealData.title}
-                    </h2>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      {currentDealData.description}
-                    </p>
-                    <div className="flex items-center mb-6">
-                      <span className="text-3xl font-semibold text-indigo-600">
-                        Flat ₹{currentDealData.discountedPrice} off
-                      </span>
-                    </div>
-                  </>
-                )}
-
-                {/* Countdown Timer */}
-                <div className="mb-8">
-                  <div className="flex items-center">
-                    <p className="text-sm text-gray-700 font-semibold mb-1">
-                      Use Coupon:
-                    </p>
-                    <p className="text-lg font-bold text-indigo-700 tracking-wider">
-                      {currentDealData.couponCode || "NO COUPON"}
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3 font-medium">
-                    Deal expires in:
-                  </p>
-                  <div className="flex justify-between max-w-sm">
-                    {Object.entries(timeLeft).map(([key, value], index) => (
-                      <div
+                {/* Product Details */}
+                <div className="md:w-1/2 p-8 flex flex-col justify-center">
+                  <div className="flex items-center mb-3">
+                    {[...Array(5)].map((_, index) => (
+                      <Star
                         key={index}
-                        className="text-center p-3 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
-                      >
-                        <div className="text-2xl font-bold text-gray-800">
-                          {value}
-                        </div>
-                        <div className="text-xs text-gray-600 capitalize">
-                          {key}
-                        </div>
-                      </div>
+                        className={`w-5 h-5 ${
+                          index < (currentDealData.rating ?? 0)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                        aria-hidden="true"
+                      />
                     ))}
+                    <span className="ml-2 text-sm text-gray-600">
+                      ({currentDealData.rating ?? 0}.0)
+                    </span>
                   </div>
-                </div>
 
-                {/* CTA Button */}
-                <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
-                  BUY NOW - LIMITED TIME!
-                </button>
+                  {currentDealData.dealType === "product" ? (
+                    <>
+                      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                        {currentDealData.productName}
+                      </h2>
+
+                      <div className="flex items-center mb-6">
+                        <span className="text-4xl font-bold text-indigo-600 mr-3">
+                          ₹{currentDealData.discountedPrice}
+                        </span>
+                        {currentDealData.mrp && (
+                          <span className="text-xl text-gray-500 line-through">
+                            ₹{currentDealData.mrp}
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                        {currentDealData.title}
+                      </h2>
+                      <p className="text-gray-600 mb-6 leading-relaxed">
+                        {currentDealData.description}
+                      </p>
+                      <div className="flex items-center mb-6">
+                        <span className="text-3xl font-semibold text-indigo-600">
+                          Flat ₹{currentDealData.discountedPrice} off
+                        </span>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Countdown Timer */}
+                  <div className="mb-8">
+                    <div className="flex items-center">
+                      <p className="text-sm text-gray-700 font-semibold mb-1">
+                        Use Coupon:
+                      </p>
+                      <p className="text-lg font-bold text-indigo-700 tracking-wider">
+                        {currentDealData.couponCode || "NO COUPON"}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3 font-medium">
+                      Deal expires in:
+                    </p>
+                    <div className="flex justify-between max-w-sm">
+                      {Object.entries(timeLeft).map(([key, value], index) => (
+                        <div
+                          key={index}
+                          className="text-center p-3 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
+                        >
+                          <div className="text-2xl font-bold text-gray-800">
+                            {value}
+                          </div>
+                          <div className="text-xs text-gray-600 capitalize">
+                            {key}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
+                    BUY NOW - LIMITED TIME!
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </AnimatePresence>
 
           {/* Navigation Arrows */}
           <button
@@ -235,7 +240,6 @@ export default function DealsOfWeek() {
           ))}
         </div>
 
-        {/* Deal Counter */}
         <div className="text-center mt-6">
           <p className="text-gray-600">
             Deal {currentDeal + 1} of {deals.length}

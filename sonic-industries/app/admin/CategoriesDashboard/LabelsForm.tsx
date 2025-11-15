@@ -12,6 +12,7 @@ interface LabelsFormProps {
 const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLabel, setNewLabel] = useState<CategoryLabels>({
+    _id: "",
     x: 0,
     y: 0,
     name: "",
@@ -24,7 +25,7 @@ const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
         ...prev,
         labels: [...prev.labels, newLabel],
       }));
-      setNewLabel({ x: 0, y: 0, name: "", desc: "" });
+      setNewLabel({ _id: "", x: 0, y: 0, name: "", desc: "" });
       setShowAddForm(false);
     }
   };
@@ -124,7 +125,7 @@ const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
               <button
                 onClick={() => {
                   setShowAddForm(false);
-                  setNewLabel({ x: 0, y: 0, name: "", desc: "" });
+                  setNewLabel({ _id: "", x: 0, y: 0, name: "", desc: "" });
                 }}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
