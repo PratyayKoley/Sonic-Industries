@@ -125,12 +125,14 @@ export const updateCategory = async (
       return;
     }
 
+    console.log(`${process.env.FRONTEND_URL}/api/revalidate`);
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
         path: `/${updatedCategory.slug}`,
         secret: process.env.REVALIDATE_SECRET,
       },
     });
+    console.log("done");
 
     res.status(200).json({
       message: "Category updated successfully.",
