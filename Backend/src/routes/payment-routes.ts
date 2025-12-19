@@ -6,6 +6,7 @@ import {
   verifyPayment,
   markPaymentFailed,
   razorpayWebhook,
+  generateReceipt,
 } from "../controllers/payment-controller";
 
 const router: Router = Router();
@@ -16,5 +17,6 @@ router.post("/checkout", createCheckoutSession);
 router.post("/checkout/verify-token", verifyCheckoutSession);
 router.post("/mark-failed", markPaymentFailed);
 router.post("/webhook", razorpayWebhook);
+router.post("/invoice", generateReceipt);
 
 export default router;

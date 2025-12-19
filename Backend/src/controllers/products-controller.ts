@@ -15,6 +15,8 @@ export const createProduct = async (
       price: Number(req.body.price),
       rating: Number(req.body.rating),
       features: JSON.parse(req.body.features || "[]"),
+      characteristics: JSON.parse(req.body.characteristics || "[]"),
+      labels: JSON.parse(req.body.labels || "[]"),
       packaging: JSON.parse(req.body.packaging || "{}"),
     };
     if (!productData || Object.keys(productData).length === 0) {
@@ -99,7 +101,7 @@ export const getProductBySlug = async (
       return;
     }
 
-    const product = await ProductModel.findOne({ slug });
+    const product = await ProductModel.findOne({ slug }).populate("categoryId");
 
     if (!product) {
       res.status(404).json({
@@ -126,24 +128,122 @@ export const updateProduct = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { slug, ...rest } = req.body;
+    const {
+      originalSlug,
+      name,
+      slug,
+      description,
+      tagline,
+      price,
+      rating,
+      features,
+      characteristics,
+      labels,
+      packaging,
+      yt_video_url,
+      existingImages,
+    } = req.body;
 
-    if (!slug || Object.keys(rest).length === 0) {
-      res.status(400).json({
-        message: "Slug and product data are required.",
-      });
+    if (!originalSlug) {
+      res.status(400).json({ message: "Original slug is required." });
       return;
     }
 
-    const updatedProduct = await ProductModel.findOneAndUpdate({ slug }, rest, {
-      new: true,
-      overwrite: true,
+    // Fetch existing product with its category
+    const existingProduct = await ProductModel.findOne({
+      slug: originalSlug,
+    }).populate<{ categoryId: Category }>("categoryId");
+
+    if (!existingProduct) {
+      res.status(404).json({ message: "Product not found." });
+      return;
+    }
+
+    const categoryName = existingProduct.categoryId.name;
+
+    // Parse incoming JSON fields
+    const parsedFeatures = features ? JSON.parse(features) : existingProduct.features;
+    const parsedPackaging = packaging ? JSON.parse(packaging) : existingProduct.packaging;
+    const parsedCharacteristics = characteristics ? JSON.parse(characteristics) : existingProduct.characteristics;
+    const parsedLabels = labels ? JSON.parse(labels) : existingProduct.labels;
+
+    let parsedExistingImages: string[] = [];
+    if (existingImages) {
+      parsedExistingImages = JSON.parse(existingImages);
+    }
+
+    // Upload NEW files only
+    const uploadedFiles = req.files as Express.Multer.File[];
+    const newImageUrls: string[] = [];
+
+    if (uploadedFiles && uploadedFiles.length > 0) {
+      for (const file of uploadedFiles) {
+        const uploadResult: UploadApiResponse = await new Promise(
+          (resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              {
+                folder: `category/${categoryName}/${name || existingProduct.name}`,
+                transformation: [
+                  {
+                    fetch_format: "auto",
+                    quality: "auto",
+                  },
+                ],
+              },
+              (error, result) => {
+                if (error) return reject(error);
+                resolve(result as UploadApiResponse);
+              }
+            );
+            stream.end(file.buffer);
+          }
+        );
+        newImageUrls.push(uploadResult.secure_url);
+      }
+    }
+
+    // ❗ CRITICAL FIX:
+    // If no new images uploaded AND existingImages is empty -> DO NOT touch images
+    let finalImages: string[] | undefined = undefined;
+
+    if (parsedExistingImages.length > 0 || newImageUrls.length > 0) {
+      finalImages = [...parsedExistingImages, ...newImageUrls];
+    }
+
+    // Prepare update data (images added only if finalImages exists)
+    const updateData: any = {
+      slug,
+      name,
+      price,
+      rating,
+      tagline,
+      description,
+      yt_video_url,
+      features: parsedFeatures,
+      packaging: parsedPackaging,
+      characteristics: parsedCharacteristics,
+      labels: parsedLabels,
+    };
+
+    if (finalImages !== undefined) {
+      updateData.images = finalImages; // Only update if user touched images
+    }
+
+    // Remove undefined fields
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
     });
 
+    const updatedProduct = await ProductModel.findOneAndUpdate(
+      { slug: originalSlug },
+      updateData,
+      { new: true }
+    );
+
     if (!updatedProduct) {
-      res.status(404).json({
-        message: "Product not found.",
-      });
+      res.status(404).json({ message: "Product not found." });
       return;
     }
 

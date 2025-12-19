@@ -9,6 +9,7 @@ const OrderSchema = new Schema(
       lastName: { type: String, required: true },
       email: { type: String, required: true },
       phone: { type: String, required: true },
+      gstin: { type: String },
     },
     status: {
       type: String,
@@ -35,6 +36,8 @@ const OrderSchema = new Schema(
     couponCode: { type: Types.ObjectId, ref: "Deal" },
     total_price: { type: Number, required: true },
     shipping_fee: { type: Number, required: true, default: 0 },
+    prepaidDiscount: { type: Number, required: true, default: 0 },
+    postpaidCharges: { type: Number, required: true, default: 0 },
     discount: { type: Number, required: true, default: 0 },
     final_price: { type: Number, required: true },
     shipping_address: {

@@ -87,14 +87,18 @@ export const createOrder = async (
     }
 
     const total_price: number = productInfo.price * newOrderRequest.quantity;
+    const gstPrice: number = total_price * 0.18;
     const couponCode: string = newOrderRequest.couponCode || null;
 
-    let shipping = 0;
+    let shipping = (total_price + gstPrice) < 10000 ? 1000 : 5000;
     const { discount } = await isDealApplicable(
       couponCode,
       productInfo._id.toString(),
       newOrderRequest.customer.email
     );
+
+    const finalPrice = total_price + gstPrice + shipping - discount;
+    const postpaidCharge = finalPrice * 0.02;
 
     // Add orderNumber and userId to the new order request
     const orderToSave = {
@@ -105,11 +109,14 @@ export const createOrder = async (
         lastName: newOrderRequest.customer.lastName,
         email: newOrderRequest.customer.email,
         phone: newOrderRequest.customer.phone,
+        gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "cod",
-      total_price: total_price,
+      total_price: (total_price + gstPrice),
+      shipping_fee: shipping,
+      postpaidCharges: postpaidCharge,
       discount: discount,
-      final_price: total_price + shipping - discount,
+      final_price: finalPrice,
       shipping_address: { ...newOrderRequest.customer.shippingAddress },
       billing_address: { ...newOrderRequest.customer.billingAddress },
       order_items: {

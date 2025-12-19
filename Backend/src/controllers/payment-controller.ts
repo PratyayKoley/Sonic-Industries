@@ -5,9 +5,9 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { OrderModel } from "../models/orders.model";
-import { DealModel } from "../models/deals.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
 import { isDealApplicable } from "../utils/couponCode";
+import { generateInvoicePdf, InvoicePayload } from "../config/invoicePdf";
 
 const CheckoutSecret =
   process.env.JWT_CHECKOUT_SECRET ||
@@ -65,15 +65,18 @@ export const createRazorPayOrder = async (
     }
 
     const total_price: number = product.price * newOrderRequest.quantity;
+    const gstPrice: number = total_price * 0.18;
     const couponCode: string = newOrderRequest.couponCode || null;
 
-    let shipping = 0;
+    let shipping = total_price + gstPrice < 10000 ? 1000 : 5000;
 
     const { discount } = await isDealApplicable(
       couponCode,
       product._id.toString(),
       newOrderRequest.customer.email
     );
+    const finalPrice = total_price + gstPrice + shipping - discount;
+    const prepaidDiscount = finalPrice * 0.02;
 
     const orderToSave = {
       orderNumber,
@@ -83,11 +86,14 @@ export const createRazorPayOrder = async (
         lastName: newOrderRequest.customer.lastName,
         email: newOrderRequest.customer.email,
         phone: newOrderRequest.customer.phone,
+        gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "razorpay",
-      total_price: total_price,
+      total_price: (total_price + gstPrice),
+      shipping_fee: shipping,
       discount: discount,
-      final_price: total_price + shipping - discount,
+      prepaidDiscount: prepaidDiscount,
+      final_price: finalPrice - prepaidDiscount,
       shipping_address: { ...newOrderRequest.customer.shippingAddress },
       billing_address: { ...newOrderRequest.customer.billingAddress },
       order_items: {
@@ -334,4 +340,26 @@ export const razorpayWebhook = async (
   }
 
   res.status(200).json({ status: "ok" });
+};
+
+export const generateReceipt = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const payload = req.body as InvoicePayload;
+  const pdfDoc = await generateInvoicePdf(payload);
+
+  const chunks: Buffer[] = [];
+  pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
+
+  pdfDoc.on("end", () => {
+    const pdfBuffer = Buffer.concat(chunks);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
+
+    res.send(pdfBuffer);
+  });
+
+  pdfDoc.end();
 };

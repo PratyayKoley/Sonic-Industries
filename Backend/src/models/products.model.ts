@@ -1,11 +1,17 @@
 import { Schema, InferSchemaType, model, Types } from "mongoose";
 
+const CharacteristicsSchema = new Schema({
+  image: { type: String },
+  name: { type: String },
+  desc: { type: String },
+});
+
 const ProductSchema = new Schema(
   {
     name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: { type: String },
-    tagline: { type: String },
+    tagline: { type: String, required: true },
 
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
 
@@ -16,7 +22,22 @@ const ProductSchema = new Schema(
     features: [
       {
         name: { type: String },
-        weight: { type: Number },
+        weight: { type: String },
+      },
+    ],
+
+    characteristics: {
+      desc1: { type: String },
+      desc2: { type: String },
+      items: [CharacteristicsSchema],
+    },
+
+    labels: [
+      {
+        x: { type: Number },
+        y: { type: Number },
+        name: { type: String },
+        desc: { type: String },
       },
     ],
 
@@ -30,7 +51,7 @@ const ProductSchema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export type Product = InferSchemaType<typeof ProductSchema> & {

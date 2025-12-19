@@ -17,7 +17,7 @@ router.get("/:slug", getProductBySlug);
 router.get("/", getAllProducts);
 router.post("/", authenticateJWT, authorizeRole("admin"), upload.array("images"), createProduct);
 router.post("/getProducts", getProductByCategory);
-router.put("/", authenticateJWT, authorizeRole("admin"), updateProduct);
+router.put("/", authenticateJWT, authorizeRole("admin"), upload.array("images"), updateProduct);
 router.delete("/:slug", authenticateJWT, authorizeRole("admin"), deleteProduct);
 
 export default router;
