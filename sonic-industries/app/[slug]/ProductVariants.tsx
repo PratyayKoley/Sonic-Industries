@@ -15,7 +15,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface ProductVariantsProps {
-  productData: CategoryBackend;
+  productData: CategoryBackend | null;
 }
 
 export default function ProductVariants({ productData }: ProductVariantsProps) {
@@ -42,7 +42,7 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
         const products = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/getProducts`,
           {
-            categoryId: productData._id,
+            categoryId: productData?._id,
           }
         );
         setProducts(products.data.products);
@@ -52,22 +52,8 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
     };
 
     fetchProducts();
-  }, [productData._id]);
+  }, [productData?._id]);
 
-  const backgroundColors = [
-    "bg-pink-200",
-    "bg-gray-500",
-    "bg-black",
-    "bg-blue-200",
-    "bg-green-200",
-    "bg-yellow-200",
-  ];
-
-  const getRandomBackground = () => {
-    return backgroundColors[
-      Math.floor(Math.random() * backgroundColors.length)
-    ];
-  };
 
   // Helper function to render stars
   const renderStars = (rating: number) => {
@@ -126,9 +112,7 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
               >
                 <div className="relative group overflow-hidden cursor-pointer">
                   {/* Product Image with Background */}
-                  <div
-                    className={`${getRandomBackground()} p-4 rounded-t-lg relative overflow-hidden h-64 flex items-center justify-center`}
-                  >
+                  <div className="bg-gray-100 p-4 rounded-t-lg relative overflow-hidden h-64 flex items-center justify-center">
                     <Image
                       src={product.images[0]}
                       alt={product.name}

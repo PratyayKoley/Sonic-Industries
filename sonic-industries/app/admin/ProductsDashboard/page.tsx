@@ -9,6 +9,9 @@ import {
   ProductPackaged,
   CategoryBackend,
   ProductImage,
+  ProductCharacteristics,
+  ProductLabels,
+  FeaturesBlock,
 } from "@/types";
 import CreateProduct from "./CreateProduct";
 import SearchBySlug from "./SearchBySlug";
@@ -30,7 +33,13 @@ const ProductsDashboard = () => {
     "browse"
   );
   const [activeFormTab, setActiveFormTab] = useState<
-    "basic" | "pricing" | "features" | "packaging" | "video"
+    | "basic"
+    | "pricing"
+    | "features"
+    | "characteristics"
+    | "labels"
+    | "packaging"
+    | "video"
   >("basic");
 
   const [formData, setFormData] = useState({
@@ -43,6 +52,12 @@ const ProductsDashboard = () => {
     images: [] as ProductImage[],
     rating: 0,
     features: [] as ProductFeatures[],
+    characteristics: {
+      desc1: "",
+      desc2: "",
+      items: [] as ProductCharacteristics[],
+    } as FeaturesBlock,
+    labels: [] as ProductLabels[],
     packaging: {
       length: 0,
       width: 0,
@@ -136,7 +151,7 @@ const ProductsDashboard = () => {
       slug: product.slug,
       description: product.description || "",
       tagline: product.tagline || "",
-      categoryId: product.categoryId || "",
+      categoryId: product.categoryId._id || "",
       price: product.price || 0,
       images: product.images.map((url) => ({
         file: null,
@@ -145,6 +160,12 @@ const ProductsDashboard = () => {
       })),
       rating: product.rating || 0,
       features: product.features || [],
+      characteristics: product.characteristics || {
+        desc1: "",
+        desc2: "",
+        items: [],
+      },
+      labels: product.labels || [],
       packaging: {
         length: product.packaging?.length ?? 0,
         width: product.packaging?.width ?? 0,

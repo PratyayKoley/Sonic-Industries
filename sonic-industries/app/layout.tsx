@@ -2,11 +2,13 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
 import Script from "next/script";
+import { Toaster } from "./ui/sonner";
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -77,6 +79,7 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.variable} antialiased`}>
         {children}
+        <Toaster position="top-center" theme="light" richColors />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="beforeInteractive"

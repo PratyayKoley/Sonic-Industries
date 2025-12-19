@@ -6,6 +6,8 @@ import PricingForm from "./PricingForm";
 import FeaturesForm from "./FeaturesForm";
 import PackagingForm from "./PackagingForm";
 import VideoForm from "./VideoForm";
+import LabelsForm from "./LabelsForm";
+import CharacteristicsForm from "./CharacteristicsForm";
 
 const CreateProduct = ({
   formData,
@@ -48,7 +50,8 @@ const CreateProduct = ({
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("slug", formData.slug);
-      if (formData.description) payload.append("description", formData.description);
+      if (formData.description)
+        payload.append("description", formData.description);
       if (formData.tagline) payload.append("tagline", formData.tagline);
       payload.append("categoryId", formData.categoryId);
       payload.append("price", String(formData.price));
@@ -56,7 +59,13 @@ const CreateProduct = ({
       // features and packaging might be objects/arrays -> stringify them
       payload.append("features", JSON.stringify(formData.features || []));
       payload.append("packaging", JSON.stringify(formData.packaging || {}));
-      if (formData.yt_video_url) payload.append("yt_video_url", formData.yt_video_url);
+      payload.append(
+        "characteristics",
+        JSON.stringify(formData.characteristics || [])
+      );
+      payload.append("labels", JSON.stringify(formData.labels || []));
+      if (formData.yt_video_url)
+        payload.append("yt_video_url", formData.yt_video_url);
 
       // Append only NEW files (hybrid array: string | {file, preview})
       const images = formData.images || [];
@@ -108,6 +117,12 @@ const CreateProduct = ({
       images: [],
       rating: 0,
       features: [],
+      characteristics: {
+        desc1: "",
+        desc2: "",
+        items: [],
+      },
+      labels: [],
       packaging: {
         length: 0,
         width: 0,
@@ -124,6 +139,8 @@ const CreateProduct = ({
     { key: "basic", label: "Basic Info" },
     { key: "pricing", label: "Pricing & Stock" },
     { key: "features", label: "Features" },
+    { key: "characteristics", label: "Characteristics" },
+    { key: "labels", label: "Labels" },
     { key: "packaging", label: "Packaging" },
     { key: "video", label: "Video" },
   ];
@@ -142,6 +159,12 @@ const CreateProduct = ({
         return <PricingForm formData={formData} setFormData={setFormData} />;
       case "features":
         return <FeaturesForm formData={formData} setFormData={setFormData} />;
+      case "characteristics":
+        return (
+          <CharacteristicsForm formData={formData} setFormData={setFormData} />
+        );
+      case "labels":
+        return <LabelsForm formData={formData} setFormData={setFormData} />;
       case "packaging":
         return <PackagingForm formData={formData} setFormData={setFormData} />;
       case "video":
@@ -225,12 +248,16 @@ const CreateProduct = ({
           <div>
             <span className="font-medium text-gray-700">Category:</span>
             <span className="ml-2">
-              {formData.categoryId ? getCategoryName(formData.categoryId) : "Not set"}
+              {formData.categoryId
+                ? getCategoryName(formData.categoryId)
+                : "Not set"}
             </span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Price:</span>
-            <span className="ml-2">{formData.price > 0 ? `₹ ${formData.price}` : "Not set"}</span>
+            <span className="ml-2">
+              {formData.price > 0 ? `₹ ${formData.price}` : "Not set"}
+            </span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Images:</span>
@@ -244,12 +271,18 @@ const CreateProduct = ({
           </div>
           <div>
             <span className="font-medium text-gray-700">Video:</span>
-            <span className="ml-2">{formData.yt_video_url ? "Set" : "Not set"}</span>
+            <span className="ml-2">
+              {formData.yt_video_url ? "Set" : "Not set"}
+            </span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Packaging:</span>
             <span className="ml-2">
-              {formData.packaging.length > 0 || formData.packaging.width > 0 || formData.packaging.height > 0 ? "Set" : "Not set"}
+              {formData.packaging.length > 0 ||
+              formData.packaging.width > 0 ||
+              formData.packaging.height > 0
+                ? "Set"
+                : "Not set"}
             </span>
           </div>
         </div>

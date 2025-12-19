@@ -3,17 +3,20 @@
 import React, { useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { Plus, X } from "lucide-react";
-import { FormDataType, CategoryFeatures } from "@/types";
+import { ProductCharacteristics, ProductFormDataType } from "@/types";
 
-interface FeaturesFormProps {
-  formData: FormDataType;
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+interface CharacteristicsFormProps {
+  formData: ProductFormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormDataType>>;
 }
 
-const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
+const CharacteristicsForm = ({
+  formData,
+  setFormData,
+}: CharacteristicsFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [iconSearch, setIconSearch] = useState("");
-  const [newFeature, setNewFeature] = useState<CategoryFeatures>({
+  const [newFeature, setNewFeature] = useState<ProductCharacteristics>({
     image: "",
     name: "",
     desc: "",
@@ -63,9 +66,6 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
   };
 
   const handleAddFeature = () => {
-    if (!newFeature.name?.trim() || !isValidIcon(newFeature.image || ""))
-      return;
-
     if (
       newFeature.name?.trim() &&
       newFeature.image?.trim() &&
@@ -73,12 +73,8 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
     ) {
       setFormData((prev) => ({
         ...prev,
-        features: {
-          ...prev.features,
-          items: [...(prev.features.items || []), newFeature],
-        },
+        features: [...prev.features, newFeature],
       }));
-
       setNewFeature({ image: "", name: "", desc: "" });
       setIconSearch("");
       setShowAddForm(false);
@@ -88,10 +84,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
   const handleRemoveFeature = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      features: {
-        ...prev.features,
-        items: prev.features.items?.filter((_, i) => i !== index),
-      },
+      features: prev.features.filter((_, i) => i !== index),
     }));
   };
 
@@ -103,11 +96,11 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
         </label>
         <input
           type="text"
-          value={formData.features.desc1 || ""}
+          value={formData.characteristics?.desc1 || ""}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              features: { ...prev.features, desc1: e.target.value },
+              characteristics: { ...prev.characteristics, desc1: e.target.value },
             }))
           }
           placeholder="Enter description line 1"
@@ -121,11 +114,11 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
         </label>
         <input
           type="text"
-          value={formData.features.desc2 || ""}
+          value={formData.characteristics?.desc2 || ""}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              features: { ...prev.features, desc2: e.target.value },
+              characteristics: { ...prev.characteristics, desc2: e.target.value },
             }))
           }
           placeholder="Enter description line 2"
@@ -134,13 +127,13 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
       </div>
 
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Feature Items</h3>
+        <h3 className="text-lg font-medium text-gray-900">Characteristic Items</h3>
         <button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Feature Item
+          Add Characteristic Item
         </button>
       </div>
 
@@ -150,7 +143,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Feature Name *
+                Characteristic Name *
               </label>
               <input
                 type="text"
@@ -286,7 +279,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
 
       {/* Features List */}
       <div className="space-y-3">
-        {formData.features.items?.map((feature, index) => (
+        {formData.characteristics?.items?.map((feature, index) => (
           <div
             key={index}
             className="border border-gray-300 rounded-lg p-4 bg-white"
@@ -313,7 +306,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
         ))}
       </div>
 
-      {formData.features.items?.length === 0 && !showAddForm && (
+      {formData.features.length === 0 && !showAddForm && (
         <div className="text-center py-8 text-gray-500">
           No features added yet. Click &quot;Add Feature&quot; to get started.
         </div>
@@ -322,4 +315,4 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
   );
 };
 
-export default FeaturesForm;
+export default CharacteristicsForm;

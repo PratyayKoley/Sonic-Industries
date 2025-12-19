@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
-import { FormDataType, CategoryLabels } from "@/types";
+import { ProductFormDataType, ProductLabels } from "@/types";
 
 interface LabelsFormProps {
-  formData: FormDataType;
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
+  formData: ProductFormDataType;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormDataType>>;
 }
 
 const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newLabel, setNewLabel] = useState<CategoryLabels>({
+  const [newLabel, setNewLabel] = useState<ProductLabels>({
     _id: "",
     x: 0,
     y: 0,

@@ -1,14 +1,16 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimationGeneratorType } from "framer-motion";
 import {
-  Lightbulb,
-  Lock,
-  Zap,
   ShieldCheck,
-  Cloud,
-  Headphones,
+  Cog,
+  Touchpad,
+  Video,
+  Truck,
+  RefreshCw,
+  Wallet,
+  BadgeIndianRupee,
 } from "lucide-react";
 import { Feature, FeatureCardProps } from "@/types";
 
@@ -41,45 +43,59 @@ export default function About() {
 
   const features: Feature[] = [
     {
-      title: "Innovative Design",
-      icon: <Lightbulb className="w-16 h-16" />,
+      title: "1 Year Warranty",
+      icon: <ShieldCheck className="w-16 h-16" />,
       description:
-        "Our products feature cutting-edge design that combines aesthetics with functionality for an exceptional user experience.",
+        "Enjoy peace of mind with a full 1-year warranty covering manufacturing defects and service support.",
       animation: "left",
     },
     {
-      title: "Advanced Security",
-      icon: <Lock className="w-16 h-16" />,
+      title: "Maintenance Free Machinery",
+      icon: <Cog className="w-16 h-16" />,
       description:
-        "We prioritize security in all our products, ensuring your data and privacy are protected at all times.",
+        "Our machinery is designed for long-term durability and operates smoothly with minimal maintenance.",
       animation: "bottom",
     },
     {
-      title: "High Performance",
-      icon: <Zap className="w-16 h-16" />,
+      title: "Easy Operation",
+      icon: <Touchpad className="w-16 h-16" />,
       description:
-        "Experience lightning-fast performance with our optimized hardware and software solutions designed for efficiency.",
+        "User-friendly controls and intuitive functionality make operating our products effortless for anyone.",
+      animation: "bottom",
+    },
+    {
+      title: "Video Call Assistance",
+      icon: <Video className="w-16 h-16" />,
+      description:
+        "Get instant expert help through video call assistance whenever you need guidance or troubleshooting.",
       animation: "right",
     },
     {
-      title: "Quality Assurance",
-      icon: <ShieldCheck className="w-16 h-16" />,
+      title: "All Over India Delivery",
+      icon: <Truck className="w-16 h-16" />,
       description:
-        "Every product undergoes rigorous testing to ensure it meets our high standards for quality and reliability.",
+        "We deliver safely and quickly to every corner of India, ensuring fast and reliable shipping.",
       animation: "left",
     },
     {
-      title: "Cloud Integration",
-      icon: <Cloud className="w-16 h-16" />,
+      title: "7 Days Replacement",
+      icon: <RefreshCw className="w-16 h-16" />,
       description:
-        "Seamlessly connect and sync your data across all devices with our integrated cloud solutions.",
+        "If you face any product issues, enjoy a hassle-free 7-day replacement guarantee.",
       animation: "bottom",
     },
     {
-      title: "24/7 Support",
-      icon: <Headphones className="w-16 h-16" />,
+      title: "Cash On Delivery",
+      icon: <Wallet className="w-16 h-16" />,
       description:
-        "Our dedicated support team is available around the clock to assist you with any questions or issues.",
+        "Make secure purchases with the convenience of cash on delivery available for eligible locations.",
+      animation: "bottom",
+    },
+    {
+      title: "Affordable Price",
+      icon: <BadgeIndianRupee className="w-16 h-16" />,
+      description:
+        "We offer high-quality products at the most competitive and affordable prices in the market.",
       animation: "right",
     },
   ];
@@ -211,7 +227,7 @@ export default function About() {
             {feature.title}
           </h3>
           <p
-            className={`text-center text-lg ${
+            className={`text-center text-sm ${
               isHovered ? "text-white" : "text-gray-600"
             }`}
           >
@@ -235,19 +251,21 @@ export default function About() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-24" ref={sectionRef} id="about">
+    <div className="min-h-screen bg-white py-20" ref={sectionRef} id="about">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-20">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why Choose Sonic Industries
+            Why Sonic Industries Is Best
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We combine innovation with reliability to deliver products that
-            exceed expectations and transform experiences.
+            Sonic Industries is a trusted leader in packaging solutions,
+            delivering innovation, precision, and reliability across industries.
+            Our commitment to quality, efficiency, and customer satisfaction
+            makes us the preferred choice for businesses worldwide.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 cursor-pointer">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 cursor-pointer">
           {features.map((feature, index) => (
             <FeatureCard key={index} feature={feature} index={index} />
           ))}

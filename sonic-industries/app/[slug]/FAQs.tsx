@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
@@ -9,7 +9,7 @@ interface FAQsProps {
   allProductData: CategoryImages;
 }
 
-export default function FAQs({allProductData}: FAQsProps) {
+export default function FAQs({ allProductData }: FAQsProps) {
   const [openItem, setOpenItem] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -18,33 +18,51 @@ export default function FAQs({allProductData}: FAQsProps) {
   const faqItems: FAQItem[] = [
     {
       id: 1,
-      question: "How can I order my favrourate product ?",
+      question: "What products does Sonic Industries offer ?",
       answer:
-        "You can easily order your favorite product by browsing our online catalog, selecting the item, choosing your preferred color and specifications, and then clicking the 'Add to Cart' button. Follow the checkout process to complete your order.",
+        "We provide a wide range of packaging machinery, coding and printing solutions, and automation systems for industries like FMCG, pharma, food & beverage, and electronics.",
     },
     {
       id: 2,
-      question: "How can I complete the order with payment ?",
+      question: "Are Sonic machines easy to operate ?",
       answer:
-        "To complete your order, proceed to checkout where you'll be prompted to provide shipping information and payment details. We accept credit/debit cards, PayPal, and Apple Pay. Once payment is confirmed, you'll receive an order confirmation email.",
+        "Yes! Our equipment features user-friendly interfaces, touchscreen controls, and ergonomic designs to simplify operation and reduce training time.",
     },
     {
       id: 3,
-      question: "Which payments options are available ?",
+      question: "Can Sonic machines work with different packaging materials ?",
       answer:
-        "We offer multiple payment options including all major credit and debit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, Google Pay, and bank transfers for select countries. All transactions are secured with industry-standard encryption.",
+        "Absolutely. Our systems are designed to handle cartons, pouches, plastics, metals, and other surfaces efficiently.",
     },
     {
       id: 4,
-      question: "How can I get refund for return products ?",
+      question: "Do you provide installation and training ?",
       answer:
-        "To receive a refund for returned products, first initiate a return request through your account within 30 days of purchase. Once we receive and inspect the returned item, we'll process your refund to the original payment method within 5-7 business days.",
+        "Yes. Sonic Industries offers complete installation, setup, and operator training to ensure smooth implementation.",
     },
     {
       id: 5,
-      question: "How can I be confident of the quality ?",
+      question: "What kind of after-sales support do you provide ?",
       answer:
-        "We stand behind the quality of our products with a comprehensive 12-month warranty. All our items undergo rigorous quality testing before shipping, and we source components only from certified suppliers. Our customer satisfaction rate exceeds 98%.",
+        "We offer 24/7 technical support, maintenance guidance, and spare parts supply to keep your operations running smoothly.",
+    },
+    {
+      id: 6,
+      question: "Are Sonic machines durable and reliable ?",
+      answer:
+        "Our equipment is built for industrial-grade performance, ensuring durability, precision, and long-term reliability even in tough production environments.",
+    },
+    {
+      id: 7,
+      question: "Can Sonic customize solutions for specific needs ?",
+      answer:
+        "Yes. We provide tailored solutions to meet your production, coding, and packaging requirements.",
+    },
+    {
+      id: 8,
+      question: "How do Sonic machines improve productivity ?",
+      answer:
+        "By combining precision, speed, and automation, our machinery reduces downtime, minimizes errors, and maximizes throughput.",
     },
   ];
 

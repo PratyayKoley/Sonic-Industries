@@ -3,6 +3,7 @@
 import React from "react";
 import { CheckCircle, Home, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const PaymentSuccess: React.FC = () => {
   const router = useRouter();
@@ -11,13 +12,26 @@ const PaymentSuccess: React.FC = () => {
     router.back();
   };
 
-  const handleDownloadReceipt = () => {
-    console.log("Downloading receipt...");
+  const handleDownloadReceipt = async (invoice?: string): Promise<void> => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/invoice`,
+      JSON.stringify({ invoice }),
+      { responseType: "blob" }
+    );
+
+    const blob = res.data;
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "invoice.pdf";
+    link.click();
+
+    window.URL.revokeObjectURL(url);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center px-4 relative overflow-hidden">
-
       {/* Main content with higher z-index */}
       <div className="max-w-2xl w-full text-center relative z-10">
         {/* Animated Success Icon */}
@@ -71,7 +85,7 @@ const PaymentSuccess: React.FC = () => {
             Go Back
           </button>
           <button
-            onClick={handleDownloadReceipt}
+            onClick={() => handleDownloadReceipt()}
             className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
           >
             <Download className="w-5 h-5" />

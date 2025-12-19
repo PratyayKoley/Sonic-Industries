@@ -9,6 +9,7 @@ interface OrderSummaryProps {
   coupon: string;
   discount: number;
   totalPrice: number;
+  gstPrice: number;
   shippingFee: number;
   finalPrice: number;
   isLoading: boolean;
@@ -28,6 +29,7 @@ export function OrderSummary({
   totalPrice,
   shippingFee,
   finalPrice,
+  gstPrice,
   isLoading,
   message,
   onQuantityChange,
@@ -37,8 +39,54 @@ export function OrderSummary({
   onRazorpayCheckout,
 }: OrderSummaryProps) {
   const [selected, setSelected] = useState<"razorpay" | "cod" | null>(null);
+  const prepaidDiscount = selected === "razorpay" ? finalPrice * 0.02 : 0;
+  const postpaidCharge = selected === "cod" ? finalPrice * 0.02 : 0;
+  const totalSavings = (discount || 0) + prepaidDiscount;
+
+  const finalTotal = finalPrice - prepaidDiscount + postpaidCharge;
+
   return (
     <div className="bg-blue-100/25 rounded-lg p-6">
+      {/* Important Notes Section */}
+      <div className="mb-5 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-sm text-gray-800 space-y-2">
+        <p className="font-semibold text-gray-900">Important Information</p>
+
+        <ul className="list-disc pl-5 space-y-1">
+          <li>
+            <span className="font-medium">Shipping Fee Rules: </span>
+            If the product price is below ₹10,000 → Shipping Fee = ₹1000. If
+            product price is above ₹10,000 → Shipping Fee = ₹5000.
+          </li>
+
+          <li>
+            <span className="font-medium">Payment Method Discounts: </span>
+            Razorpay (Prepaid) gives{" "}
+            <span className="font-semibold text-green-600">2% discount</span>.
+            COD adds{" "}
+            <span className="font-semibold text-red-600">2% extra charge</span>.
+          </li>
+
+          <li>
+            <span className="font-medium">Partial Payment: </span>
+            Pay only the transportation fee via Razorpay → Remaining product
+            amount paid via COD.
+          </li>
+
+          <li>
+            <span className="font-medium">Bonus Rewards:</span>
+            Prepaid (Razorpay) orders get a{" "}
+            <span className="font-semibold text-blue-600">
+              guaranteed bonus spin reward
+            </span>
+            . COD or partial payments{" "}
+            <span className="text-red-600 font-semibold">
+              do NOT get rewards
+            </span>
+            .
+          </li>
+        </ul>
+      </div>
+
       <h2 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b">
         ORDER SUMMARY
       </h2>
@@ -102,7 +150,7 @@ export function OrderSummary({
           </button>
         </div>
 
-        <div className="mt-2 text-sm text-green-600">{message}</div>  
+        <div className="mt-2 text-sm text-green-600">{message}</div>
       </div>
 
       {/* Price Breakdown */}
@@ -113,18 +161,36 @@ export function OrderSummary({
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700">Est. Delivery</span>
+          <span className="text-sm text-gray-700">Est. Transportation Fee</span>
           <span className="text-sm font-medium">₹{shippingFee.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700">Est. Tax</span>
-          <span className="text-sm font-medium">₹4.49</span>
+          <span className="text-sm text-gray-700">GST (18%)</span>
+          <span className="text-sm font-medium">₹{gstPrice.toFixed(2)}</span>
         </div>
+
+        {selected === "razorpay" && (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700">Prepaid Discount</span>
+            <span className="text-sm font-medium">
+              ₹{prepaidDiscount.toFixed(2)}
+            </span>
+          </div>
+        )}
+
+        {selected === "cod" && (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700">COD Charges</span>
+            <span className="text-sm font-medium">
+              ₹{postpaidCharge.toFixed(2)}
+            </span>
+          </div>
+        )}
 
         {discount > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700">Promotion</span>
+            <span className="text-sm text-gray-700">Discount</span>
             <span className="text-sm font-medium text-green-600">
               -₹{discount.toFixed(2)}
             </span>
@@ -132,19 +198,19 @@ export function OrderSummary({
         )}
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700">Pre-Tax Total</span>
+          <span className="text-sm text-gray-700">Total Savings</span>
           <span className="text-sm font-medium">
-            ₹{(finalPrice + 4.49).toFixed(2)}
+            ₹{totalSavings > 0 ? `${totalSavings.toFixed(2)}` : "0.00"}
           </span>
         </div>
 
         <div className="border-t pt-3">
           <div className="flex justify-between items-center">
             <span className="text-sm font-semibold text-red-600">
-              Total Savings
+              Final Total Price
             </span>
             <span className="text-sm font-semibold text-red-600">
-              ₹{discount > 0 ? `${discount.toFixed(2)}` : "0.00"}
+              ₹{finalTotal.toFixed(2)}
             </span>
           </div>
         </div>

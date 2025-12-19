@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Play, RotateCw, Truck, RefreshCw, Headphones, X } from "lucide-react";
-import { CategoryBackend } from "@/types";
+import { CategoryBackend, ProductBackend } from "@/types";
 import Image from "next/image";
 
 interface WhyChooseUsProps {
-  productData: CategoryBackend;
+  productData: CategoryBackend | ProductBackend;
 }
 
 export default function WhyChooseUs({ productData }: WhyChooseUsProps) {

@@ -12,6 +12,8 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import Image from "next/image";
+import VideoWidget from "@/lib/VideoWidget";
+import FakePopup from "@/lib/FakePopup";
 
 export default function Footer() {
   const [isVisible, setIsVisible] = useState(false);
@@ -206,7 +208,9 @@ export default function Footer() {
                     <div className="text-transparent bg-clip-text bg-black">
                       SONIC
                     </div>
-                    <div className="text-transparent bg-clip-text bg-black">INDUSTRIES</div>
+                    <div className="text-transparent bg-clip-text bg-black">
+                      INDUSTRIES
+                    </div>
                   </div>
                 </div>
               </div>
@@ -299,12 +303,14 @@ export default function Footer() {
               custom={2}
             >
               <p>
-                Copyright © {getCurrentYear()}. All rights reserved by{" "}
+                Copyright &copy; {getCurrentYear()}. All rights reserved by{" "}
                 <span className="font-medium">Sonic Industries</span>
               </p>
             </motion.div>
           </div>
         </div>
+        <FakePopup />
+        <VideoWidget />
       </footer>
     </>
   );

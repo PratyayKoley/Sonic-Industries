@@ -6,11 +6,11 @@ import { ProductFormDataType } from "@/types";
 
 interface Feature {
   name: string;
-  weight: number;
+  weight: string;
 }
 
 interface FeaturesFormProps {
-  formData: ProductFormDataType
+  formData: ProductFormDataType;
   setFormData: React.Dispatch<React.SetStateAction<ProductFormDataType>>;
 }
 
@@ -18,16 +18,16 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newFeature, setNewFeature] = useState<Feature>({
     name: "",
-    weight: 0,
+    weight: "",
   });
 
   const handleAddFeature = () => {
-    if (newFeature.name?.trim() && newFeature.weight > 0) {
+    if (newFeature.name?.trim() && newFeature.weight.trim()) {
       setFormData((prev: ProductFormDataType) => ({
         ...prev,
         features: [...prev.features, newFeature],
       }));
-      setNewFeature({ name: "", weight: 0 });
+      setNewFeature({ name: "", weight: "" });
       setShowAddForm(false);
     }
   };
@@ -39,10 +39,14 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
     }));
   };
 
-  const handleUpdateFeature = (index: number, field: keyof Feature, value: string | number) => {
+  const handleUpdateFeature = (
+    index: number,
+    field: keyof Feature,
+    value: string | number
+  ) => {
     setFormData((prev: ProductFormDataType) => ({
       ...prev,
-      features: prev.features.map((feature, i) => 
+      features: prev.features.map((feature, i) =>
         i === index ? { ...feature, [field]: value } : feature
       ),
     }));
@@ -85,12 +89,12 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                 Weight *
               </label>
               <input
-                type="number"
+                type="text"
                 value={newFeature.weight}
                 onChange={(e) =>
-                  setNewFeature((prev) => ({ 
-                    ...prev, 
-                    weight: parseFloat(e.target.value) || 0 
+                  setNewFeature((prev) => ({
+                    ...prev,
+                    weight: e.target.value,
                   }))
                 }
                 placeholder="Enter weight"
@@ -103,7 +107,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
             <div className="flex gap-2">
               <button
                 onClick={handleAddFeature}
-                disabled={!newFeature.name?.trim() || newFeature.weight <= 0}
+                disabled={!newFeature.name?.trim() || !newFeature.weight.trim()}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Add Feature
@@ -111,7 +115,7 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
               <button
                 onClick={() => {
                   setShowAddForm(false);
-                  setNewFeature({ name: "", weight: 0 });
+                  setNewFeature({ name: "", weight: "" });
                 }}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
@@ -137,7 +141,9 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                 <input
                   type="text"
                   value={feature.name}
-                  onChange={(e) => handleUpdateFeature(index, 'name', e.target.value)}
+                  onChange={(e) =>
+                    handleUpdateFeature(index, "name", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter feature name"
                 />
@@ -147,9 +153,15 @@ const FeaturesForm = ({ formData, setFormData }: FeaturesFormProps) => {
                   Weight
                 </label>
                 <input
-                  type="number"
+                  type="string"
                   value={feature.weight}
-                  onChange={(e) => handleUpdateFeature(index, 'weight', parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleUpdateFeature(
+                      index,
+                      "weight",
+                      e.target.value
+                    )
+                  }
                   min="0"
                   step="0.01"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ export default function ContactUs() {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.message) {
-      alert("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -39,14 +40,14 @@ export default function ContactUs() {
       );
 
       if (res.data.success) {
-        alert("✅ Message sent successfully!");
+        toast.success("✅ Message sent successfully!");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        alert("Failed to send message. Please try again.");
+        toast.error("Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      alert("Something went wrong. Please try again later.");
+      toast.error(error instanceof Error ? error.message : "An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -3,11 +3,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { CategoryBackend, CategoryImages, Hotspot } from "@/types";
+import { CategoryImages, Hotspot, ProductBackend } from "@/types";
 import Image from "next/image";
 
 interface HotspotsProps {
-  productData: CategoryBackend;
+  productData: ProductBackend;
   allProductData: CategoryImages;
 }
 

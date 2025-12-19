@@ -139,7 +139,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
       {/* Tagline */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Tagline
+          Tagline *
         </label>
         <input
           type="text"

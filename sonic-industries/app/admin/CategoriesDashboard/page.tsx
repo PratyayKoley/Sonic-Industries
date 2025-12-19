@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { X, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
-import { CategoryBackend, CategoryFeatures, CategoryLabels } from "@/types";
+import { CategoryBackend, CategoryFeatures, FeaturesBlock } from "@/types";
 import CreateCategory from "./CreateCategory";
 import SearchBySlug from "./SearchBySlug";
 import EditingModal from "./EditingModal";
@@ -21,15 +21,19 @@ const CategoriesDashboard = () => {
     "browse"
   );
   const [activeFormTab, setActiveFormTab] = useState<
-    "basic" | "features" | "labels" | "video"
+    "basic" | "features" | "video"
   >("basic");
 
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    title: "",
     description: "",
-    features: [] as CategoryFeatures[],
-    labels: [] as CategoryLabels[],
+    features: {
+      desc1: "",
+      desc2: "",
+      items: [] as CategoryFeatures[],
+    } as FeaturesBlock,
     yt_video_url: "",
   });
 
@@ -103,9 +107,13 @@ const CategoriesDashboard = () => {
     setFormData({
       name: category.name,
       slug: category.slug,
+      title: category.title,
       description: category.description || "",
-      features: category.features || [],
-      labels: category.labels || [],
+      features: category.features || {
+        desc1: "",
+        desc2: "",
+        items: [],
+      },
       yt_video_url: category.yt_video_url || "",
     });
     setIsEditing(true);

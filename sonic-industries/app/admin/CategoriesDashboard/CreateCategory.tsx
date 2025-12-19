@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import { CreateCategoryProps, FormTab } from "@/types";
 import BasicForm from "./BasicForm";
 import FeaturesForm from "./FeaturesForm";
-import LabelsForm from "./LabelsForm";
 import VideoForm from "./VideoForm";
 
 const CreateCategory = ({
@@ -37,18 +36,18 @@ const CreateCategory = ({
       const transformedData = {
         name: formData.name,
         slug: formData.slug,
+        title: formData.title,
         description: formData.description,
-        features: formData.features.map((feature) => ({
-          image: feature.image || undefined,
-          name: feature.name,
-          desc: feature.desc || undefined,
-        })),
-        labels: formData.labels.map((label) => ({
-          x: label.x,
-          y: label.y,
-          name: label.name,
-          desc: label.desc || undefined,
-        })),
+        features: {
+          desc1: formData.features.desc1 || undefined,
+          desc2: formData.features.desc2 || undefined,
+          items:
+            formData.features.items?.map((feature) => ({
+              image: feature.image || undefined,
+              name: feature.name,
+              desc: feature.desc || undefined,
+            })) || [],
+        },
         yt_video_url: formData.yt_video_url,
       };
 
@@ -79,9 +78,13 @@ const CreateCategory = ({
     setFormData({
       name: "",
       slug: "",
+      title: "",
       description: "",
-      features: [],
-      labels: [],
+      features: {
+        desc1: "",
+        desc2: "",
+        items: [],
+      },
       yt_video_url: "",
     });
     setIsEditing(false);
@@ -92,7 +95,6 @@ const CreateCategory = ({
   const tabs: { key: FormTab; label: string }[] = [
     { key: "basic", label: "Basic Info" },
     { key: "features", label: "Features" },
-    { key: "labels", label: "Labels" },
     { key: "video", label: "Video" },
   ];
 
@@ -102,8 +104,6 @@ const CreateCategory = ({
         return <BasicForm formData={formData} setFormData={setFormData} />;
       case "features":
         return <FeaturesForm formData={formData} setFormData={setFormData} />;
-      case "labels":
-        return <LabelsForm formData={formData} setFormData={setFormData} />;
       case "video":
         return <VideoForm formData={formData} setFormData={setFormData} />;
       default:
@@ -166,12 +166,20 @@ const CreateCategory = ({
             <span className="ml-2">{formData.slug || "Not set"}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Features:</span>
-            <span className="ml-2">{formData.features.length}</span>
+            <span className="font-medium text-gray-700">Title:</span>
+            <span className="ml-2">{formData.title || "Not set"}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Labels:</span>
-            <span className="ml-2">{formData.labels.length}</span>
+            <span className="font-medium text-gray-700">Description 1:</span>
+            <span className="ml-2">{formData.features.desc1 || "Not set"}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Description 2:</span>
+            <span className="ml-2">{formData.features.desc2 || "Not set"}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Features Items:</span>
+            <span className="ml-2">{formData.features.items?.length}</span>
           </div>
           <div>
             <span className="font-medium text-gray-700">Video:</span>

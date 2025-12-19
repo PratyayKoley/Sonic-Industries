@@ -9,6 +9,8 @@ import { CustomerForm } from "./CustomerForm";
 import { OrderSummary } from "./OrderSummary";
 import { LoadingSpinner } from "./LoadingSpinner";
 import CheckoutTimer from "./CheckoutTimer";
+import { toast } from "sonner";
+import { RazorpayModeDialog } from "./RazorpayModeDialog";
 
 interface Address {
   firstName: string;
@@ -25,6 +27,7 @@ interface CustomerData {
   lastName: string;
   email: string;
   phone: string;
+  gstin?: string;
   shippingAddress: Address;
   billingAddress: Address;
 }
@@ -33,6 +36,10 @@ export default function CheckoutClient() {
   const searchParams = useSearchParams();
   const sessionToken = searchParams.get("token");
   const [product, setProduct] = useState<ProductBackend | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [razorPayMode, setRazorPayMode] = useState<"full" | "partial" | null>(
+    null
+  );
   const [quantity, setQuantity] = useState(1);
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -43,6 +50,7 @@ export default function CheckoutClient() {
     lastName: "",
     email: "",
     phone: "",
+    gstin: "",
     shippingAddress: {
       firstName: "",
       lastName: "",
@@ -50,7 +58,7 @@ export default function CheckoutClient() {
       city: "",
       state: "",
       postalCode: "",
-      country: "",
+      country: "India",
     },
     billingAddress: {
       firstName: "",
@@ -59,7 +67,7 @@ export default function CheckoutClient() {
       city: "",
       state: "",
       postalCode: "",
-      country: "",
+      country: "India",
     },
   });
   const [sameAsShipping, setSameAsShipping] = useState(false);
@@ -120,6 +128,38 @@ export default function CheckoutClient() {
     setQuantity((prev) => Math.min(10, Math.max(1, prev + delta)));
   };
 
+  const isCustomerFormValid = () => {
+    const c = customer;
+
+    if (!c.firstName || !c.lastName || !c.email || !c.phone) return false;
+
+    const s = c.shippingAddress;
+    if (
+      !s.firstName ||
+      !s.lastName ||
+      !s.address ||
+      !s.city ||
+      !s.state ||
+      !s.postalCode ||
+      !s.country
+    )
+      return false;
+
+    const b = c.billingAddress;
+    if (
+      !b.firstName ||
+      !b.lastName ||
+      !b.address ||
+      !b.city ||
+      !b.state ||
+      !b.postalCode ||
+      !b.country
+    )
+      return false;
+
+    return true;
+  };
+
   const applyCoupon = async () => {
     if (coupon.trim()) {
       try {
@@ -149,6 +189,11 @@ export default function CheckoutClient() {
   };
 
   const handleCodCheckout = async () => {
+    if (!isCustomerFormValid()) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
     setIsLoading(true);
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`, {
@@ -159,17 +204,35 @@ export default function CheckoutClient() {
         payment_method: "cod",
         quantity,
       });
-      alert("Order placed successfully!");
+      toast.success("Order placed successfully!");
     } catch (error) {
       console.error("COD checkout failed:", error);
-      alert("Order failed. Please try again.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Order failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRazorpayCheckout = async () => {
+    if (!isCustomerFormValid()) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
+    setRazorPayMode(null);
+    setIsPaymentModalOpen(true);
+  };
+
+  const confirmRazorpayPayment = async () => {
+    if (!razorPayMode) return;
+
     setIsLoading(true);
+    setIsPaymentModalOpen(false);
+
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/create-order`,
@@ -190,15 +253,20 @@ export default function CheckoutClient() {
       initiatePayment(paymentPayLoad);
     } catch (error) {
       console.error("Razorpay checkout failed:", error);
-      alert("Payment initialization failed. Please try again.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Payment initialization failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const totalPrice = product.price * quantity;
-  const shippingFee = 50;
-  const finalPrice = totalPrice + shippingFee - discount;
+  const gstPrice = totalPrice * 0.18;
+  const shippingFee = (totalPrice + gstPrice) < 10000 ? 1000 : 5000;
+  const finalPrice = totalPrice + gstPrice + shippingFee - discount;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -259,6 +327,7 @@ export default function CheckoutClient() {
               discount={discount}
               totalPrice={totalPrice}
               shippingFee={shippingFee}
+              gstPrice={gstPrice}
               finalPrice={finalPrice}
               isLoading={isLoading}
               message={message}
@@ -271,6 +340,15 @@ export default function CheckoutClient() {
           </div>
         </div>
       </div>
+      <RazorpayModeDialog
+        isPaymentDialogOpen={isPaymentModalOpen}
+        setIsPaymentDialogOpen={setIsPaymentModalOpen}
+        setPaymentMode={setRazorPayMode}
+        finalPrice={finalPrice}
+        shippingFee={shippingFee}
+        paymentMode={razorPayMode}
+        confirmRazorpayPayment={confirmRazorpayPayment}
+      />
     </div>
   );
 }

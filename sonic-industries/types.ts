@@ -20,31 +20,6 @@ export interface Hotspot {
   name?: string;
 }
 
-export type Product = {
-  id: number;
-  name: string;
-  subtitle: string;
-  image: string;
-  price: string;
-  brand: string;
-  color: string;
-  compatibility: string;
-  dimensions: string;
-  weight: string;
-  os: string;
-  battery: string;
-};
-
-export type Specification = {
-  id: keyof Product;
-  name: string;
-};
-
-export type SpecRowProps = {
-  spec: Specification;
-  index: number;
-};
-
 export interface FAQItem {
   id: number;
   question: string;
@@ -56,9 +31,9 @@ export interface ProductBackend {
   name: string;
   slug: string;
   description?: string;
-  tagline?: string;
+  tagline: string;
 
-  categoryId: string;
+  categoryId: CategoryBackend;
 
   price: number;
   images: string[];
@@ -66,8 +41,15 @@ export interface ProductBackend {
 
   features?: {
     name?: string;
-    weight?: number;
+    weight?: string;
   }[];
+
+  characteristics?: {
+    desc1?: string;
+    desc2?: string;
+    items?: ProductCharacteristics[];
+  };
+  labels?: ProductLabels[];
 
   packaging?: {
     items?: number;
@@ -86,12 +68,14 @@ export interface CategoryBackend {
   _id: string;
   name: string;
   slug: string;
+  title: string;
   description?: string;
 
-  features?: CategoryFeatures[];
-
-  labels?: CategoryLabels[];
-
+  features?: {
+    desc1?: string;
+    desc2?: string;
+    items?: CategoryFeatures[];
+  };
   yt_video_url?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -180,13 +164,27 @@ export interface OrderModelBackend {
   updatedAt: string;
 }
 
+export interface ProductCharacteristics {
+  image?: string;
+  name?: string;
+  desc?: string;
+  iconSearch?: string;
+}
+
 export interface CategoryFeatures {
   image?: string;
   name?: string;
   desc?: string;
+  iconSearch?: string;
 }
 
-export interface CategoryLabels {
+export interface FeaturesBlock {
+  desc1?: string;
+  desc2?: string;
+  items?: CategoryFeatures[];
+}
+
+export interface ProductLabels {
   _id: string;
   x?: number;
   y?: number;
@@ -211,9 +209,13 @@ export type SearchBySlugProps = {
 export type FormDataType = {
   name: string;
   slug: string;
+  title: string;
   description: string;
-  features: CategoryFeatures[];
-  labels: CategoryLabels[];
+  features: {
+    desc1?: string;
+    desc2?: string;
+    items?: CategoryFeatures[];
+  };
   yt_video_url: string;
 };
 
@@ -249,7 +251,7 @@ export type CreateCategoryProps = {
 
 export type ProductFeatures = {
   name?: string;
-  weight?: number;
+  weight?: string;
 };
 
 export type ProductPackaged = {
@@ -279,6 +281,12 @@ export type ProductFormDataType = {
   features: ProductFeatures[];
 
   packaging: ProductPackaged;
+  characteristics: {
+    desc1?: string;
+    desc2?: string;
+    items?: ProductCharacteristics[];
+  };
+  labels: ProductLabels[];
 
   yt_video_url: string;
 };
@@ -393,10 +401,12 @@ export interface OrdersDashboardProps {
 }
 
 export type DealFormTab = "basic" | "pricing" | "image-rating";
-export type FormTab = "basic" | "features" | "labels" | "video";
+export type FormTab = "basic" | "features" | "video";
 export type ProductFormTab =
   | "basic"
   | "features"
+  | "characteristics"
+  | "labels"
   | "video"
   | "packaging"
   | "pricing";
