@@ -1,7 +1,4 @@
-import {
-  ProductBackend,
-  SearchAllProductProps,
-} from "@/types";
+import { ProductBackend, SearchAllProductProps } from "@/types";
 import {
   Edit2,
   Trash2,
@@ -24,6 +21,7 @@ const SearchAllProducts = ({
   );
 
   const toggleCategory = (categoryId: string) => {
+    console.log(categoryId);
     setExpandedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(categoryId)) {
@@ -72,6 +70,7 @@ const SearchAllProducts = ({
     return stars;
   };
 
+  console.log(products);
   // Group products by category
   const groupedProducts = categories
     .map((category) => ({
@@ -97,7 +96,7 @@ const SearchAllProducts = ({
           {/* Category Header */}
           <button
             onClick={() => toggleCategory(category._id)}
-            className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between p-4 bg-linear-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-bold text-gray-800">
@@ -212,7 +211,7 @@ const SearchAllProducts = ({
       {/* Uncategorized Products */}
       {uncategorizedProducts.length > 0 && (
         <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-          <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100">
+          <div className="p-4 bg-linear-to-r from-gray-50 to-gray-100">
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-bold text-gray-800">Uncategorized</h2>
               <span className="bg-gray-600 text-white px-3 py-1 rounded-full text-sm font-semibold">

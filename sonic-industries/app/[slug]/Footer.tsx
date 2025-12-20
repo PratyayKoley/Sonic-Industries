@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, spring } from "framer-motion";
+import { motion, AnimatePresence, spring, springValue } from "framer-motion";
 import { ChevronUp, PhoneCall, Mail, Clock } from "lucide-react";
 import {
   FaFacebook,
@@ -110,6 +110,18 @@ export default function Footer() {
     tap: { scale: 0.95 },
   };
 
+  const linkHoverVariants = {
+    hover: {
+      x: 5, // move 5px right on hover
+      color: "#7C3AED", // Tailwind purple-600 hex
+      transition: {
+        type: spring,
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -119,13 +131,6 @@ export default function Footer() {
     { name: "Terms & Conditions", href: "/RazorpayPages/terms-and-conditions" },
     { name: "Refund & Cancellation", href: "/RazorpayPages/refund-policy" },
     { name: "Shipping & Delivery", href: "/RazorpayPages/shipping-policy" },
-  ];
-
-  const quickLinks = [
-    { name: "About Us", href: "/about" },
-    { name: "Products", href: "/products" },
-    { name: "Services", href: "/services" },
-    { name: "Contact Us", href: "/contact-us" },
   ];
 
   return (
@@ -179,7 +184,10 @@ export default function Footer() {
         <FaWhatsapp size={22} />
       </motion.a>
 
-      <footer ref={footerRef} className="relative bg-linear-to-b from-gray-50 to-gray-100">
+      <footer
+        ref={footerRef}
+        className="relative bg-linear-to-b from-gray-50 to-gray-100"
+      >
         <div className="max-w-7xl mx-auto px-4 pt-16 pb-6">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -213,9 +221,10 @@ export default function Footer() {
                 </div>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Leading manufacturer of high-quality packaging machinery and solutions. Delivering excellence since inception.
+                Leading manufacturer of high-quality packaging machinery and
+                solutions. Delivering excellence since inception.
               </p>
-              
+
               {/* Contact Info */}
               <div className="space-y-2 pt-2">
                 <div className="flex items-start text-sm text-gray-600">
@@ -233,28 +242,6 @@ export default function Footer() {
               </div>
             </motion.div>
 
-            {/* Quick Links */}
-            <motion.div
-              initial="hidden"
-              animate={isVisible ? "visible" : "hidden"}
-              variants={containerVariants}
-              custom={1}
-            >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                {quickLinks.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-600 hover:text-purple-600 transition-colors text-sm inline-block hover:translate-x-1 transform duration-200"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
             {/* Legal & Policies */}
             <motion.div
               initial="hidden"
@@ -262,16 +249,20 @@ export default function Footer() {
               variants={containerVariants}
               custom={2}
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Legal & Policies</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Legal & Policies
+              </h3>
               <ul className="space-y-2">
                 {policyLinks.map((link) => (
                   <li key={link.name}>
-                    <Link
+                    <motion.a
                       href={link.href}
+                      variants={linkHoverVariants}
+                      whileHover="hover"
                       className="text-gray-600 hover:text-purple-600 transition-colors text-sm inline-block hover:translate-x-1 transform duration-200"
                     >
                       {link.name}
-                    </Link>
+                    </motion.a>
                   </li>
                 ))}
               </ul>
@@ -284,7 +275,9 @@ export default function Footer() {
               variants={containerVariants}
               custom={3}
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Connect With Us</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Connect With Us
+              </h3>
               <p className="text-gray-600 text-sm mb-4">
                 Follow us on social media for updates and latest products.
               </p>
@@ -362,23 +355,39 @@ export default function Footer() {
           >
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <p className="text-sm text-gray-600 text-center md:text-left">
-                Copyright &copy; {getCurrentYear()} <span className="font-semibold text-purple-600">Sonic Industries</span>. All rights reserved.
+                Copyright &copy; {getCurrentYear()}{" "}
+                <span className="font-semibold text-purple-600">
+                  Sonic Industries
+                </span>
+                . All rights reserved.
               </p>
-              
+
               <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
-                <Link href="/RazorpayPages/privacy-policy" className="hover:text-purple-600 transition-colors">
+                <Link
+                  href="/RazorpayPages/privacy-policy"
+                  className="hover:text-purple-600 transition-colors"
+                >
                   Privacy
                 </Link>
                 <span>•</span>
-                <Link href="/RazorpayPages/terms-and-conditions" className="hover:text-purple-600 transition-colors">
+                <Link
+                  href="/RazorpayPages/terms-and-conditions"
+                  className="hover:text-purple-600 transition-colors"
+                >
                   Terms
                 </Link>
                 <span>•</span>
-                <Link href="/RazorpayPages/refund-policy" className="hover:text-purple-600 transition-colors">
+                <Link
+                  href="/RazorpayPages/refund-policy"
+                  className="hover:text-purple-600 transition-colors"
+                >
                   Refunds
                 </Link>
                 <span>•</span>
-                <Link href="/RazorpayPages/shipping-policy" className="hover:text-purple-600 transition-colors">
+                <Link
+                  href="/RazorpayPages/shipping-policy"
+                  className="hover:text-purple-600 transition-colors"
+                >
                   Shipping
                 </Link>
               </div>
