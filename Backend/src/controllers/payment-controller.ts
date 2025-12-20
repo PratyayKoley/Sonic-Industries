@@ -64,19 +64,20 @@ export const createRazorPayOrder = async (
       }
     }
 
-    const total_price: number = product.price * newOrderRequest.quantity;
-    const gstPrice: number = total_price * 0.18;
+    const subtotal: number = product.price * newOrderRequest.quantity;
+    const gst: number = Math.round(subtotal * 0.18);
+    let shipping = subtotal + gst < 10000 ? 1000 : 5000;
+
     const couponCode: string = newOrderRequest.couponCode || null;
-
-    let shipping = total_price + gstPrice < 10000 ? 1000 : 5000;
-
     const { discount } = await isDealApplicable(
       couponCode,
       product._id.toString(),
       newOrderRequest.customer.email
     );
-    const finalPrice = total_price + gstPrice + shipping - discount;
-    const prepaidDiscount = finalPrice * 0.02;
+    const priceAfterCoupon: number = subtotal + gst + shipping - discount;
+
+    const prepaidDiscount = Math.round(priceAfterCoupon * 0.02);
+    const finalPayable = Math.round(priceAfterCoupon - prepaidDiscount);
 
     const orderToSave = {
       orderNumber,
@@ -89,11 +90,11 @@ export const createRazorPayOrder = async (
         gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "razorpay",
-      total_price: (total_price + gstPrice),
+      total_price: (subtotal + gst),
       shipping_fee: shipping,
       discount: discount,
       prepaidDiscount: prepaidDiscount,
-      final_price: finalPrice - prepaidDiscount,
+      final_price: finalPayable,
       shipping_address: { ...newOrderRequest.customer.shippingAddress },
       billing_address: { ...newOrderRequest.customer.billingAddress },
       order_items: {
@@ -106,7 +107,7 @@ export const createRazorPayOrder = async (
     };
 
     const RazorpayOrder = await razorpayInstance.orders.create({
-      amount: orderToSave.final_price * 100, // convert to paise
+      amount: finalPayable * 100, // convert to paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: true,

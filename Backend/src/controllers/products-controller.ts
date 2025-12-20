@@ -324,7 +324,7 @@ export const getAllProducts = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allProducts = await ProductModel.find();
+    const allProducts = await ProductModel.find().populate("categoryId");
 
     if (!allProducts || allProducts.length === 0) {
       res.status(404).json({
