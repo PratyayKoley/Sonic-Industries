@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Address {
@@ -28,6 +28,9 @@ interface CustomerFormProps {
   setCustomer: Dispatch<SetStateAction<CustomerData>>;
   sameAsShipping: boolean;
   setSameAsShipping: Dispatch<SetStateAction<boolean>>;
+  setOtpVerified: Dispatch<SetStateAction<boolean>>;
+  otpSent: boolean;
+  setOtpSent: Dispatch<SetStateAction<boolean>>;
 }
 
 export function CustomerForm({
@@ -35,10 +38,12 @@ export function CustomerForm({
   setCustomer,
   sameAsShipping,
   setSameAsShipping,
+  setOtpVerified,
+  otpSent,
+  setOtpSent,
 }: CustomerFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailTouched, setEmailTouched] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
 
   const inputClassName =
@@ -100,7 +105,7 @@ export function CustomerForm({
         break;
 
       case "phone":
-        if (!/^[0-9]{10}$/.test(value))
+        if (value && value.length !== 10)
           message = "Phone number must be 10 digits";
         break;
 
@@ -120,6 +125,25 @@ export function CustomerForm({
     setErrors((prev) => ({ ...prev, [name]: message }));
   }
 
+  function useDebounce<T>(value: T, delay = 400) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }, [value, delay]);
+
+    return debouncedValue;
+  }
+
+  const debouncedEmail = useDebounce(customer.email, 400);
+  const debouncedPhone = useDebounce(customer.phone, 400);
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(debouncedEmail);
+
   function handleOtpSend() {
     // Replace with your backend OTP API call
 
@@ -129,11 +153,29 @@ export function CustomerForm({
   function handleOtpValidate() {
     if (!/^[0-9]{4,6}$/.test(otp)) {
       toast.error("Invalid OTP");
+      setOtpVerified(false);
       return;
     }
 
+    // ✅ Ideally verify OTP from backend here
+    setOtpVerified(true);
     toast.success("OTP Verified Successfully!");
   }
+
+  useEffect(() => {
+    if (!emailTouched) return;
+    validateField("email", debouncedEmail);
+  }, [debouncedEmail]);
+
+  useEffect(() => {
+    validateField("phone", debouncedPhone);
+  }, [debouncedPhone]);
+
+  useEffect(() => {
+    setOtpSent(false);
+    setOtpVerified(false);
+    setOtp("");
+  }, [customer.email]);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -154,9 +196,9 @@ export function CustomerForm({
             type="text"
             value={customer.firstName}
             placeholder="First Name"
-            onBlur={() => validateField("firstName", customer.firstName)}
             onChange={(e) => {
               setCustomer({ ...customer, firstName: e.target.value });
+              validateField("firstName", e.target.value);
             }}
             className={inputClassName}
           />
@@ -171,9 +213,9 @@ export function CustomerForm({
             type="text"
             value={customer.lastName}
             placeholder="Last Name"
-            onBlur={() => validateField("lastName", customer.lastName)}
             onChange={(e) => {
               setCustomer({ ...customer, lastName: e.target.value });
+              validateField("lastName", e.target.value);
             }}
             className={inputClassName}
           />
@@ -189,12 +231,10 @@ export function CustomerForm({
             type="email"
             placeholder="your.email@example.com"
             value={customer.email}
-            onBlur={() => {
-              setEmailTouched(true);
-              validateField("email", customer.email);
-            }}
             onChange={(e) => {
-              setCustomer({ ...customer, email: e.target.value });
+              const value = e.target.value;
+              setCustomer({ ...customer, email: value });
+              setEmailTouched(true);
             }}
             className={inputClassName}
           />
@@ -203,7 +243,7 @@ export function CustomerForm({
           )}
 
           {/* Show Send OTP button when valid email is typed */}
-          {emailTouched && !errors.email && !otpSent && (
+          {emailTouched && isEmailValid && !otpSent && (
             <button
               onClick={handleOtpSend}
               className="px-4 py-2 bg-blue-600 text-white rounded text-sm"
@@ -243,10 +283,10 @@ export function CustomerForm({
               type="tel"
               placeholder="9876543210"
               value={customer.phone}
-              onBlur={() => validateField("phone", customer.phone)}
-              onChange={(e) =>
-                setCustomer({ ...customer, phone: e.target.value })
-              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                setCustomer({ ...customer, phone: value });
+              }}
               className={`${inputClassName} pl-10`}
             />
           </div>
@@ -263,10 +303,10 @@ export function CustomerForm({
           type="text"
           placeholder="22AAAAA0000A1Z5"
           value={customer.gstin || ""}
-          onBlur={() => validateField("gstin", customer.gstin || "")}
-          onChange={(e) =>
-            setCustomer({ ...customer, gstin: e.target.value.toUpperCase() })
-          }
+          onChange={(e) => {
+            setCustomer({ ...customer, gstin: e.target.value.toUpperCase() });
+            validateField("gstin", e.target.value.toUpperCase() || "");
+          }}
           className={inputClassName}
         />
         {errors.gstin && (
@@ -386,18 +426,16 @@ export function CustomerForm({
           <input
             type="text"
             value={customer.shippingAddress.postalCode}
-            onBlur={() =>
-              validateField("postalCode", customer.shippingAddress.postalCode)
-            }
-            onChange={(e) =>
+            onChange={(e) => {
               setCustomer({
                 ...customer,
                 shippingAddress: {
                   ...customer.shippingAddress,
                   postalCode: e.target.value,
                 },
-              })
-            }
+              });
+              validateField("postalCode", e.target.value);
+            }}
             className={inputClassName}
           />
           {errors.postalCode && (
@@ -534,21 +572,16 @@ export function CustomerForm({
               <input
                 type="text"
                 value={customer.billingAddress.postalCode}
-                onBlur={() =>
-                  validateField(
-                    "postalCode",
-                    customer.billingAddress.postalCode
-                  )
-                }
-                onChange={(e) =>
+                onChange={(e) => {
                   setCustomer({
                     ...customer,
                     billingAddress: {
                       ...customer.billingAddress,
                       postalCode: e.target.value,
                     },
-                  })
-                }
+                  });
+                  validateField("postalCode", e.target.value);
+                }}
                 className={inputClassName}
               />
               {errors.postalCode && (

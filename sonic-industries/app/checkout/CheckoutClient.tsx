@@ -71,6 +71,8 @@ export default function CheckoutClient() {
     },
   });
   const [sameAsShipping, setSameAsShipping] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
   useEffect(() => {
     if (!sessionToken) return;
@@ -194,6 +196,16 @@ export default function CheckoutClient() {
       return;
     }
 
+    if (!otpSent) {
+      toast.error("Please send OTP to your email");
+      return;
+    }
+
+    if (!otpVerified) {
+      toast.error("Please verify OTP before proceeding");
+      return;
+    }
+
     setIsLoading(true);
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`, {
@@ -220,6 +232,16 @@ export default function CheckoutClient() {
   const handleRazorpayCheckout = async () => {
     if (!isCustomerFormValid()) {
       toast.error("Please fill all required fields.");
+      return;
+    }
+
+    if (!otpSent) {
+      toast.error("Please send OTP to your email");
+      return;
+    }
+
+    if (!otpVerified) {
+      toast.error("Please verify OTP before proceeding");
       return;
     }
 
@@ -265,8 +287,9 @@ export default function CheckoutClient() {
 
   const totalPrice = product.price * quantity;
   const gstPrice = totalPrice * 0.18;
-  const shippingFee = (totalPrice + gstPrice) < 10000 ? 1000 : 5000;
+  const shippingFee = totalPrice + gstPrice < 10000 ? 1000 : 5000;
   const finalPrice = totalPrice + gstPrice + shippingFee - discount;
+  const prepaidDiscount = Math.round(finalPrice * 0.02);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -315,6 +338,9 @@ export default function CheckoutClient() {
               setCustomer={setCustomer}
               sameAsShipping={sameAsShipping}
               setSameAsShipping={setSameAsShipping}
+              setOtpVerified={setOtpVerified}
+              otpSent={otpSent}
+              setOtpSent={setOtpSent}
             />
           </div>
 
@@ -323,6 +349,7 @@ export default function CheckoutClient() {
             <OrderSummary
               product={product}
               quantity={quantity}
+              otpVerified={otpVerified}
               coupon={coupon}
               discount={discount}
               totalPrice={totalPrice}
@@ -344,7 +371,7 @@ export default function CheckoutClient() {
         isPaymentDialogOpen={isPaymentModalOpen}
         setIsPaymentDialogOpen={setIsPaymentModalOpen}
         setPaymentMode={setRazorPayMode}
-        finalPrice={finalPrice}
+        finalPrice={finalPrice - prepaidDiscount}
         shippingFee={shippingFee}
         paymentMode={razorPayMode}
         confirmRazorpayPayment={confirmRazorpayPayment}

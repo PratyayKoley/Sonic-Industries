@@ -2,6 +2,7 @@ import { ProductBackend } from "@/types";
 import { Wallet } from "lucide-react";
 import { SiRazorpay } from "react-icons/si";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface OrderSummaryProps {
   product: ProductBackend;
@@ -14,6 +15,7 @@ interface OrderSummaryProps {
   finalPrice: number;
   isLoading: boolean;
   message: string;
+  otpVerified: boolean;
   onQuantityChange: (delta: number) => void;
   onCouponChange: (value: string) => void;
   onApplyCoupon: () => void;
@@ -32,6 +34,7 @@ export function OrderSummary({
   gstPrice,
   isLoading,
   message,
+  otpVerified,
   onQuantityChange,
   onCouponChange,
   onApplyCoupon,
@@ -254,17 +257,27 @@ export function OrderSummary({
         {/* Action button (appears after selection) */}
         {selected && (
           <button
-            onClick={
-              selected === "razorpay" ? onRazorpayCheckout : onCodCheckout
-            }
-            disabled={isLoading}
-            className={`w-full flex items-center justify-center gap-2 py-3 px-5 rounded-lg font-semibold shadow-md transition-colors cursor-pointer
+            onClick={() => {
+              // 🔒 HARD GUARD
+              if (selected === "razorpay" && !otpVerified) {
+                toast.error("Please verify OTP before proceeding to payment");
+                return;
+              }
+
+              selected === "razorpay" ? onRazorpayCheckout() : onCodCheckout();
+            }}
+            disabled={isLoading || (selected === "razorpay" && !otpVerified)}
+            className={`w-full flex items-center justify-center gap-2 py-3 px-5 rounded-lg font-semibold shadow-md transition-colors
       ${
         selected === "razorpay"
           ? "bg-[#1a3c92] hover:bg-[#0f2c6a] text-white"
           : "bg-green-600 hover:bg-green-700 text-white"
       }
-      ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+      ${
+        isLoading || (selected === "razorpay" && !otpVerified)
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer"
+      }
     `}
           >
             {isLoading ? (

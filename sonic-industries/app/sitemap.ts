@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productsRes = await axios.get(`${backend}/api/products`);
   const products: ProductBackend[] = productsRes.data.products || [];
 
+  // Dynamic URLs from categories
   const categoryUrls: MetadataRoute.Sitemap = categories.map((category) => ({
     url: `${frontend}/${category.slug}`,
     lastModified: category.updatedAt || category.createdAt,
@@ -21,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 1,
   }));
 
+  // Dynamic URLs from products
   const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${frontend}/${product.slug}`,
     lastModified: product.updatedAt || product.createdAt,
@@ -28,5 +30,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  return [...categoryUrls, ...productUrls];
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: `${frontend}/RazorpayPages/privacy-policy`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${frontend}/RazorpayPagesrefund-policy`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${frontend}/RazorpayPages/shipping-policy`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${frontend}/RazorpayPages/terms-and-conditions`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
+
+  // Combine all URLs
+  return [...categoryUrls, ...productUrls, ...staticPages];
 }
