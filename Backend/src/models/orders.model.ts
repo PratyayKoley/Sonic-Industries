@@ -3,7 +3,7 @@ import { InferSchemaType, model, Schema, Types } from "mongoose";
 const OrderSchema = new Schema(
   {
     orderNumber: { type: String, required: true, unique: true },
-    sessionToken: { type: String, required: true, unique: true },
+    sessionToken: { type: String, required: true },
     customer: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
@@ -23,13 +23,21 @@ const OrderSchema = new Schema(
       default: "pending",
       required: true,
     },
+    reward: {
+      name: { type: String, default: null },
+      spunAt: { type: Date, default: null },
+    },
+    spinEligible: {
+      type: Boolean,
+      default: false,
+    },
     payment_method: {
       type: String,
       enum: ["cod", "razorpay"],
       required: true,
     },
     razorpay: {
-      razorpay_order_id: { type: String },
+      razorpay_order_id: { type: String, unique: true },
       razorpay_payment_id: { type: String },
       paidAt: { type: Date },
     },

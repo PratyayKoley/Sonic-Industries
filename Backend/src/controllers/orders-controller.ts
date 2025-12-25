@@ -61,6 +61,18 @@ export const createOrder = async (
       return;
     }
 
+    const existingOrders = await OrderModel.countDocuments({
+      sessionToken: newOrderRequest.sessionToken,
+      payment_status: { $in: ["pending", "failed"] },
+    });
+
+    if (existingOrders >= 5) {
+      res.status(429).json({
+        message: "Too many payment attempts for this session",
+      });
+      return;
+    }
+
     const productInfo: Product | null = await ProductModel.findById(
       (decoded as { productId: string }).productId
     );
@@ -90,7 +102,7 @@ export const createOrder = async (
     const gstPrice: number = total_price * 0.18;
     const couponCode: string = newOrderRequest.couponCode || null;
 
-    let shipping = (total_price + gstPrice) < 10000 ? 1000 : 5000;
+    let shipping = total_price + gstPrice < 10000 ? 1000 : 5000;
     const { discount } = await isDealApplicable(
       couponCode,
       productInfo._id.toString(),
@@ -112,7 +124,7 @@ export const createOrder = async (
         gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "cod",
-      total_price: (total_price + gstPrice),
+      total_price: total_price + gstPrice,
       shipping_fee: shipping,
       postpaidCharges: postpaidCharge,
       discount: discount,

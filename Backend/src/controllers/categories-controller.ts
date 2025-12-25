@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Category, CategoryModel } from "../models/categories.model";
 import { Product, ProductModel } from "../models/products.model";
 import axios from "axios";
+import { startSession } from "mongoose";
 
 export const getCategoryBySlug = async (
   req: Request,
@@ -151,6 +152,9 @@ export const deleteCategory = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const session = await startSession();
+  session.startTransaction();
+
   try {
     const { slug } = req.params;
 
@@ -161,17 +165,26 @@ export const deleteCategory = async (
       return;
     }
 
-    const deletedCategory = await CategoryModel.findOneAndDelete({ slug });
-    if (!deletedCategory) {
-      res.status(404).json({
-        message: "Category not found.",
-      });
+    const category = await CategoryModel.findOne({ slug }).session(session);
+
+    if (!category) {
+      res.status(404).json({ message: "Category not found." });
       return;
     }
 
+    await ProductModel.deleteMany({ categoryId: category._id }, { session });
+
+    const deletedCategory = await CategoryModel.findByIdAndDelete(
+      category._id,
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${deletedCategory.slug}`,
+        path: `/${deletedCategory?.slug}`,
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -182,6 +195,9 @@ export const deleteCategory = async (
     });
     return;
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     console.error("Error deleting category:", error);
     res.status(500).json({
       message: "Failed to delete category.",

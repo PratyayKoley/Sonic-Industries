@@ -4,10 +4,11 @@ import { Product, ProductModel } from "../models/products.model";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { OrderModel } from "../models/orders.model";
+import { Order, OrderModel } from "../models/orders.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
 import { isDealApplicable } from "../utils/couponCode";
 import { generateInvoicePdf, InvoicePayload } from "../config/invoicePdf";
+import { pickWeightedReward } from "../utils/rewardPicker";
 
 const CheckoutSecret =
   process.env.JWT_CHECKOUT_SECRET ||
@@ -35,6 +36,18 @@ export const createRazorPayOrder = async (
     if (!decoded) {
       res.status(401).json({
         message: "Session expired or invalid",
+      });
+      return;
+    }
+
+    const existingOrders = await OrderModel.countDocuments({
+      sessionToken: newOrderRequest.sessionToken,
+      payment_status: { $in: ["pending", "failed"] },
+    });
+
+    if (existingOrders >= 5) {
+      res.status(429).json({
+        message: "Too many payment attempts for this session",
       });
       return;
     }
@@ -90,7 +103,7 @@ export const createRazorPayOrder = async (
         gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "razorpay",
-      total_price: (subtotal + gst),
+      total_price: subtotal + gst,
       shipping_fee: shipping,
       discount: discount,
       prepaidDiscount: prepaidDiscount,
@@ -175,6 +188,7 @@ export const verifyPayment = async (
           payment_status: "paid",
           "razorpay.razorpay_payment_id": response.razorpay_payment_id,
           "razorpay.paidAt": new Date().toISOString(),
+          spinEligible: true,
         },
       }
     );
@@ -341,6 +355,67 @@ export const razorpayWebhook = async (
   }
 
   res.status(200).json({ status: "ok" });
+};
+
+export const spinReward = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { razorpayOrderId } = req.body;
+
+    if (!razorpayOrderId) {
+      res.status(400).json({
+        message: "Order ID is required",
+      });
+      return;
+    }
+
+    const order = await OrderModel.findOne({
+      "razorpay.razorpay_order_id": razorpayOrderId,
+    });
+
+    if (!order) {
+      res.status(404).json({
+        message: "Order not found",
+      });
+      return;
+    }
+
+    if (
+      order.payment_method !== "razorpay" ||
+      order.payment_status !== "paid" ||
+      !order.spinEligible
+    ) {
+      res.status(403).json({
+        message: "Payment not completed for this order",
+      });
+      return;
+    }
+
+    if (order.reward?.name) {
+      res.status(200).json({
+        message: "Reward already assigned for this order",
+        reward: order.reward.name,
+      });
+      return;
+    }
+
+    const reward = pickWeightedReward();
+    order.reward = {
+      name: reward,
+      spunAt: new Date(),
+    };
+    await order.save();
+
+    res.status(200).json({
+      reward,
+      alreadySpun: false,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Spin failed" });
+  }
 };
 
 export const generateReceipt = async (
