@@ -12,14 +12,14 @@ const PaymentFailed: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-pink-50 flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-red-50 via-orange-50 to-pink-50 flex items-center justify-center px-4 relative overflow-hidden">
       {/* Error Animation Container */}
       <div className="max-w-2xl w-full text-center relative z-10">
         {/* Animated Error Icon */}
         <div className="relative mb-8">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-32 h-32 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center animate-shake shadow-2xl">
+              <div className="w-32 h-32 bg-linear-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center animate-shake shadow-2xl">
                 <XCircle className="w-16 h-16 text-white animate-error-pulse" />
               </div>
               <div className="absolute inset-0 w-32 h-32 border-4 border-red-300 rounded-full animate-error-ring opacity-60"></div>
@@ -30,7 +30,7 @@ const PaymentFailed: React.FC = () => {
 
         {/* Error Message */}
         <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent mb-4 animate-fade-in-up">
+          <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-red-600 to-rose-600 bg-clip-text text-transparent mb-4 animate-fade-in-up">
             Payment Failed
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 mb-4 animate-fade-in-up animation-delay-200">

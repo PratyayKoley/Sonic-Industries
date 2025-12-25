@@ -88,7 +88,7 @@ const SearchAllDeals = ({
   return (
     <div className="space-y-4">
       {/* Header Stats */}
-      <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
+      <div className="bg-linear-to-r from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
         <div className="flex items-center gap-2">
           <Percent className="w-5 h-5 text-orange-600" />
           <h2 className="text-lg font-semibold text-gray-800">
@@ -109,7 +109,7 @@ const SearchAllDeals = ({
             >
               {/* Deal Image */}
               {deal.imageUrl && (
-                <div className="relative h-40 bg-gradient-to-br from-orange-100 to-red-100">
+                <div className="relative h-40 bg-linear-to-br from-orange-100 to-red-100">
                   <Image
                     src={deal.imageUrl}
                     alt={deal.title}
@@ -134,7 +134,7 @@ const SearchAllDeals = ({
 
               <div className="p-4 space-y-3">
                 {/* Title */}
-                <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 min-h-[3.5rem]">
+                <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 min-h-14">
                   {deal.title}
                 </h3>
 
@@ -164,7 +164,7 @@ const SearchAllDeals = ({
                 )}
 
                 {/* Price Section */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">
+                <div className="bg-linear-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1">
                       <IndianRupee className="w-5 h-5 text-green-700" />

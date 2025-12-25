@@ -237,7 +237,7 @@ export default function About() {
 
         {/* Background glow effect */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-tr from-purple-700 to-indigo-500 rounded-2xl z-0"
+          className="absolute inset-0 bg-linear-to-tr from-purple-700 to-indigo-500 rounded-2xl z-0"
           initial={{ scale: 0, opacity: 0 }}
           animate={{
             scale: isHovered ? 1 : 0,

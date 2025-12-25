@@ -35,36 +35,43 @@ export default function ProductIntro2({
     return "title" in data;
   }
 
-  const features: FeaturesBlock = isCategory(productData)
-    ? ((parentCategoryData as CategoryBackend)?.features?.items?.length
-        ? (parentCategoryData as CategoryBackend).features
-        : {
-            desc1: "",
-            desc2: "",
-            items: [],
-          }) ?? {
-        desc1: "",
-        desc2: "",
-        items: [],
-      }
-    : ((productData as ProductBackend)?.characteristics?.items?.length
-        ? (productData as ProductBackend).characteristics
-        : {
-            desc1: "",
-            desc2: "",
-            items: [],
-          }) ?? {
-        desc1: "",
-        desc2: "",
-        items: [],
-      };
+  const emptyFeatures: FeaturesBlock = {
+    desc1: "",
+    desc2: "",
+    items: [],
+  };
+
+  let features: FeaturesBlock = emptyFeatures;
+
+  if (productData) {
+    if (isCategory(productData)) {
+      // 1️⃣ Category → productData first, then parent category
+      features = productData.features?.items?.length
+        ? productData.features
+        : parentCategoryData?.features?.items?.length
+        ? parentCategoryData.features
+        : emptyFeatures;
+    } else {
+      // 2️⃣ Product → product characteristics first, then parent category
+      features = productData.characteristics?.items?.length
+        ? productData.characteristics
+        : parentCategoryData?.features?.items?.length
+        ? parentCategoryData.features
+        : emptyFeatures;
+    }
+  } else {
+    // 3️⃣ productData missing → parent category fallback
+    features = parentCategoryData?.features?.items?.length
+      ? parentCategoryData.features
+      : emptyFeatures;
+  }
 
   return (
     <div
       className="min-h-screen bg-white relative overflow-hidden"
       id="features"
     >
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-linear-to-r from-indigo-100 via-purple-100 to-pink-100 pointer-events-none" />
 
       <div className="container mx-auto px-10 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-12">

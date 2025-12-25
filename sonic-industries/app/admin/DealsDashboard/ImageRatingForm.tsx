@@ -48,13 +48,13 @@ const ImageRatingForm = ({
   };
 
   return (
-    <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-8 rounded-2xl border border-rose-200/50 shadow-xl backdrop-blur-sm">
+    <div className="bg-linear-to-br from-rose-50 via-pink-50 to-orange-50 p-8 rounded-2xl border border-rose-200/50 shadow-xl backdrop-blur-sm">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-white shadow-lg">
+        <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-500 rounded-xl text-white shadow-lg">
           <ImageIcon className="w-6 h-6" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
             Media & Details
           </h2>
           <p className="text-gray-600">
@@ -167,7 +167,7 @@ const ImageRatingForm = ({
         </div>
       </div>
 
-      <div className="mt-8 p-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-xl border border-rose-200/30">
+      <div className="mt-8 p-4 bg-linear-to-r from-blue-500/10 to-cyan-500/10 rounded-xl border border-rose-200/30">
         <div className="flex items-center gap-2">
           <Check className="w-4 h-4 text-green-600" />
           <span className="text-sm font-medium text-gray-700">

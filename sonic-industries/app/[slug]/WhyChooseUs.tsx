@@ -127,7 +127,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
         <div
-          className={`lg:col-span-7 rounded-3xl overflow-hidden shadow-2xl relative bg-gradient-to-r from-indigo-500 to-purple-600 transform transition-all duration-1000 ease-out h-full`}
+          className={`lg:col-span-7 rounded-3xl overflow-hidden shadow-2xl relative bg-linear-to-r from-indigo-500 to-purple-600 transform transition-all duration-1000 ease-out h-full`}
           style={{
             transformOrigin: "left center",
             transform: isVisible
@@ -153,7 +153,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
               />
 
               {/* Gradient overlay - full blue gradient to match second image */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-blue-600/20"></div>
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-blue-500/5 to-blue-600/20"></div>
 
               {/* Play button */}
               <button
@@ -304,7 +304,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
       {/* Background elements */}
       <div className="fixed top-1/2 right-1/2 w-full h-full -z-10 overflow-hidden opacity-20 pointer-events-none">
         <div
-          className="absolute w-64 h-64 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 blur-3xl"
+          className="absolute w-64 h-64 rounded-full bg-linear-to-r from-blue-400 to-purple-500 blur-3xl"
           style={{
             transform: `scale(${0.5 + scrollProgress * 1.5}) translate(${
               scrollProgress * 100

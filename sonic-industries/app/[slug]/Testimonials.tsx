@@ -237,7 +237,7 @@ export default function Testimonials() {
 
   return (
     <motion.div
-      className="bg-gradient-to-b from-white to-white/20 py-24 px-4 relative overflow-hidden"
+      className="bg-linear-to-b from-white to-white/20 py-24 px-4 relative overflow-hidden"
       ref={carouselRef}
       initial="hidden"
       animate={isVisible ? "visible" : "hidden"}
@@ -277,7 +277,7 @@ export default function Testimonials() {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Heading with animation */}
         <motion.div variants={itemVariants}>
-          <h2 className="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r bg-clip-text text-black mb-3">
+          <h2 className="text-4xl md:text-5xl font-bold text-center bg-linear-to-r bg-clip-text text-black mb-3">
             Our Clients Say
           </h2>
           <p className="text-center text-gray-600 mb-16 max-w-3xl mx-auto">
@@ -375,7 +375,7 @@ export default function Testimonials() {
                     transition: { duration: 0.3 },
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-30"></div>
+                  <div className="absolute inset-0 bg-linear-to-br from-blue-500 to-purple-600 opacity-30"></div>
                   <Image
                     src={testimonials[activeIndex].avatar}
                     alt={testimonials[activeIndex].name}
@@ -415,7 +415,7 @@ export default function Testimonials() {
                   <p className="text-gray-700 text-lg md:text-xl italic mb-8 relative">
                     {testimonials[activeIndex].content}
                   </p>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     {testimonials[activeIndex].name}
                   </h3>
                   <p className="text-gray-600 font-medium">

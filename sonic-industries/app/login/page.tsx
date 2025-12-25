@@ -60,11 +60,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-linear-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-linear-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative w-full max-w-md">
@@ -81,7 +81,7 @@ const Login = () => {
                 className="w-12 h-12"
               />
             </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-linear-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
               Welcome Back
             </h2>
             <p className="text-gray-600 mt-2">Please sign in to your account</p>
@@ -90,13 +90,13 @@ const Login = () => {
           {/* Alert Messages */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
               <span className="text-red-700 text-sm">{error}</span>
             </div>
           )}
           {message && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center space-x-3">
-              <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
               <span className="text-green-700 text-sm">{message}</span>
             </div>
           )}
@@ -164,7 +164,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl cursor-pointer"
+              className="w-full bg-linear-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl cursor-pointer"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">

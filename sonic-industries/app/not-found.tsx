@@ -13,10 +13,10 @@ const NotFound: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
       <div className="max-w-2xl w-full text-center">
         <div className="relative mb-8">
-          <div className="text-[12rem] md:text-[16rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-600 leading-none animate-pulse">
+          <div className="text-[12rem] md:text-[16rem] font-bold text-transparent bg-clip-text bg-linear-to-r from-red-600 to-red-600 leading-none animate-pulse">
             404
           </div>
           <div className="absolute inset-0 text-[12rem] md:text-[16rem] font-bold text-gray-200 leading-none -z-10 transform translate-x-2 translate-y-2">

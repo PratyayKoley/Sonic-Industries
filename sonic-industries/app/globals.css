@@ -131,8 +131,9 @@
 body,
 html {
   font-family: "Poppins", sans-serif;
-  data-scroll-behavior: smooth;
-  width: 100vw;
+  scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
 }
 

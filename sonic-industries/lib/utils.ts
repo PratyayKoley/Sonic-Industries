@@ -38,7 +38,7 @@ export const initiatePayment = (orderData: RazorpayPaymentOrder) => {
         const data = verifyRes.data;
 
         if (data.success) {
-          window.location.href = `/payment-success?payment_id=${response.razorpay_payment_id}`;
+          window.location.href = `/payment-success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}`;
         } else {
           window.location.href = `/payment-failed`;
         }

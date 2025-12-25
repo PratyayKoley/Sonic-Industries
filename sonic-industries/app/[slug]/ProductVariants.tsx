@@ -54,7 +54,6 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
     fetchProducts();
   }, [productData?._id]);
 
-
   // Helper function to render stars
   const renderStars = (rating: number) => {
     const stars = [];
@@ -121,9 +120,9 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
                       height={500}
                     />
 
-                    <div className="absolute group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                    <div className="absolute inset-0 flex items-center justify-center z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                       <button
-                        className="py-3 px-8 bg-red-600 text-white font-bold text-lg rounded hover:bg-red-700 transform scale-0 group-hover:scale-100 transition-transform duration-300 cursor-pointer"
+                        className="py-3 px-8 bg-red-600 text-white font-bold text-lg rounded hover:bg-red-700 cursor-pointer scale-100 md:scale-0 md:group-hover:scale-100 transition-transform duration-300"
                         onClick={() => handleBuyNow({ productId: product._id })}
                       >
                         BUY NOW

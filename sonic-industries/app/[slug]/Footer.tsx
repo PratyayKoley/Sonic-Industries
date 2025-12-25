@@ -135,54 +135,56 @@ export default function Footer() {
 
   return (
     <>
-      <AnimatePresence>
-        {showScrollButton && (
-          <motion.button
-            key="scroll-to-top"
-            onClick={scrollToTop}
-            className="fixed bottom-6 right-6 w-12 h-12 bg-purple-700 rounded-full text-white flex items-center justify-center shadow-lg z-50 cursor-pointer"
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            whileHover="hover"
-            whileTap="tap"
-            variants={buttonVariants}
-            aria-label="Scroll to top"
-          >
-            <ChevronUp size={24} />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <div className="fixed right-4 bottom-6 z-50 flex flex-col gap-4 overflow-hidden">
+        <AnimatePresence>
+          {showScrollButton && (
+            <motion.button
+              key="scroll-to-top"
+              onClick={scrollToTop}
+              className="w-12 h-12 bg-purple-700 rounded-full text-white flex items-center justify-center shadow-lg z-50 cursor-pointer"
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              whileHover="hover"
+              whileTap="tap"
+              variants={buttonVariants}
+              aria-label="Scroll to top"
+            >
+              <ChevronUp size={24} />
+            </motion.button>
+          )}
+        </AnimatePresence>
 
-      <motion.a
-        key="phone-call"
-        href="tel:+918010735898"
-        className="fixed bottom-21 right-6 w-12 h-12 bg-green-700 rounded-full text-white flex items-center justify-center shadow-lg z-50"
-        initial="initial"
-        animate="animate"
-        whileHover="hover"
-        whileTap="tap"
-        variants={buttonVariants}
-        aria-label="Call"
-      >
-        <PhoneCall size={22} />
-      </motion.a>
+        <motion.a
+          key="phone-call"
+          href="tel:+918010735898"
+          className="w-12 h-12 bg-green-700 rounded-full text-white flex items-center justify-center shadow-lg z-50"
+          initial="initial"
+          animate="animate"
+          whileHover="hover"
+          whileTap="tap"
+          variants={buttonVariants}
+          aria-label="Call"
+        >
+          <PhoneCall size={22} />
+        </motion.a>
 
-      <motion.a
-        key="whatsapp"
-        href="https://wa.me/+918010735898"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-36 right-6 w-12 h-12 bg-[#25D366] rounded-full text-white flex items-center justify-center shadow-lg z-50"
-        initial="initial"
-        animate="animate"
-        whileHover="hover"
-        whileTap="tap"
-        variants={buttonVariants}
-        aria-label="WhatsApp"
-      >
-        <FaWhatsapp size={22} />
-      </motion.a>
+        <motion.a
+          key="whatsapp"
+          href="https://wa.me/+918010735898"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-12 h-12 bg-[#25D366] rounded-full text-white flex items-center justify-center shadow-lg z-50"
+          initial="initial"
+          animate="animate"
+          whileHover="hover"
+          whileTap="tap"
+          variants={buttonVariants}
+          aria-label="WhatsApp"
+        >
+          <FaWhatsapp size={22} />
+        </motion.a>
+      </div>
 
       <footer
         ref={footerRef}

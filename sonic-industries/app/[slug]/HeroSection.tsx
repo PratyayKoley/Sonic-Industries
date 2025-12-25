@@ -28,9 +28,15 @@ export default function HeroSection({
     return "title" in data;
   }
 
-  const displayTitle = isCategory(productData)
+  const isCategoryPage = isCategory(productData);
+
+  const displayTitle = isCategoryPage
     ? productData.title || "Untitled"
     : productData.tagline || "Untitled";
+
+  const siblingProducts = !isCategoryPage
+    ? allProductData.products.filter((item) => item.slug !== productData.slug)
+    : allProductData.products;
 
   return (
     <section className="min-h-screen w-full bg-white px-4 py-12" id="home">
@@ -54,22 +60,20 @@ export default function HeroSection({
               Learn More
             </button>
           </div>
-          <div className="container px-4 mt-10">
-            <div>
+          {(isCategoryPage || siblingProducts.length > 0) && (
+            <div className="container px-4 mt-10">
               <div className="flex gap-4 flex-nowrap overflow-x-auto relative min-w-[calc(100%-5em)] mt-8 h-max scrollbar-hide">
-                {allProductData.products.map((item) => (
+                {siblingProducts.map((item) => (
                   <div
-                    className="flex flex-col items-center flex-shrink-0"
+                    className="flex flex-col items-center shrink-0"
                     key={item._id}
-                    onClick={() => router.push(`${item.slug}`)}
+                    onClick={() => router.push(item.slug)}
                   >
-                    {/* Bigger Circle */}
-                    <div className="relative w-[150px] h-[150px] cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded-full">
-                      {/* Bigger Inner Image */}
+                    <div className="relative w-37.5 h-37.5 cursor-pointer">
                       <span
-                        className="absolute inset-[3px] rounded-full border-[4px]  z-[1] bg-cover bg-top"
+                        className="absolute inset-0.75 rounded-full border-4 z-1 bg-cover bg-top"
                         style={{ backgroundImage: `url('${item.images[0]}')` }}
-                      ></span>
+                      />
                     </div>
 
                     <span className="w-[6em] text-center text-[0.8em] mt-1">
@@ -79,19 +83,19 @@ export default function HeroSection({
                 ))}
               </div>
             </div>
-          </div>
+          )}
           <div></div>
         </div>
 
         <div className="w-full lg:w-1/2 flex items-center justify-center relative md:mr-10">
-          <div className="relative w-full h-[380px] sm:h-[420px] md:h-[480px] lg:h-[600px]">
+          <div className="relative w-full h-95 sm:h-105 md:h-120 lg:h-150">
             <Ripple
               mainCircleSize={300}
               numCircles={6}
               className="absolute inset-0 w-full h-full"
             />
             <div className="relative z-10 flex items-center justify-center h-full">
-              <div className="relative w-full h-[500px]">
+              <div className="relative w-full h-125">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={allProductData.images[0]}

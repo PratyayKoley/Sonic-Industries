@@ -194,7 +194,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
 
   return (
     <div
-      className="bg-gradient-to-b from-gray-50 to-gray-100 py-20 px-4 overflow-hidden relative"
+      className="bg-linear-to-b from-gray-50 to-gray-100 py-20 px-4 overflow-hidden relative"
       ref={sectionRef}
       id="faq"
     >
@@ -253,7 +253,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
                     {item.question}
                   </h3>
                   <motion.div
-                    className="flex-shrink-0 ml-2"
+                    className="shrink-0 ml-2"
                     animate={{ rotate: openItem === item.id ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                   >

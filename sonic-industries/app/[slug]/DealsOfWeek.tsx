@@ -73,7 +73,7 @@ export default function DealsOfWeek() {
   const timeLeft = getTimeLeft(currentDealData.expiresAt);
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-12 px-4">
+    <div className="bg-linear-to-br from-gray-50 to-gray-100 min-h-screen py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
@@ -98,7 +98,7 @@ export default function DealsOfWeek() {
             >
               <div className="flex flex-col md:flex-row">
                 {/* Product Image */}
-                <div className="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+                <div className="md:w-1/2 p-8 flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-50">
                   <div className="relative">
                     <Image
                       alt={currentDealData.title || "Deal Image"}
@@ -185,7 +185,7 @@ export default function DealsOfWeek() {
                       {Object.entries(timeLeft).map(([key, value], index) => (
                         <div
                           key={index}
-                          className="text-center p-3 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
+                          className="text-center p-3 bg-linear-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
                         >
                           <div className="text-2xl font-bold text-gray-800">
                             {value}
@@ -198,7 +198,7 @@ export default function DealsOfWeek() {
                     </div>
                   </div>
 
-                  <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
+                  <button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
                     BUY NOW - LIMITED TIME!
                   </button>
                 </div>

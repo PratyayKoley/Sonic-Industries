@@ -69,7 +69,7 @@ const OpenMail: React.FC<OpenMailProps> = ({
       >
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white p-6">
+          <div className="relative bg-linear-to-r from-slate-900 to-slate-700 text-white p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-3">
@@ -114,7 +114,7 @@ const OpenMail: React.FC<OpenMailProps> = ({
               <div className="bg-slate-50 rounded-xl p-5 mb-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {(lead.senderName || lead.senderEmail)
                         .charAt(0)
                         .toUpperCase()}
