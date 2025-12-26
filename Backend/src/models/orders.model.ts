@@ -37,7 +37,7 @@ const OrderSchema = new Schema(
       required: true,
     },
     razorpay: {
-      razorpay_order_id: { type: String, unique: true },
+      razorpay_order_id: { type: String },
       razorpay_payment_id: { type: String },
       paidAt: { type: Date },
     },
@@ -86,6 +86,17 @@ OrderSchema.index(
     partialFilterExpression: { couponCode: { $exists: true, $ne: null } },
   }
 );
+
+OrderSchema.index(
+  { "razorpay.razorpay_order_id": 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      "razorpay.razorpay_order_id": { $exists: true, $ne: null }
+    }
+  }
+);
+
 
 export type Order = InferSchemaType<typeof OrderSchema> & {
   _id: Types.ObjectId;
