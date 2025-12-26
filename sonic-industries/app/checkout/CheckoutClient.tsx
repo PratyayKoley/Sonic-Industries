@@ -208,15 +208,25 @@ export default function CheckoutClient() {
 
     setIsLoading(true);
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`, {
-        sessionToken,
-        customer: {
-          ...customer,
-        },
-        payment_method: "cod",
-        quantity,
-      });
-      toast.success("Order placed successfully!");
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders`,
+        {
+          sessionToken,
+          customer: {
+            ...customer,
+          },
+          payment_method: "cod",
+          quantity,
+        }
+      );
+      const data = res.data;
+
+      if (data.newOrder) {
+        toast.success("Order placed successfully!");
+        window.location.href = `/payment-success?cod_order_id=${data.newOrder.orderNumber}`;
+      } else {
+        window.location.href = `/payment-failed`;
+      }
     } catch (error) {
       console.error("COD checkout failed:", error);
       toast.error(

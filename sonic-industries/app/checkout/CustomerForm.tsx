@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface Address {
@@ -171,10 +171,15 @@ export function CustomerForm({
     validateField("phone", debouncedPhone);
   }, [debouncedPhone]);
 
+  const prevEmailRef = useRef(customer.email);
+
   useEffect(() => {
-    setOtpSent(false);
-    setOtpVerified(false);
-    setOtp("");
+    if (prevEmailRef.current !== customer.email) {
+      setOtpSent(false);
+      setOtpVerified(false);
+      setOtp("");
+      prevEmailRef.current = customer.email;
+    }
   }, [customer.email]);
 
   return (

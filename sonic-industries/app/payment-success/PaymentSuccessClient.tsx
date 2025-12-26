@@ -8,7 +8,6 @@ import { useSearchParams } from "next/navigation";
 const PaymentSuccessClient: React.FC = () => {
   const searchParams = useSearchParams();
   const razorpayOrderId = searchParams.get("order_id") || "";
-  console.log("Razorpay Order ID:", razorpayOrderId);
   const handleGoHome = () => {
     window.history.back();
   };
@@ -40,9 +39,6 @@ const PaymentSuccessClient: React.FC = () => {
 
     setSpinning(true);
     setSelectedReward(null);
-
-    // // Start continuous spinning visually
-    // setRotation((prev) => prev + 360 * 10);
 
     try {
       // 1️⃣ Call backend
@@ -139,133 +135,135 @@ const PaymentSuccessClient: React.FC = () => {
         </div>
 
         {/* Spinning Wheel Section */}
-        <div className="bg-white rounded-2xl p-6 mb-8 shadow-xl border border-emerald-100">
-          <h2 className="text-2xl font-bold text-emerald-600 mb-2">
-            🎁 Prepaid Bonus Spin
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Spin the wheel and win a guaranteed reward!
-          </p>
+        {razorpayOrderId && (
+          <div className="bg-white rounded-2xl p-6 mb-8 shadow-xl border border-emerald-100">
+            <h2 className="text-2xl font-bold text-emerald-600 mb-2">
+              🎁 Prepaid Bonus Spin
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Spin the wheel and win a guaranteed reward!
+            </p>
 
-          <div id="wrapper">
-            <div id="wheel">
-              <svg width="100%" height="100%" viewBox="0 0 300 300">
-                <g
-                  id="inner-wheel"
-                  style={{
-                    transformOrigin: "150px 150px",
-                    transform: `rotate(${rotation}deg)`,
-                    transition: spinning
-                      ? "transform 8s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
-                      : "none",
-                  }}
-                >
-                  {rewards.map((reward, i) => {
-                    const slice = 360 / rewards.length;
-                    const startAngle = (i * slice - 90) * (Math.PI / 180);
-                    const endAngle = ((i + 1) * slice - 90) * (Math.PI / 180);
-                    const midAngle = (startAngle + endAngle) / 2;
+            <div id="wrapper">
+              <div id="wheel">
+                <svg width="100%" height="100%" viewBox="0 0 300 300">
+                  <g
+                    id="inner-wheel"
+                    style={{
+                      transformOrigin: "150px 150px",
+                      transform: `rotate(${rotation}deg)`,
+                      transition: spinning
+                        ? "transform 8s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+                        : "none",
+                    }}
+                  >
+                    {rewards.map((reward, i) => {
+                      const slice = 360 / rewards.length;
+                      const startAngle = (i * slice - 90) * (Math.PI / 180);
+                      const endAngle = ((i + 1) * slice - 90) * (Math.PI / 180);
+                      const midAngle = (startAngle + endAngle) / 2;
 
-                    const radius = 150;
-                    const x1 = 150 + Math.cos(startAngle) * radius;
-                    const y1 = 150 + Math.sin(startAngle) * radius;
-                    const x2 = 150 + Math.cos(endAngle) * radius;
-                    const y2 = 150 + Math.sin(endAngle) * radius;
+                      const radius = 150;
+                      const x1 = 150 + Math.cos(startAngle) * radius;
+                      const y1 = 150 + Math.sin(startAngle) * radius;
+                      const x2 = 150 + Math.cos(endAngle) * radius;
+                      const y2 = 150 + Math.sin(endAngle) * radius;
 
-                    const imageRadius = 90;
-                    const imageX = 150 + Math.cos(midAngle) * imageRadius;
-                    const imageY = 150 + Math.sin(midAngle) * imageRadius;
+                      const imageRadius = 90;
+                      const imageX = 150 + Math.cos(midAngle) * imageRadius;
+                      const imageY = 150 + Math.sin(midAngle) * imageRadius;
 
-                    return (
-                      <g key={i}>
-                        <defs>
-                          <clipPath id={`clip-${i}`}>
-                            <path
-                              d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
-                            />
-                          </clipPath>
-                          <pattern
-                            id={`pattern-${i}`}
-                            x="0"
-                            y="0"
-                            width="300"
-                            height="300"
-                            patternUnits="userSpaceOnUse"
-                          >
-                            <image
-                              href={IMAGE[i]}
+                      return (
+                        <g key={i}>
+                          <defs>
+                            <clipPath id={`clip-${i}`}>
+                              <path
+                                d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
+                              />
+                            </clipPath>
+                            <pattern
+                              id={`pattern-${i}`}
                               x="0"
-                              y="5"
+                              y="0"
                               width="300"
                               height="300"
-                              preserveAspectRatio="xMidYMid slice"
-                              opacity="0.4"
-                            />
-                          </pattern>
-                        </defs>
+                              patternUnits="userSpaceOnUse"
+                            >
+                              <image
+                                href={IMAGE[i]}
+                                x="0"
+                                y="5"
+                                width="300"
+                                height="300"
+                                preserveAspectRatio="xMidYMid slice"
+                                opacity="0.4"
+                              />
+                            </pattern>
+                          </defs>
 
-                        <path
-                          d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
-                          fill={`url(#pattern-${i})`}
-                          stroke="#fff"
-                          strokeWidth="2"
-                        />
+                          <path
+                            d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
+                            fill={`url(#pattern-${i})`}
+                            stroke="#fff"
+                            strokeWidth="2"
+                          />
 
-                        <path
-                          d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
-                          fill={COLORS[i]}
-                          opacity="0.7"
-                        />
+                          <path
+                            d={`M 150 150 L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
+                            fill={COLORS[i]}
+                            opacity="0.7"
+                          />
 
-                        <circle
-                          cx={imageX}
-                          cy={imageY}
-                          r="31"
-                          fill="#fff"
-                          opacity="0.7"
-                        />
+                          <circle
+                            cx={imageX}
+                            cy={imageY}
+                            r="31"
+                            fill="#fff"
+                            opacity="0.7"
+                          />
 
-                        <image
-                          href={IMAGE[i]}
-                          x={imageX - 20}
-                          y={imageY - 20}
-                          width="40"
-                          height="40"
-                          clipPath="circle(20px at 50% 50%)"
-                          preserveAspectRatio="xMidYMid slice"
-                        />
-                      </g>
-                    );
-                  })}
-                </g>
-              </svg>
+                          <image
+                            href={IMAGE[i]}
+                            x={imageX - 20}
+                            y={imageY - 20}
+                            width="40"
+                            height="40"
+                            clipPath="circle(20px at 50% 50%)"
+                            preserveAspectRatio="xMidYMid slice"
+                          />
+                        </g>
+                      );
+                    })}
+                  </g>
+                </svg>
 
-              {/* Center Spin Button */}
-              <div
-                id="spin"
-                onClick={spinWheel}
-                style={{ pointerEvents: spinning ? "none" : "auto" }}
-              >
-                <div id="inner-spin"></div>
-                <div id="spin-text">{spinning ? "SPIN" : "SPIN"}</div>
+                {/* Center Spin Button */}
+                <div
+                  id="spin"
+                  onClick={spinWheel}
+                  style={{ pointerEvents: spinning ? "none" : "auto" }}
+                >
+                  <div id="inner-spin"></div>
+                  <div id="spin-text">{spinning ? "SPIN" : "SPIN"}</div>
+                </div>
+
+                {/* Pointer Arrow */}
+                <div id="pointer"></div>
               </div>
-
-              {/* Pointer Arrow */}
-              <div id="pointer"></div>
             </div>
+
+            {selectedReward && (
+              <div className="mt-6 p-4 bg-linear-to-r from-green-100 to-emerald-100 rounded-xl animate-bounce-in">
+                <p className="text-2xl font-bold text-green-700">
+                  🎉 Congratulations!
+                </p>
+                <p className="text-xl font-semibold text-emerald-600 mt-2">
+                  You won: {selectedReward}
+                </p>
+              </div>
+            )}
           </div>
-
-          {selectedReward && (
-            <div className="mt-6 p-4 bg-linear-to-r from-green-100 to-emerald-100 rounded-xl animate-bounce-in">
-              <p className="text-2xl font-bold text-green-700">
-                🎉 Congratulations!
-              </p>
-              <p className="text-xl font-semibold text-emerald-600 mt-2">
-                You won: {selectedReward}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-800 relative z-20">
