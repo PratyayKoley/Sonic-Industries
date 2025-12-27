@@ -81,12 +81,50 @@ export const getCustomerEmailTemplate = (order: any): string => {
                         <td style="border-top: 1px solid #e5e7eb; padding-top: 15px;">
                           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                              <td style="color: #6b7280; font-size: 14px;">Subtotal</td>
-                              <td style="color: #111827; font-size: 14px; text-align: right;">₹${order.order_items?.price}</td>
+                              <td style="color: #6b7280; font-size: 14px; padding: 5px 0;">Item Price</td>
+                              <td style="color: #111827; font-size: 14px; text-align: right; padding: 5px 0;">₹${order.total_price?.toFixed(2)}</td>
                             </tr>
                             <tr>
-                              <td style="color: #111827; font-size: 16px; font-weight: 600; padding-top: 10px;">Total</td>
-                              <td style="color: #111827; font-size: 16px; font-weight: 600; text-align: right; padding-top: 10px;">₹${order.order_items?.price}</td>
+                              <td style="color: #6b7280; font-size: 14px; padding: 5px 0;">Shipping Fee</td>
+                              <td style="color: #111827; font-size: 14px; text-align: right; padding: 5px 0;">₹${order.shipping_fee?.toFixed(2)}</td>
+                            </tr>
+                            ${
+                              order.discount > 0
+                                ? `
+                            <tr>
+                              <td style="color: #10b981; font-size: 14px; padding: 5px 0;">Discount</td>
+                              <td style="color: #10b981; font-size: 14px; text-align: right; padding: 5px 0;">-₹${order.discount?.toFixed(2)}</td>
+                            </tr>
+                            `
+                                : ""
+                            }
+                            ${
+                              order.prepaidDiscount > 0
+                                ? `
+                            <tr>
+                              <td style="color: #10b981; font-size: 14px; padding: 5px 0;">Prepaid Discount</td>
+                              <td style="color: #10b981; font-size: 14px; text-align: right; padding: 5px 0;">-₹${order.prepaidDiscount?.toFixed(2)}</td>
+                            </tr>
+                            `
+                                : ""
+                            }
+                            ${
+                              order.postpaidCharges > 0
+                                ? `
+                            <tr>
+                              <td style="color: #ef4444; font-size: 14px; padding: 5px 0;">COD Charges</td>
+                              <td style="color: #ef4444; font-size: 14px; text-align: right; padding: 5px 0;">+₹${order.postpaidCharges?.toFixed(2)}</td>
+                            </tr>
+                            `
+                                : ""
+                            }
+                            <tr>
+                              <td style="color: #6b7280; font-size: 14px; padding: 10px 0 5px 0; border-top: 1px solid #e5e7eb;">Subtotal</td>
+                              <td style="color: #111827; font-size: 14px; text-align: right; padding: 10px 0 5px 0; border-top: 1px solid #e5e7eb;">₹${order.final_price?.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                              <td style="color: #111827; font-size: 18px; font-weight: 700; padding-top: 10px; border-top: 2px solid #111827;">Total Amount</td>
+                              <td style="color: #111827; font-size: 18px; font-weight: 700; text-align: right; padding-top: 10px; border-top: 2px solid #111827;">₹${order.final_price?.toFixed(2)}</td>
                             </tr>
                           </table>
                         </td>
@@ -106,7 +144,8 @@ export const getCustomerEmailTemplate = (order: any): string => {
                   <td width="48%" style="vertical-align: top; padding-right: 2%;">
                     <div style="background-color: #f9fafb; padding: 20px; border-radius: 6px; border: 1px solid #e5e7eb;">
                       <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Method</p>
-                      <p style="margin: 0; color: #111827; font-size: 15px; font-weight: 500;">${order.payment_method === "cod" ? "Cash on Delivery" : "Online Payment"}</p>
+                      <p style="margin: 0; color: #111827; font-size: 15px; font-weight: 500;">${order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "razorpay" ? "Razorpay" : "Online Payment"}</p>
+                      <p style="margin: 5px 0 0; color: ${order.payment_status === "paid" ? "#10b981" : "#f59e0b"}; font-size: 13px; font-weight: 600; text-transform: uppercase;">${order.payment_status}</p>
                     </div>
                   </td>
                   <td width="48%" style="vertical-align: top; padding-left: 2%;">
@@ -194,17 +233,21 @@ export const getAdminEmailTemplate = (order: any): string => {
             <td style="padding: 30px 30px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td width="33%" style="text-align: center; padding: 20px; background-color: #ecfdf5; border-radius: 6px;">
-                    <p style="margin: 0 0 5px; color: #059669; font-size: 24px; font-weight: 700;">₹${order.order_items?.price}</p>
-                    <p style="margin: 0; color: #10b981; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Total Value</p>
+                  <td width="25%" style="text-align: center; padding: 20px 10px; background-color: #ecfdf5; border-radius: 6px;">
+                    <p style="margin: 0 0 5px; color: #059669; font-size: 22px; font-weight: 700;">₹${order.final_price?.toFixed(2)}</p>
+                    <p style="margin: 0; color: #10b981; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Final Amount</p>
                   </td>
-                  <td width="33%" style="text-align: center; padding: 20px; background-color: #eff6ff; border-radius: 6px;">
-                    <p style="margin: 0 0 5px; color: #2563eb; font-size: 24px; font-weight: 700;">${order.order_items?.quantity}</p>
-                    <p style="margin: 0; color: #3b82f6; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Items</p>
+                  <td width="25%" style="text-align: center; padding: 20px 10px; background-color: #eff6ff; border-radius: 6px;">
+                    <p style="margin: 0 0 5px; color: #2563eb; font-size: 22px; font-weight: 700;">${order.order_items?.quantity}</p>
+                    <p style="margin: 0; color: #3b82f6; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Items</p>
                   </td>
-                  <td width="33%" style="text-align: center; padding: 20px; background-color: #fef3c7; border-radius: 6px;">
-                    <p style="margin: 0 0 5px; color: #d97706; font-size: 16px; font-weight: 700;">${order.payment_method}</p>
-                    <p style="margin: 0; color: #f59e0b; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment</p>
+                  <td width="25%" style="text-align: center; padding: 20px 10px; background-color: #fef3c7; border-radius: 6px;">
+                    <p style="margin: 0 0 5px; color: #d97706; font-size: 14px; font-weight: 700;">${order.payment_method.toUpperCase()}</p>
+                    <p style="margin: 0; color: #f59e0b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Payment</p>
+                  </td>
+                  <td width="25%" style="text-align: center; padding: 20px 10px; background-color: ${order.payment_status === "paid" ? "#ecfdf5" : "#fef3c7"}; border-radius: 6px;">
+                    <p style="margin: 0 0 5px; color: ${order.payment_status === "paid" ? "#059669" : "#d97706"}; font-size: 14px; font-weight: 700;">${order.payment_status.toUpperCase()}</p>
+                    <p style="margin: 0; color: ${order.payment_status === "paid" ? "#10b981" : "#f59e0b"}; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Status</p>
                   </td>
                 </tr>
               </table>
@@ -264,10 +307,10 @@ export const getAdminEmailTemplate = (order: any): string => {
             </td>
           </tr>
           
-          <!-- Order Items -->
+          <!-- Order Items & Payment Breakdown -->
           <tr>
             <td style="padding: 0 30px 25px;">
-              <h2 style="margin: 0 0 15px; color: #111827; font-size: 18px; font-weight: 600;">Order Items</h2>
+              <h2 style="margin: 0 0 15px; color: #111827; font-size: 18px; font-weight: 600;">Order Items & Payment Details</h2>
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid #e5e7eb; border-radius: 6px;">
                 <tr style="background-color: #f9fafb;">
                   <td style="padding: 12px 20px; color: #6b7280; font-size: 13px; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb;">Product</td>
@@ -277,11 +320,55 @@ export const getAdminEmailTemplate = (order: any): string => {
                 <tr>
                   <td style="padding: 20px; color: #111827; font-size: 15px; font-weight: 500;">${order.order_items?.name}</td>
                   <td style="padding: 20px; color: #111827; font-size: 15px; text-align: center;">${order.order_items?.quantity}</td>
-                  <td style="padding: 20px; color: #111827; font-size: 15px; font-weight: 600; text-align: right;">₹${order.order_items?.price}</td>
+                  <td style="padding: 20px; color: #111827; font-size: 15px; font-weight: 600; text-align: right;">₹${order.total_price?.toFixed(2)}</td>
+                </tr>
+                
+                <!-- Payment Breakdown -->
+                <tr style="background-color: #f9fafb;">
+                  <td colspan="2" style="padding: 12px 20px; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb;">Item Subtotal</td>
+                  <td style="padding: 12px 20px; color: #111827; font-size: 14px; text-align: right; border-top: 1px solid #e5e7eb;">₹${order.total_price?.toFixed(2)}</td>
                 </tr>
                 <tr style="background-color: #f9fafb;">
-                  <td colspan="2" style="padding: 15px 20px; color: #111827; font-size: 16px; font-weight: 600; border-top: 1px solid #e5e7eb;">Order Total</td>
-                  <td style="padding: 15px 20px; color: #059669; font-size: 18px; font-weight: 700; text-align: right; border-top: 1px solid #e5e7eb;">₹${order.order_items?.price}</td>
+                  <td colspan="2" style="padding: 12px 20px; color: #6b7280; font-size: 14px;">Shipping Fee</td>
+                  <td style="padding: 12px 20px; color: #111827; font-size: 14px; text-align: right;">₹${order.shipping_fee?.toFixed(2)}</td>
+                </tr>
+                ${
+                  order.discount > 0
+                    ? `
+                <tr style="background-color: #f9fafb;">
+                  <td colspan="2" style="padding: 12px 20px; color: #10b981; font-size: 14px;">Discount Applied</td>
+                  <td style="padding: 12px 20px; color: #10b981; font-size: 14px; text-align: right;">-₹${order.discount?.toFixed(2)}</td>
+                </tr>
+                `
+                    : ""
+                }
+                ${
+                  order.prepaidDiscount > 0
+                    ? `
+                <tr style="background-color: #f9fafb;">
+                  <td colspan="2" style="padding: 12px 20px; color: #10b981; font-size: 14px;">Prepaid Discount</td>
+                  <td style="padding: 12px 20px; color: #10b981; font-size: 14px; text-align: right;">-₹${order.prepaidDiscount?.toFixed(2)}</td>
+                </tr>
+                `
+                    : ""
+                }
+                ${
+                  order.postpaidCharges > 0
+                    ? `
+                <tr style="background-color: #f9fafb;">
+                  <td colspan="2" style="padding: 12px 20px; color: #ef4444; font-size: 14px;">COD Charges</td>
+                  <td style="padding: 12px 20px; color: #ef4444; font-size: 14px; text-align: right;">+₹${order.postpaidCharges?.toFixed(2)}</td>
+                </tr>
+                `
+                    : ""
+                }
+                <tr style="background-color: #f9fafb;">
+                  <td colspan="2" style="padding: 12px 20px; color: #6b7280; font-size: 15px; font-weight: 600; border-top: 1px solid #e5e7eb;">Subtotal (Before Adjustments)</td>
+                  <td style="padding: 12px 20px; color: #111827; font-size: 15px; font-weight: 600; text-align: right; border-top: 1px solid #e5e7eb;">₹${order.final_price?.toFixed(2)}</td>
+                </tr>
+                <tr style="background-color: #ecfdf5;">
+                  <td colspan="2" style="padding: 15px 20px; color: #111827; font-size: 17px; font-weight: 700; border-top: 2px solid #059669;">Final Order Total</td>
+                  <td style="padding: 15px 20px; color: #059669; font-size: 19px; font-weight: 700; text-align: right; border-top: 2px solid #059669;">₹${order.final_price?.toFixed(2)}</td>
                 </tr>
               </table>
             </td>
@@ -319,7 +406,11 @@ export const getAdminEmailTemplate = (order: any): string => {
 };
 
 // Inquiry Email Template for Admin
-export const getInquiryEmailTemplate = (senderName: string, email: string, message: string) => {
+export const getInquiryEmailTemplate = (
+  senderName: string,
+  email: string,
+  message: string
+) => {
   return `
 <!DOCTYPE html>
 <html>
@@ -408,6 +499,112 @@ export const getInquiryEmailTemplate = (senderName: string, email: string, messa
               </p>
               <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">
                 © ${new Date().getFullYear()} Sonic Industries Admin Panel
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+};
+
+export const getOtpEmailTemplate = (otp: string): string => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Email</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f4f4;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <!-- Main Container -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Verify Your Email</h1>
+              <p style="margin: 10px 0 0; color: #ffffff; font-size: 16px; opacity: 0.95;">Your verification code is ready</p>
+            </td>
+          </tr>
+          
+          <!-- Security Icon -->
+          <tr>
+            <td style="padding: 30px 30px 20px; text-align: center;">
+              <div style="display: inline-block; width: 60px; height: 60px; background-color: #667eea; border-radius: 50%; line-height: 60px;">
+                <span style="color: #ffffff; font-size: 32px;">🔐</span>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Message -->
+          <tr>
+            <td style="padding: 0 30px 25px;">
+              <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6; text-align: center;">
+                We received a request to verify your email address. Use the code below to complete your verification.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- OTP Code -->
+          <tr>
+            <td style="padding: 0 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+                <tr>
+                  <td style="padding: 30px; text-align: center;">
+                    <p style="margin: 0 0 10px; color: #ffffff; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">Your Verification Code</p>
+                    <p style="margin: 0; color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Expiry Warning -->
+          <tr>
+            <td style="padding: 0 30px 25px;">
+              <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 6px;">
+                <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
+                  <strong>⏰ Important:</strong> This code will expire in <strong>10 minutes</strong>. Don't share this code with anyone.
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Additional Info -->
+          <tr>
+            <td style="padding: 0 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                      If you didn't request this verification code, you can safely ignore this email. Someone may have typed your email address by mistake.
+                    </p>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                      For security reasons, never share your verification codes with anyone, including Sonic Industries staff.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 30px; background-color: #f9fafb; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 10px; color: #6b7280; font-size: 14px; text-align: center;">
+                Need help? Contact us at <a href="mailto:${process.env.EMAIL_USER}" style="color: #667eea; text-decoration: none;">${process.env.EMAIL_USER}</a>
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 13px; text-align: center;">
+                © ${new Date().getFullYear()} Sonic Industries. All rights reserved.
               </p>
             </td>
           </tr>

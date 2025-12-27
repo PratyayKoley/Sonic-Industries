@@ -351,6 +351,7 @@ export default function CheckoutClient() {
               setOtpVerified={setOtpVerified}
               otpSent={otpSent}
               setOtpSent={setOtpSent}
+              sessionToken={sessionToken}
             />
           </div>
 

@@ -21,7 +21,6 @@ const SearchAllProducts = ({
   );
 
   const toggleCategory = (categoryId: string) => {
-    console.log(categoryId);
     setExpandedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(categoryId)) {
@@ -70,7 +69,6 @@ const SearchAllProducts = ({
     return stars;
   };
 
-  console.log(products);
   // Group products by category
   const groupedProducts = categories
     .map((category) => ({

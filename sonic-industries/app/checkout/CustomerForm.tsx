@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -31,6 +32,7 @@ interface CustomerFormProps {
   setOtpVerified: Dispatch<SetStateAction<boolean>>;
   otpSent: boolean;
   setOtpSent: Dispatch<SetStateAction<boolean>>;
+  sessionToken: string;
 }
 
 export function CustomerForm({
@@ -41,6 +43,7 @@ export function CustomerForm({
   setOtpVerified,
   otpSent,
   setOtpSent,
+  sessionToken,
 }: CustomerFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailTouched, setEmailTouched] = useState(false);
@@ -144,22 +147,43 @@ export function CustomerForm({
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(debouncedEmail);
 
-  function handleOtpSend() {
-    // Replace with your backend OTP API call
+  async function handleOtpSend() {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/sendotp`,
+        {
+          email: customer.email,
+          sessionId: sessionToken,
+        }
+      );
 
-    setOtpSent(true);
+      setOtpSent(true);
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      toast.error("Failed to send OTP. Please try again.");
+    }
   }
 
-  function handleOtpValidate() {
-    if (!/^[0-9]{4,6}$/.test(otp)) {
+  async function handleOtpValidate() {
+    if (!/^[0-9]{6}$/.test(otp)) {
       toast.error("Invalid OTP");
       setOtpVerified(false);
       return;
     }
 
-    // ✅ Ideally verify OTP from backend here
-    setOtpVerified(true);
-    toast.success("OTP Verified Successfully!");
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/verifyotp`, {
+        sessionId: sessionToken,
+        otp,
+      });
+
+      setOtpVerified(true);
+      toast.success("OTP Verified Successfully!");
+    } catch (error) {
+      const message = "Failed to verify OTP";
+      toast.error(message);
+      setOtpVerified(false);
+    }
   }
 
   useEffect(() => {

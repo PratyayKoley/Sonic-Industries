@@ -3,9 +3,12 @@ import { OrderModel } from "../models/orders.model";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { Product, ProductModel } from "../models/products.model";
-import { DealModel } from "../models/deals.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
 import { isDealApplicable } from "../utils/couponCode";
+import { sendMail } from "../config/mailer";
+import { getOtpEmailTemplate } from "../config/Emails";
+import { OTPStoreModel } from "../models/otpStore.model";
+import argon2 from "argon2";
 
 export const getAllOrders = async (
   req: Request,
@@ -278,5 +281,101 @@ export const getOrderById = async (
       message: "Failed to fetch order.",
       error,
     });
+  }
+};
+
+export const sendOTPEmail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { email, sessionId } = req.body;
+
+    if (!email || !sessionId) {
+      res.status(400).json({ message: "Email and Session ID are required" });
+      return;
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await argon2.hash(otp, { type: argon2.argon2id });
+
+    await OTPStoreModel.findOneAndUpdate(
+      { sessionId },
+      {
+        email,
+        sessionId,
+        otp: hashedOtp,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000), //  10 min
+      },
+      { upsert: true, new: true }
+    );
+
+    await sendMail({
+      to: email,
+      subject: "Your OTP Verification Code - Sonic Industries",
+      html: getOtpEmailTemplate(otp),
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+    });
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+    res.status(500).json({
+      message: "Failed to send OTP email",
+      error,
+    });
+  }
+};
+
+export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { sessionId, otp } = req.body;
+
+    if (!sessionId || !otp) {
+      res.status(400).json({ message: "Session ID and OTP are required" });
+      return;
+    }
+
+    if (!/^[0-9]{6}$/.test(otp)) {
+      res.status(400).json({ message: "Invalid OTP format" });
+      return;
+    }
+
+    const record = await OTPStoreModel.findOne({ sessionId });
+
+    if (!record) {
+      res.status(400).json({ message: "OTP not found or expired" });
+      return;
+    }
+
+    if (record.expiresAt < new Date()) {
+      await OTPStoreModel.deleteOne({ sessionId });
+      res.status(400).json({ message: "OTP expired" });
+      return;
+    }
+
+    if (record.attempts >= 5) {
+      await OTPStoreModel.deleteOne({ sessionId });
+      res.status(429).json({ message: "Maximum OTP attempts exceeded" });
+      return;
+    }
+
+    const isValid = await argon2.verify(record.otp, otp);
+    if (!isValid) {
+      // Increment attempts on failure
+      record.attempts += 1;
+      await record.save();
+      res.status(400).json({ message: "Incorrect OTP" });
+      return;
+    }
+
+    await OTPStoreModel.deleteOne({ sessionId });
+    res.status(200).json({ message: "OTP verified successfully" });
+    return;
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ message: "Failed to verify OTP" });
+    return;
   }
 };

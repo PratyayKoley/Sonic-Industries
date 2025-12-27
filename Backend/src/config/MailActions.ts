@@ -27,23 +27,6 @@ export const handleSuccessfulOrderEmail = async (
 
   if (existingLead) return;
 
-  const customerHtml = `
-  <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-    <h2>🎉 Order Confirmed!</h2>
-    <p>Hi ${order.customer?.firstName} ${order.customer?.lastName},</p>
-    <p>Thank you for your order <b>${order.orderNumber}</b>.</p>
-    <p>Details:</p>
-    <ul>
-      <li>Product: ${order.order_items?.name}</li>
-      <li>Quantity: ${order.order_items?.quantity}</li>
-      <li>Total Price: ₹${order.order_items?.price}</li>
-      <li>Payment Method: ${order.payment_method}</li>
-    </ul>
-    <p>We will notify you once your order is shipped.</p>
-    <p>Regards,<br/>Sonic Industries</p>
-  </div>
-`;
-
   await LeadModel.create({
     subject: `Order Confirmation - ${order.orderNumber}`,
     content: `Order ${order.orderNumber} confirmed successfully for ${order.customer?.firstName}.`,
@@ -68,10 +51,3 @@ export const handleSuccessfulOrderEmail = async (
     html: getAdminEmailTemplate(order), 
   });
 };
-
-export const handleInquiryEmail = async (
-  req: Request, 
-  res: Response
-): Promise<void> => {
-  
-}
