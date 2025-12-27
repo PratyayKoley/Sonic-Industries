@@ -34,7 +34,7 @@ const DealSchema = new Schema(
       },
     },
     rating: { type: Number, default: 5 },
-    expiresAt: { type: Date, required: true },
+    expiresAt: { type: Date, required: true, index: { expires: 0 } },
     couponCode: { type: String, required: true, unique: true },
   },
   {
