@@ -10,13 +10,20 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function DealsOfWeek() {
   const [currentDeal, setCurrentDeal] = useState(0);
   const [deals, setDeals] = useState<DealBackend[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchDeals = async () => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`
-    );
-    const data: DealBackend[] = await res.data.deals;
-    setDeals(data);
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`
+      );
+      const data: DealBackend[] = res.data.deals;
+      setDeals(data);
+    } catch (error) {
+      console.error("Error fetching deals:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -41,12 +48,18 @@ export default function DealsOfWeek() {
     return () => clearInterval(interval);
   }, [nextDeal]);
 
-  if (deals.length === 0)
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-gray-500">Loading deals...</p>
       </div>
     );
+  }
+
+  if (!loading && deals.length === 0) {
+    // No deals, render nothing or a custom message
+    return null;
+  }
 
   const currentDealData = deals[currentDeal];
 
