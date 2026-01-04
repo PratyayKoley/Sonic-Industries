@@ -9,6 +9,11 @@ import { handleSuccessfulOrderEmail } from "../config/MailActions";
 import { isDealApplicable } from "../utils/couponCode";
 import { generateInvoicePdf, InvoicePayload } from "../config/invoicePdf";
 import { pickWeightedReward } from "../utils/rewardPicker";
+import { sendMail } from "../config/mailer";
+import {
+  getCustomerRewardsEmailTemplate,
+  getAdminRewardsEmailTemplate,
+} from "../config/Emails";
 
 const CheckoutSecret =
   process.env.JWT_CHECKOUT_SECRET ||
@@ -408,6 +413,19 @@ export const spinReward = async (
     };
     await order.save();
 
+    await sendMail({
+      to: process.env.EMAIL_USER as string,
+      subject: `New Reward Assigned - Order ${order.orderNumber} for ${order.customer?.firstName} ${order.customer?.lastName}`,
+      html: getAdminRewardsEmailTemplate(order),
+    });
+
+    setTimeout(async () => {
+      await sendMail({
+        to: order.customer?.email as string,
+        subject: "Congratulations! You've Won a Reward!",
+        html: getCustomerRewardsEmailTemplate(order),
+      });
+    });
     res.status(200).json({
       reward,
       alreadySpun: false,

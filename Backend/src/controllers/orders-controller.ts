@@ -296,24 +296,42 @@ export const sendOTPEmail = async (
       return;
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedOtp = await argon2.hash(otp, { type: argon2.argon2id });
+    const existing = await OTPStoreModel.findOne({ sessionId }).select("createdAt");;
 
-    await OTPStoreModel.findOneAndUpdate(
+    if (existing && Date.now() - existing.createdAt.getTime() < 30_000) {
+      res.status(429).json({
+        message: "Please wait 30 seconds before requesting a new OTP",
+      });
+      return;
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await argon2.hash(otp, {
+      type: argon2.argon2id,
+      memoryCost: 2 ** 14, // lower
+      timeCost: 2,
+      parallelism: 1,
+    });
+
+    await OTPStoreModel.updateOne(
       { sessionId },
       {
-        email,
-        sessionId,
-        otp: hashedOtp,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000), //  10 min
+        $set: {
+          email,
+          otp: hashedOtp,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+          attempts: 0,
+        },
       },
-      { upsert: true, new: true }
+      { upsert: true }
     );
 
-    await sendMail({
+    sendMail({
       to: email,
       subject: "Your OTP Verification Code - Sonic Industries",
       html: getOtpEmailTemplate(otp),
+    }).catch((err) => {
+      console.error("OTP email failed:", err);
     });
 
     res.status(200).json({
