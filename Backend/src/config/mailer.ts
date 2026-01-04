@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 interface MailOptions {
   to: string | string[];
@@ -6,29 +7,22 @@ interface MailOptions {
   html: string;
 }
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export const sendMail = async ({
   to,
   subject,
   html,
 }: MailOptions): Promise<void> => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject,
-    html,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
+    await resend.emails.send({
+      from: "Sonic Industries <onboarding@resend.dev>",
+      to,
+      subject,
+      html,
+    });
   } catch (error) {
-    console.error("❌ Error sending email:", error);
+    console.error("❌ Error sending email via Resend:", error);
+    throw error;
   }
 };
