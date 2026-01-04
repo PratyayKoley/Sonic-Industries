@@ -57,7 +57,6 @@ export default function DealsOfWeek() {
   }
 
   if (!loading && deals.length === 0) {
-    // No deals, render nothing or a custom message
     return null;
   }
 

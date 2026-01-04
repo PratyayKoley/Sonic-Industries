@@ -366,7 +366,7 @@ const LeadsDashboard = () => {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
                 >
                   Previous
                 </button>
@@ -378,7 +378,7 @@ const LeadsDashboard = () => {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+                  className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
                 >
                   Next
                 </button>

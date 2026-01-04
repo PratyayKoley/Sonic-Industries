@@ -172,10 +172,13 @@ export function CustomerForm({
     }
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/verifyotp`, {
-        sessionId: sessionToken,
-        otp,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/verifyotp`,
+        {
+          sessionId: sessionToken,
+          otp,
+        }
+      );
 
       setOtpVerified(true);
       toast.success("OTP Verified Successfully!");
@@ -275,7 +278,7 @@ export function CustomerForm({
           {emailTouched && isEmailValid && !otpSent && (
             <button
               onClick={handleOtpSend}
-              className="px-4 py-2 bg-blue-600 text-white rounded text-sm"
+              className="px-4 py-2 bg-blue-600 text-white rounded text-sm cursor-pointer"
             >
               Send OTP
             </button>
@@ -293,7 +296,7 @@ export function CustomerForm({
               />
               <button
                 onClick={handleOtpValidate}
-                className="px-4 py-2 bg-green-600 text-white rounded text-sm"
+                className="px-4 py-2 bg-green-600 text-white rounded text-sm cursor-pointer"
               >
                 Verify OTP
               </button>

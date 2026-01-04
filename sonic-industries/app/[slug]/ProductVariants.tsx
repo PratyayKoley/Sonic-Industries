@@ -103,11 +103,11 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
 
         {/* Products Carousel */}
         <Carousel className="w-full">
-          <CarouselContent className="-ml-4">
+          <CarouselContent className="flex justify-center">
             {products.map((product) => (
               <CarouselItem
                 key={product._id}
-                className="pl-4 md:basis-1/2 lg:basis-1/4"
+                className="flex justify-center md:basis-1/2 lg:basis-1/4"
               >
                 <div className="relative group overflow-hidden cursor-pointer">
                   {/* Product Image with Background */}
