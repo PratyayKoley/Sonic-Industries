@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import {
   createCheckoutSession,
   createRazorPayOrder,
@@ -17,7 +17,11 @@ router.post("/verify-payment", verifyPayment);
 router.post("/checkout", createCheckoutSession);
 router.post("/checkout/verify-token", verifyCheckoutSession);
 router.post("/mark-failed", markPaymentFailed);
-router.post("/webhook", razorpayWebhook);
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  razorpayWebhook
+);
 router.post("/invoice", generateReceipt);
 router.post("/spin-reward", spinReward);
 

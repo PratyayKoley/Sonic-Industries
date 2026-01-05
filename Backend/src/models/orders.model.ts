@@ -19,7 +19,7 @@ const OrderSchema = new Schema(
     },
     payment_status: {
       type: String,
-      enum: ["pending", "paid", "failed", "refunded"],
+      enum: ["pending", "paid", "partial", "failed", "refunded"],
       default: "pending",
       required: true,
     },
@@ -33,7 +33,7 @@ const OrderSchema = new Schema(
     },
     payment_method: {
       type: String,
-      enum: ["cod", "razorpay"],
+      enum: ["cod", "razorpay_full", "razorpay_partial"],
       required: true,
     },
     razorpay: {
@@ -66,6 +66,16 @@ const OrderSchema = new Schema(
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
     },
+    online_paid_amount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    cod_amount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     order_items: {
       productId: { type: Types.ObjectId, ref: "Product", required: true },
       categoryId: { type: Types.ObjectId, ref: "Category", required: true },
@@ -92,11 +102,10 @@ OrderSchema.index(
   {
     unique: true,
     partialFilterExpression: {
-      "razorpay.razorpay_order_id": { $exists: true, $ne: null }
-    }
+      "razorpay.razorpay_order_id": { $exists: true, $ne: null },
+    },
   }
 );
-
 
 export type Order = InferSchemaType<typeof OrderSchema> & {
   _id: Types.ObjectId;

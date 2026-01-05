@@ -15,9 +15,7 @@ import {
   getAdminRewardsEmailTemplate,
 } from "../config/Emails";
 
-const CheckoutSecret =
-  process.env.JWT_CHECKOUT_SECRET ||
-  "kbdhiffhibdsiujhaihhiBHBhvGUVguguGUYgutGFutf";
+const CheckoutSecret = process.env.JWT_CHECKOUT_SECRET!;
 
 export const createRazorPayOrder = async (
   req: Request,
@@ -37,6 +35,11 @@ export const createRazorPayOrder = async (
       return;
     }
 
+    if (!["full", "partial"].includes(newOrderRequest.razorPayMode)) {
+      res.status(400).json({ message: "Invalid payment mode" });
+      return;
+    }
+
     const decoded = jwt.verify(newOrderRequest.sessionToken, CheckoutSecret);
     if (!decoded) {
       res.status(401).json({
@@ -45,12 +48,26 @@ export const createRazorPayOrder = async (
       return;
     }
 
-    const existingOrders = await OrderModel.countDocuments({
+    const existingPaidOrder = await OrderModel.findOne({
+      sessionToken: newOrderRequest.sessionToken,
+      payment_status: { $in: ["paid", "partial"] }, // already paid
+    });
+
+    if (existingPaidOrder) {
+      res.status(400).json({
+        message:
+          "This checkout session has already been used for a successful payment.",
+      });
+      return;
+    }
+
+    // Optionally, you can still limit retries for pending/failed orders
+    const existingPendingOrFailed = await OrderModel.countDocuments({
       sessionToken: newOrderRequest.sessionToken,
       payment_status: { $in: ["pending", "failed"] },
     });
 
-    if (existingOrders >= 5) {
+    if (existingPendingOrFailed >= 5) {
       res.status(429).json({
         message: "Too many payment attempts for this session",
       });
@@ -107,7 +124,14 @@ export const createRazorPayOrder = async (
         phone: newOrderRequest.customer.phone,
         gstin: newOrderRequest.customer.gstin,
       },
-      payment_method: "razorpay",
+      payment_method:
+        newOrderRequest.razorPayMode === "full"
+          ? "razorpay_full"
+          : "razorpay_partial",
+      online_paid_amount:
+        newOrderRequest.razorPayMode === "full" ? finalPayable : shipping,
+      cod_amount:
+        newOrderRequest.razorPayMode === "full" ? 0 : finalPayable - shipping,
       total_price: subtotal + gst,
       shipping_fee: shipping,
       discount: discount,
@@ -124,12 +148,18 @@ export const createRazorPayOrder = async (
       },
     };
 
+    const razorpayAmount =
+      newOrderRequest.razorPayMode === "full" ? finalPayable : shipping;
+
     const RazorpayOrder = await razorpayInstance.orders.create({
-      amount: finalPayable * 100, // convert to paise
+      amount: razorpayAmount * 100, // paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: true,
-      notes: { productId: (decoded as { productId: string }).productId },
+      notes: {
+        productId: (decoded as { productId: string }).productId,
+        payment_mode: newOrderRequest.razorPayMode,
+      },
     });
 
     const newOrder = await OrderModel.create({
@@ -184,13 +214,23 @@ export const verifyPayment = async (
       return;
     }
 
+    const order = await OrderModel.findOne({
+      "razorpay.razorpay_order_id": response.razorpay_order_id,
+    });
+
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+
     await OrderModel.updateOne(
       {
         "razorpay.razorpay_order_id": response.razorpay_order_id,
       },
       {
         $set: {
-          payment_status: "paid",
+          payment_status:
+            order.payment_method === "razorpay_full" ? "paid" : "partial",
           "razorpay.razorpay_payment_id": response.razorpay_payment_id,
           "razorpay.paidAt": new Date().toISOString(),
           spinEligible: true,
@@ -313,53 +353,57 @@ export const markPaymentFailed = async (
   }
 };
 
-export const razorpayWebhook = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
-  const signature = req.headers["x-razorpay-signature"] as string;
-  const body = JSON.stringify(req.body);
+export const razorpayWebhook = async (req: Request, res: Response) => {
+  try {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+    const signature = req.headers["x-razorpay-signature"] as string;
 
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(body)
-    .digest("hex");
+    const expectedSignature = crypto
+      .createHmac("sha256", secret)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
 
-  if (signature !== expectedSignature) {
-    res.status(400).json({ message: "Invalid signature" });
-    return;
+    if (signature !== expectedSignature) {
+      res.status(400).json({ message: "Invalid signature" });
+      return;
+    }
+
+    const event = req.body.event;
+    const payment = req.body.payload.payment.entity;
+
+    const order = await OrderModel.findOne({
+      "razorpay.razorpay_order_id": payment.order_id,
+    });
+
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+
+    if (event === "payment.captured") {
+      order.payment_status =
+        order.payment_method === "razorpay_full" ? "paid" : "partial";
+
+      order.razorpay!.razorpay_payment_id = payment.id;
+      order.razorpay!.paidAt = new Date();
+      order.spinEligible = true;
+
+      await order.save();
+
+      await handleSuccessfulOrderEmail(order.orderNumber);
+    }
+
+    if (event === "payment.failed") {
+      order.payment_status = "failed";
+      order.status = "cancelled";
+      await order.save();
+    }
+
+    res.status(200).json({ status: "ok" });
+  } catch (error) {
+    console.error("Webhook error:", error);
+    res.status(500).json({ message: "Webhook processing failed" });
   }
-
-  const event = req.body.event;
-  const payment = req.body.payload.payment.entity;
-
-  if (event === "payment.captured") {
-    await OrderModel.updateOne(
-      { "razorpay.razorpay_order_id": payment.order_id },
-      {
-        $set: {
-          payment_status: "paid",
-          "razorpay.razorpay_payment_id": payment.id,
-          "razorpay.paidAt": new Date().toISOString(),
-        },
-      }
-    );
-
-    await handleSuccessfulOrderEmail(payment.order_id);
-  } else if (event === "payment.failed") {
-    await OrderModel.updateOne(
-      { "razorpay.razorpay_order_id": payment.order_id },
-      {
-        $set: {
-          payment_status: "failed",
-          status: "cancelled",
-        },
-      }
-    );
-  }
-
-  res.status(200).json({ status: "ok" });
 };
 
 export const spinReward = async (
@@ -388,8 +432,8 @@ export const spinReward = async (
     }
 
     if (
-      order.payment_method !== "razorpay" ||
-      order.payment_status !== "paid" ||
+      !order.payment_method.startsWith("razorpay") ||
+      !["paid", "partial"].includes(order.payment_status) ||
       !order.spinEligible
     ) {
       res.status(403).json({

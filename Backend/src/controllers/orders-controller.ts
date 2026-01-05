@@ -64,12 +64,26 @@ export const createOrder = async (
       return;
     }
 
-    const existingOrders = await OrderModel.countDocuments({
+    const existingPaidOrder = await OrderModel.findOne({
+      sessionToken: newOrderRequest.sessionToken,
+      payment_status: { $in: ["paid", "partial"] }, // already paid
+    });
+
+    if (existingPaidOrder) {
+      res.status(400).json({
+        message:
+          "This checkout session has already been used for a successful payment.",
+      });
+      return;
+    }
+
+    // Optionally, you can still limit retries for pending/failed orders
+    const existingPendingOrFailed = await OrderModel.countDocuments({
       sessionToken: newOrderRequest.sessionToken,
       payment_status: { $in: ["pending", "failed"] },
     });
 
-    if (existingOrders >= 5) {
+    if (existingPendingOrFailed >= 5) {
       res.status(429).json({
         message: "Too many payment attempts for this session",
       });
@@ -127,6 +141,8 @@ export const createOrder = async (
         gstin: newOrderRequest.customer.gstin,
       },
       payment_method: "cod",
+      online_paid_amount: 0,
+      cod_amount: finalPrice,
       total_price: total_price + gstPrice,
       shipping_fee: shipping,
       postpaidCharges: postpaidCharge,
@@ -296,7 +312,9 @@ export const sendOTPEmail = async (
       return;
     }
 
-    const existing = await OTPStoreModel.findOne({ sessionId }).select("createdAt");;
+    const existing = await OTPStoreModel.findOne({ sessionId }).select(
+      "createdAt"
+    );
 
     if (existing && Date.now() - existing.createdAt.getTime() < 30_000) {
       res.status(429).json({
