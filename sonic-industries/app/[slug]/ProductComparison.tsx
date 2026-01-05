@@ -63,7 +63,7 @@ export default function ProductComparison({
         }}
         className={index % 2 === 0 ? "bg-gray-50/50" : "bg-white"}
       >
-        <td className="border border-gray-200 p-3 font-bold sticky left-0 bg-white z-10 min-w-[150px]">
+        <td className="border border-gray-200 p-3 font-bold sticky left-0 bg-white z-10 min-w-37.5">
           {featureName}
         </td>
 
@@ -72,7 +72,7 @@ export default function ProductComparison({
           return (
             <td
               key={product._id}
-              className="border border-gray-200 p-3 text-center min-w-[150px]"
+              className="border border-gray-200 p-3 text-center min-w-37.5"
             >
               {match ? match.weight : "--"}
             </td>
@@ -117,7 +117,7 @@ export default function ProductComparison({
                 {products.map((product, idx) => (
                   <th
                     key={product._id}
-                    className="border-b border-gray-200 p-3 min-w-[200px] bg-white"
+                    className="border-b border-gray-200 p-3 min-w-50 bg-white"
                   >
                     <motion.div
                       className="flex flex-col items-center"
@@ -134,7 +134,7 @@ export default function ProductComparison({
                         alt={product.name}
                         width={500}
                         height={500}
-                        className="w-[120px] h-[120px] object-contain rounded-lg mb-2"
+                        className="w-30 h-30 object-contain rounded-lg mb-2"
                       />
                       <h3 className="font-bold text-lg">{product.name}</h3>
                       <p className="font-extrabold text-blue-600 mt-1">
@@ -163,7 +163,7 @@ export default function ProductComparison({
                 {products.map((product) => (
                   <td
                     key={product._id}
-                    className="border p-3 text-center min-w-[150px]"
+                    className="border p-3 text-center min-w-37.5"
                   >
                     <button className="bg-red-600 text-white font-bold py-2 px-4 w-full rounded-lg shadow hover:bg-red-700 transition-colors">
                       BUY NOW

@@ -275,6 +275,7 @@ export default function CheckoutClient() {
           },
           payment_method: "razorpay",
           quantity,
+          razorPayMode,
         }
       );
       const { RazorpayOrder, customerData } = res.data;

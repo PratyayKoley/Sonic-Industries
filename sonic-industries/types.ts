@@ -124,7 +124,7 @@ export interface OrderModelBackend {
   };
   status: "pending" | "shipped" | "delivered" | "cancelled";
   payment_status: "pending" | "paid" | "failed" | "refunded";
-  payment_method: "cod" | "razorpay";
+  payment_method: "cod" | "razorpay_full" | "razorpay_partial";
   razorpay?: {
     razorpay_order_id?: string;
     razorpay_payment_id?: string;
