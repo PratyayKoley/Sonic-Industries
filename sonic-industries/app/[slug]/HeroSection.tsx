@@ -39,44 +39,49 @@ export default function HeroSection({
     : allProductData.products;
 
   return (
-    <section className="min-h-screen w-full bg-white px-4 py-12" id="home">
-      <div className="container mx-auto flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-12">
-        {/* Left Text Content */}
-        <div className="w-full lg:w-1/2 text-center lg:text-left lg:ml-8 xl:ml-20 mt-12 lg:mt-0">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
+    <section className="w-full bg-white px-4 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-14">
+
+        {/* Text Section */}
+        <div className="w-full lg:w-1/2 text-center lg:text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-snug mb-5">
             {displayTitle}
           </h1>
 
-          <ul className="text-gray-700 mb-8 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 list-disc list-inside space-y-2">
+          <ul className="text-gray-700 text-sm sm:text-base md:text-lg max-w-xl mx-auto lg:mx-0 list-disc list-inside space-y-2 mb-8">
             {productData.description}
           </ul>
 
+          {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <button className="bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-medium px-8 py-3 rounded-md uppercase hover:tracking-widest cursor-pointer tracking-normal">
+            <button className="bg-red-600 hover:bg-red-700 transition text-white font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base">
               Buy Now
             </button>
 
-            <button className="border border-blue-500 text-blue-500 hover:bg-blue-50 transition-all duration-300 font-medium px-8 py-3 rounded-md uppercase hover:tracking-widest cursor-pointer tracking-normal">
+            <button className="border border-blue-500 text-blue-500 hover:bg-blue-50 transition font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base">
               Learn More
             </button>
           </div>
+
+          {/* Sibling Products */}
           {(isCategoryPage || siblingProducts.length > 0) && (
-            <div className="container px-4 mt-10">
-              <div className="flex gap-4 flex-nowrap overflow-x-auto relative min-w-[calc(100%-5em)] mt-8 h-max scrollbar-hide">
+            <div className="mt-10">
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                 {siblingProducts.map((item) => (
                   <div
-                    className="flex flex-col items-center shrink-0"
                     key={item._id}
+                    className="flex flex-col items-center shrink-0 cursor-pointer"
                     onClick={() => router.push(item.slug)}
                   >
-                    <div className="relative w-37.5 h-37.5 cursor-pointer">
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24">
                       <span
-                        className="absolute inset-0.75 rounded-full border-4 z-1 bg-cover bg-top"
-                        style={{ backgroundImage: `url('${item.images[0]}')` }}
+                        className="absolute inset-1 rounded-full border-4 bg-cover bg-top"
+                        style={{
+                          backgroundImage: `url('${item.images[0]}')`,
+                        }}
                       />
                     </div>
-
-                    <span className="w-[6em] text-center text-[0.8em] mt-1">
+                    <span className="mt-2 text-xs sm:text-sm text-center w-24">
                       {item.name}
                     </span>
                   </div>
@@ -84,29 +89,28 @@ export default function HeroSection({
               </div>
             </div>
           )}
-          <div></div>
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center relative md:mr-10">
-          <div className="relative w-full h-95 sm:h-105 md:h-120 lg:h-150">
+        {/* Image Section */}
+        <div className="w-full lg:w-1/2 flex justify-center relative">
+          <div className="relative w-full max-w-md sm:max-w-lg aspect-square">
             <Ripple
-              mainCircleSize={300}
+              mainCircleSize={260}
               numCircles={6}
-              className="absolute inset-0 w-full h-full"
+              className="absolute inset-0"
             />
-            <div className="relative z-10 flex items-center justify-center h-full">
-              <div className="relative w-full h-125">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={allProductData.images[0]}
-                  alt="Product"
-                  height={500}
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
-              </div>
+
+            <div className="relative z-10 flex items-center justify-center w-full h-full">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={allProductData.images[0]}
+                alt="Product"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

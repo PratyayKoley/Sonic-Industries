@@ -73,12 +73,12 @@ export default function ProductIntro2({
     >
       <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-linear-to-r from-indigo-100 via-purple-100 to-pink-100 pointer-events-none" />
 
-      <div className="container mx-auto px-10 relative z-10">
+      <div className="container mx-auto px-6 md:px-10 lg:px-10 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-12">
           {/* Text and Features */}
           <div className="w-full md:w-1/2">
             <motion.h1
-              className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-10 leading-tight"
+              className="hidden md:block text-3xl lg:text-4xl font-extrabold text-gray-900 mb-10 leading-snug"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

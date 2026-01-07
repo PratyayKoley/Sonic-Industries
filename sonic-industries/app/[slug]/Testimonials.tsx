@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
@@ -17,7 +17,8 @@ export default function Testimonials() {
       id: 1,
       name: "Natha Roy",
       position: "CEO of Apple",
-      avatar: "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189141/1_ckeuna.jpg",
+      avatar:
+        "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189141/1_ckeuna.jpg",
       rating: 5,
       content:
         "Do play they miss give so up. Words to up style of since world. Way own uncommonly travelling now acceptance bed compliment solicitude. We leaf to snug on no need.",
@@ -26,7 +27,8 @@ export default function Testimonials() {
       id: 2,
       name: "Sarah Johnson",
       position: "CTO of Microsoft",
-      avatar: "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg",
+      avatar:
+        "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg",
       rating: 5,
       content:
         "Peculiar trifling absolute and wandered vicinity property yet. The and collecting motionless difficulty son. His hearing staying ten colonel met. Word drew six easy four dear cold deny.",
@@ -365,17 +367,7 @@ export default function Testimonials() {
 
               <div className="flex flex-col items-center relative">
                 {/* Avatar with animation */}
-                <motion.div
-                  className="w-28 h-28 rounded-full border-4 border-blue-600 mb-8 relative z-10 overflow-hidden shadow-lg"
-                  variants={fadeInVariants}
-                  custom={0.3}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 0 20px rgba(191, 219, 254, 0.5)",
-                    transition: { duration: 0.3 },
-                  }}
-                >
-                  <div className="absolute inset-0 bg-linear-to-br from-blue-500 to-purple-600 opacity-30"></div>
+                <motion.div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-blue-600 mb-6 sm:mb-8 relative overflow-hidden shadow-lg">
                   <Image
                     src={testimonials[activeIndex].avatar}
                     alt={testimonials[activeIndex].name}
@@ -412,13 +404,13 @@ export default function Testimonials() {
                   variants={fadeInVariants}
                   custom={0.5}
                 >
-                  <p className="text-gray-700 text-lg md:text-xl italic mb-8 relative">
+                  <p className="text-center text-gray-700 text-sm sm:text-base md:text-lg italic mb-4 sm:mb-6">
                     {testimonials[activeIndex].content}
                   </p>
-                  <h3 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600">
                     {testimonials[activeIndex].name}
                   </h3>
-                  <p className="text-gray-600 font-medium">
+                  <p className="text-gray-600 font-medium text-sm sm:text-base">
                     {testimonials[activeIndex].position}
                   </p>
                 </motion.div>

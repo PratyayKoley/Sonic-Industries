@@ -91,19 +91,22 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
     >
       <div className="max-w-6xl mx-auto w-full">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-2 sm:mb-4">
             Our Awesome Products
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Prepared is me marianne pleasure likewise debating. Wonder an unable
-            except better stairs do ye admire. His secure called esteem praise.
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
+            Prepared is me marianne pleasure likewise debating. Wonder an unable except better stairs do ye admire. His secure called esteem praise.
           </p>
         </div>
 
         {/* Products Carousel */}
         <Carousel className="w-full">
-          <CarouselContent className="flex justify-center">
+          <CarouselContent
+            className={`flex gap-4 sm:gap-6 md:gap-8 ${
+              products.length === 1 ? "justify-center" : "justify-start"
+            }`}
+          >
             {products.map((product) => (
               <CarouselItem
                 key={product._id}

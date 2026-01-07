@@ -99,7 +99,7 @@ export default function ProductIntro({
           {/* Text and Features */}
           <div className="w-full md:w-1/2">
             <motion.h1
-              className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-10 leading-tight"
+              className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-10 leading-snug"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
-import { ProductFormDataType, ProductLabels } from "@/types";
+import { NewProductLabels, ProductFormDataType, ProductLabels } from "@/types";
 
 interface LabelsFormProps {
   formData: ProductFormDataType;
@@ -11,8 +11,7 @@ interface LabelsFormProps {
 
 const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newLabel, setNewLabel] = useState<ProductLabels>({
-    _id: "",
+  const [newLabel, setNewLabel] = useState<NewProductLabels>({
     x: 0,
     y: 0,
     name: "",
@@ -25,7 +24,7 @@ const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
         ...prev,
         labels: [...prev.labels, newLabel],
       }));
-      setNewLabel({ _id: "", x: 0, y: 0, name: "", desc: "" });
+      setNewLabel({ x: 0, y: 0, name: "", desc: "" });
       setShowAddForm(false);
     }
   };
@@ -125,7 +124,7 @@ const LabelsForm = ({ formData, setFormData }: LabelsFormProps) => {
               <button
                 onClick={() => {
                   setShowAddForm(false);
-                  setNewLabel({ _id: "", x: 0, y: 0, name: "", desc: "" });
+                  setNewLabel({ x: 0, y: 0, name: "", desc: "" });
                 }}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >

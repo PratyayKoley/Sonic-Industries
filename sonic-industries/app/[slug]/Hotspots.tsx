@@ -184,7 +184,7 @@ export default function Hotspots({
         {/* Interactive Smartwatch Section */}
         <div
           ref={containerRef}
-          className="relative w-full aspect-[4/3] max-w-xs sm:max-w-sm md:max-w-2xl mx-auto mb-8 md:mb-16"
+          className="relative w-full aspect-4/3 max-w-xs sm:max-w-sm md:max-w-2xl mx-auto mb-8 md:mb-16"
         >
           {/* Watch Image */}
           <motion.div
@@ -203,7 +203,7 @@ export default function Hotspots({
             }}
           >
             <Image
-              src={allProductData.images[1]}
+              src={allProductData.images[0]}
               alt="Labelling Image"
               className="max-w-full max-h-full object-contain"
               width={500}
@@ -291,7 +291,7 @@ export default function Hotspots({
 
                       {/* Info card */}
                       <motion.div
-                        className="absolute top-1/2 z-20 w-max max-w-[150px] md:max-w-[250px]"
+                        className="absolute top-1/2 z-20 w-max max-w-37.5 md:max-w-62.5"
                         initial={{
                           opacity: 0,
                           y: "-50%",
@@ -328,7 +328,7 @@ export default function Hotspots({
                               className={`mb-1 ${
                                 !isMobile
                                   ? "text-lg md:text-xl mb-2 font-semibold"
-                                  : "text-xs font-light w-[4.4rem] break-words"
+                                  : "text-xs font-light w-[4.4rem] wrap-break-word"
                               }`}
                             >
                               {hotspot.name}

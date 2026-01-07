@@ -120,11 +120,6 @@ const CategoriesDashboard = () => {
     setActiveFormTab("basic");
   };
 
-  const clearMessages = () => {
-    setError("");
-    setSuccess("");
-  };
-
   const CreateCategoryProps = {
     formData,
     setFormData,
@@ -169,24 +164,30 @@ const CategoriesDashboard = () => {
     handleDelete,
   };
 
+  const clearMessages = () => {
+    setError("");
+    setSuccess("");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 px-3 py-4 sm:px-6 sm:py-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                 Categories Management
               </h1>
-              <p className="text-gray-600 mt-1">
-                Manage your website categories with ease
+              <p className="text-sm sm:text-base text-gray-600 mt-1">
+                Manage your website categories
               </p>
             </div>
+
             <button
               onClick={loadAllCategories}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
             >
               <RefreshCw
                 className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
@@ -198,87 +199,72 @@ const CategoriesDashboard = () => {
 
         {/* Messages */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600" />
-            <span className="text-red-800">{error}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-red-600 hover:text-red-800 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
+          <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4 text-sm sm:text-base">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+            <span className="text-red-800 flex-1">{error}</span>
+            <button onClick={clearMessages}>
+              <X className="w-4 h-4 text-red-600" />
             </button>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <span className="text-green-800">{success}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-green-600 hover:text-green-800"
-            >
-              <X className="w-4 h-4" />
+          <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-lg p-4 text-sm sm:text-base">
+            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+            <span className="text-green-800 flex-1">{success}</span>
+            <button onClick={clearMessages}>
+              <X className="w-4 h-4 text-green-600" />
             </button>
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="flex border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab("browse")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "browse"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Browse All ({categories.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("search")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "search"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Search by Slug
-            </button>
-            <button
-              onClick={() => setActiveTab("create")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "create"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Create New
-            </button>
+        {/* Tabs */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="flex overflow-x-auto scrollbar-hide border-b">
+            {[
+              { id: "browse", label: `Browse (${categories.length})` },
+              { id: "search", label: "Search by Slug" },
+              { id: "create", label: "Create New" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-5 py-3 whitespace-nowrap text-sm font-medium transition ${
+                  activeTab === tab.id
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <div className="p-6">
-            {/* Browse Tab */}
+          <div className="p-4 sm:p-6">
             {activeTab === "browse" && (
-              <div className="space-y-4">
+              <>
                 {loading ? (
                   <div className="text-center py-8">
                     <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-                    <p className="text-gray-600">Loading categories...</p>
+                    <p className="text-sm sm:text-base text-gray-600">
+                      Loading categories...
+                    </p>
                   </div>
                 ) : categories.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No categories found. Create your first category!</p>
-                  </div>
+                  <p className="text-center text-sm sm:text-base text-gray-500">
+                    No categories found.
+                  </p>
                 ) : (
-                  <SearchAllCategories {...SearchAllCategoriesProps} />
+                  <SearchAllCategories
+                    categories={categories}
+                    startEdit={() => {}}
+                    handleDelete={() => {}}
+                  />
                 )}
-              </div>
+              </>
             )}
 
             {activeTab === "search" && <SearchBySlug {...SearchBySlugProps} />}
-
             {activeTab === "create" && (
               <CreateCategory {...CreateCategoryProps} />
             )}
@@ -286,7 +272,19 @@ const CategoriesDashboard = () => {
         </div>
 
         {isEditing && selectedCategory && (
-          <EditingModal {...EditingModalProps} />
+          <EditingModal
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            formData={formData}
+            setFormData={setFormData}
+            loading={loading}
+            setLoading={setLoading}
+            setError={setError}
+            setSuccess={setSuccess}
+            setIsEditing={setIsEditing}
+            categories={categories}
+            setCategories={setCategories}
+          />
         )}
       </div>
     </div>

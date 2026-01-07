@@ -165,8 +165,8 @@ export default function ProductComparison({
                     key={product._id}
                     className="border p-3 text-center min-w-37.5"
                   >
-                    <button className="bg-red-600 text-white font-bold py-2 px-4 w-full rounded-lg shadow hover:bg-red-700 transition-colors">
-                      BUY NOW
+                    <button className="bg-red-600 text-white font-bold py-2 px-4 w-full rounded-lg shadow hover:bg-red-700 transition-colors cursor-pointer">
+                      LEARN MORE
                     </button>
                   </td>
                 ))}

@@ -70,50 +70,33 @@ export default function FAQs({ allProductData }: FAQsProps) {
     setOpenItem((prev) => (prev === id ? null : id));
   };
 
-  // Intersection Observer for scroll animations - reset when out of view
+  // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        } else {
-          setIsVisible(false);
-        }
-      },
+      ([entry]) => setIsVisible(entry.isIntersecting),
       { threshold: 0.2 }
     );
-
     const currentSection = sectionRef.current;
-
-    if (currentSection) {
-      observer.observe(currentSection);
-    }
-
+    if (currentSection) observer.observe(currentSection);
     return () => {
-      if (currentSection) {
-        observer.unobserve(currentSection);
-      }
+      if (currentSection) observer.unobserve(currentSection);
     };
   }, []);
 
-  // Animation on scroll
+  // Scroll progress
   useEffect(() => {
     const handleScroll = () => {
       if (sectionRef.current) {
         const rect = sectionRef.current.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-
-        // Calculate how far through the section we've scrolled (0 to 1)
         const progress = 1 - rect.bottom / (windowHeight + rect.height);
         setScrollProgress(Math.max(0, Math.min(1, progress)));
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Variants for animations
   const backgroundVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: (i: number) => ({
@@ -130,20 +113,13 @@ export default function FAQs({ allProductData }: FAQsProps) {
     visible: {
       opacity: 1,
       x: 0,
-      transition: {
-        staggerChildren: 0.1,
-        when: "beforeChildren",
-      },
+      transition: { staggerChildren: 0.1, when: "beforeChildren" },
     },
   };
 
   const faqItemVariants = {
     hidden: { opacity: 0, x: -16 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5 },
-    },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
   };
 
   const imageContainerVariants = {
@@ -152,20 +128,8 @@ export default function FAQs({ allProductData }: FAQsProps) {
       opacity: 1,
       x: 0,
       scale: 1,
-      transition: {
-        duration: 1,
-        ease: easeOut,
-        delay: 0.3,
-      },
+      transition: { duration: 1, ease: easeOut, delay: 0.3 },
     },
-  };
-
-  const imageDecorationVariants = {
-    hidden: { scale: 0 },
-    visible: (delay: number) => ({
-      scale: 1,
-      transition: { duration: 1, ease: easeOut, delay },
-    }),
   };
 
   const imageVariants = {
@@ -176,29 +140,16 @@ export default function FAQs({ allProductData }: FAQsProps) {
       rotate: 0,
       transition: { duration: 1, ease: easeOut, delay: 0.3 },
     },
-    hover: {
-      scale: 1.15,
-      transition: { duration: 0.3 },
-    },
-  };
-
-  const shadowVariants = {
-    hidden: { scale: 0.5, y: 4, opacity: 0 },
-    visible: {
-      scale: 1,
-      y: 0,
-      opacity: 0.2,
-      transition: { duration: 1, ease: easeOut, delay: 0.3 },
-    },
+    hover: { scale: 1.15, transition: { duration: 0.3 } },
   };
 
   return (
     <div
-      className="bg-linear-to-b from-gray-50 to-gray-100 py-20 px-4 overflow-hidden relative"
+      className="relative bg-gray-50 py-16 px-4 sm:px-6 md:py-20 overflow-hidden"
       ref={sectionRef}
       id="faq"
     >
-      {/* Background decorative elements */}
+      {/* Background decoration */}
       <motion.div
         className="absolute -top-32 -left-32 w-64 h-64 rounded-full bg-blue-500 blur-3xl pointer-events-none"
         initial="hidden"
@@ -215,18 +166,17 @@ export default function FAQs({ allProductData }: FAQsProps) {
       />
 
       <div className="max-w-6xl mx-auto">
-        {/* Heading and description */}
-        <h2 className="text-4xl md:text-5xl font-bold text-center bg-clip-text text-black mb-3">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3">
           Asked Questions
         </h2>
-        <p className="text-center text-gray-600 mb-16 max-w-3xl mx-auto">
+        <p className="text-center text-gray-600 mb-12 sm:mb-16 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
           Find answers to commonly asked questions about our products, ordering
           process, payment options, and more to help you make informed
           decisions.
         </p>
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-          {/* FAQ Accordion section with animations that reset */}
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+          {/* Accordion */}
           <motion.div
             className="w-full md:w-1/2 space-y-4"
             initial="hidden"
@@ -236,7 +186,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
             {faqItems.map((item) => (
               <motion.div
                 key={item.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden"
+                className="bg-white rounded-lg shadow-md overflow-hidden"
                 variants={faqItemVariants}
                 style={{
                   borderLeft:
@@ -247,17 +197,16 @@ export default function FAQs({ allProductData }: FAQsProps) {
               >
                 <button
                   onClick={() => toggleAccordion(item.id)}
-                  className="w-full flex justify-between items-center p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="w-full flex justify-between items-center p-4 sm:p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
                 >
-                  <h3 className="font-medium text-gray-800 text-lg">
+                  <h3 className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">
                     {item.question}
                   </h3>
                   <motion.div
-                    className="shrink-0 ml-2"
                     animate={{ rotate: openItem === item.id ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <ChevronDown className="w-6 h-6 text-purple-600" />
+                    <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                   </motion.div>
                 </button>
 
@@ -269,7 +218,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="p-5 bg-gray-50 text-gray-600 border-t border-gray-100">
+                      <div className="p-4 sm:p-5 bg-gray-50 text-gray-600 text-sm sm:text-base md:text-lg border-t border-gray-100">
                         {item.answer}
                       </div>
                     </motion.div>
@@ -279,47 +228,20 @@ export default function FAQs({ allProductData }: FAQsProps) {
             ))}
           </motion.div>
 
-          {/* Image section with animations that reset */}
+          {/* Image */}
           <motion.div
-            className="w-full md:w-1/2 flex items-center justify-center relative"
+            className="hidden md:flex w-full md:w-1/2 min-h-full items-center justify-center relative"
             initial="hidden"
             animate={isVisible ? "visible" : "hidden"}
             variants={imageContainerVariants}
           >
-            {/* Decorative background elements for the image */}
-            <motion.div
-              className="absolute w-64 h-64 rounded-full bg-blue-100 opacity-30"
-              style={{ left: "20%", top: "10%" }}
-              variants={imageDecorationVariants}
-              custom={0.5}
+            <motion.img
+              src={allProductData.images[4]}
+              alt="Product Info"
+              className="max-w-md md:max-w-lg h-auto max-h-96 object-contain cursor-pointer"
+              variants={imageVariants}
+              whileHover="hover"
             />
-            <motion.div
-              className="absolute w-48 h-48 rounded-full bg-purple-100 opacity-30"
-              style={{ right: "15%", bottom: "15%" }}
-              variants={imageDecorationVariants}
-              custom={0.7}
-            />
-
-            {/* Main image with animated effects */}
-            <div className="relative z-10 w-full flex items-center justify-center">
-              {/* Shadow blob that moves slightly differently than the image */}
-              <motion.div
-                className="absolute bottom-0 w-2/3 h-6 bg-black rounded-full blur-md"
-                variants={shadowVariants}
-              />
-
-              {/* The actual image with hover effects */}
-              <motion.img
-                src={allProductData.images[4]}
-                alt="Product Info"
-                className="w-full max-w-lg h-96 object-contain cursor-pointer"
-                style={{
-                  filter: "drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.1))",
-                }}
-                variants={imageVariants}
-                whileHover="hover"
-              />
-            </div>
           </motion.div>
         </div>
       </div>

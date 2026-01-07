@@ -192,6 +192,13 @@ export interface ProductLabels {
   desc?: string;
 }
 
+export interface NewProductLabels {
+  x?: number;
+  y?: number;
+  name?: string;
+  desc?: string;
+}
+
 export type SearchAllCategoryProps = {
   categories: CategoryBackend[];
   startEdit: (category: CategoryBackend) => void;
@@ -286,7 +293,7 @@ export type ProductFormDataType = {
     desc2?: string;
     items?: ProductCharacteristics[];
   };
-  labels: ProductLabels[];
+  labels: NewProductLabels[];
 
   yt_video_url: string;
 };

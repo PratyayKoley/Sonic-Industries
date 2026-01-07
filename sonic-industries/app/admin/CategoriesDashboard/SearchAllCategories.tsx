@@ -1,5 +1,6 @@
 import { CategoryBackend, SearchAllCategoryProps } from "@/types";
 import { Edit2, Trash2, Tag, Hash } from "lucide-react";
+import Link from "next/link";
 
 const SearchAllCategories = ({
   categories,
@@ -13,7 +14,8 @@ const SearchAllCategories = ({
         <div className="flex items-center gap-2">
           <Tag className="w-5 h-5 text-indigo-600" />
           <h2 className="text-lg font-semibold text-gray-800">
-            Total Categories: <span className="text-indigo-600">{categories.length}</span>
+            Total Categories:{" "}
+            <span className="text-indigo-600">{categories.length}</span>
           </h2>
         </div>
       </div>
@@ -45,6 +47,16 @@ const SearchAllCategories = ({
               <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
                 {category.slug}
               </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 mb-3 text-sm text-gray-500">
+              Link:
+              <Link
+                href={`/${category.slug}`}
+                className="font-mono text-xs bg-gray-100 px-2 py-1 rounded"
+              >
+                {process.env.NEXT_PUBLIC_FRONTEND_URL}/{category.slug}
+              </Link>
             </div>
 
             {/* Description */}

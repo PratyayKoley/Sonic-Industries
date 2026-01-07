@@ -8,6 +8,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const SearchAllProducts = ({
@@ -151,6 +152,15 @@ const SearchAllProducts = ({
 
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <span>Slug: {product.slug}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <Link
+                          href={`/${product.slug}`}
+                          className="font-mono text-xs bg-gray-100 px-2 py-1 rounded"
+                        >
+                          Link: {process.env.NEXT_PUBLIC_FRONTEND_URL}/{product.slug}
+                        </Link>
                       </div>
 
                       {/* Price */}

@@ -13,12 +13,10 @@ export default function ContactUs() {
   });
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -40,14 +38,13 @@ export default function ContactUs() {
       );
 
       if (res.data.success) {
-        toast.success("✅ Message sent successfully!");
+        toast.success("Message sent successfully!");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        toast.error("Failed to send message. Please try again.");
+        toast.error("Failed to send message.");
       }
     } catch (error) {
-      console.error("Error submitting contact form:", error);
-      toast.error(error instanceof Error ? error.message : "An error occurred. Please try again.");
+      toast.error("Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
@@ -55,148 +52,129 @@ export default function ContactUs() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
+      ([entry]) => entry.isIntersecting && setIsVisible(true),
+      { threshold: 0.15 }
     );
-    const currentSection = sectionRef.current;
-    if (currentSection) {
-      observer.observe(currentSection);
-    }
-    return () => {
-      if (currentSection) {
-        observer.unobserve(currentSection);
-      }
-    };
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   const contactCards = [
     {
       id: 1,
-      icon: <Phone className="text-purple-600" />,
+      icon: <Phone className="w-6 h-6 text-purple-600" />,
       content: ["+91 8010735898", "+333 153 4575 7893"],
     },
     {
       id: 2,
-      icon: <Mail className="text-purple-600" />,
+      icon: <Mail className="w-6 h-6 text-purple-600" />,
       content: ["sonicindustriesofficial@gmail.com", "anothername@name.com"],
     },
     {
       id: 3,
-      icon: <MapPin className="text-purple-600" />,
+      icon: <MapPin className="w-6 h-6 text-purple-600" />,
       content: [
-        "Sonic Industries, Gala No 05, Nityanand Bhakti,",
-        "Opp Rajeev Gandhi Vidyalay, Nilemore Road,",
+        "Sonic Industries, Gala No 05, Nityanand Bhakti",
+        "Opp Rajeev Gandhi Vidyalay, Nilemore Road",
         "Nallasopara West, Palghar-401203",
       ],
     },
   ];
 
   return (
-    <div className="bg-gray-100 py-20 px-4" ref={sectionRef} id="contact">
+    <section
+      ref={sectionRef}
+      id="contact"
+      className="bg-gray-100 py-14 sm:py-20 px-4"
+    >
       <div className="max-w-6xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">Contact Us</h2>
-          <p className="text-center text-gray-600 max-w-3xl mx-auto">
-            Have questions or inquiries? We&apos;d love to hear from you.
+        {/* Header */}
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">
+            Contact Us
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+            Have questions or inquiries? We’d love to hear from you.
           </p>
         </div>
 
         {/* Contact Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 cursor-pointer">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {contactCards.map((card, index) => (
             <div
               key={card.id}
-              className={`bg-white rounded-lg shadow-lg p-8 text-center transform transition-all duration-700 
+              className={`bg-white rounded-xl shadow-md p-6 sm:p-8 text-center transition-all duration-700
               ${
                 isVisible
                   ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
+                  : "translate-y-8 opacity-0"
               }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+              style={{ transitionDelay: `${index * 120}ms` }}
             >
               <div className="flex justify-center mb-4">
-                <div className="relative w-16 h-16 flex items-center justify-center">
-                  <div
-                    className="absolute inset-0 rounded-full border border-dashed border-purple-400 animate-spin"
-                    style={{
-                      animationDuration: "12s",
-                      animationDirection:
-                        index % 2 === 0 ? "normal" : "reverse",
-                    }}
-                  ></div>
+                <div className="relative w-14 h-14 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full border border-dashed border-purple-400 animate-spin animation-duration-[12s]" />
                   <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
                     {card.icon}
                   </div>
                 </div>
               </div>
-              <div>
-                {card.content.map((line, i) => (
-                  <p key={i} className="text-gray-700 my-1">
-                    {line}
-                  </p>
-                ))}
-              </div>
+
+              {card.content.map((line, i) => (
+                <p
+                  key={i}
+                  className="text-sm sm:text-base text-gray-700 leading-relaxed"
+                >
+                  {line}
+                </p>
+              ))}
             </div>
           ))}
         </div>
 
-        {/* Contact Form & Map */}
+        {/* Form + Map */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Contact Form */}
+          {/* Form */}
           <div
-            className={`bg-white rounded-lg shadow-lg p-8 transform transition-all duration-700 
-              ${
-                isVisible
-                  ? "translate-x-0 opacity-100"
-                  : "-translate-x-10 opacity-0"
-              }`}
-            style={{ transitionDelay: "300ms" }}
+            className={`bg-white rounded-xl shadow-md p-6 sm:p-8 transition-all duration-700
+            ${
+              isVisible
+                ? "translate-x-0 opacity-100"
+                : "-translate-x-8 opacity-0"
+            }`}
           >
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your Name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter Your Email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Write your message here"
-                  rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-600"
-                  required
-                ></textarea>
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-purple-600"
+              />
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-purple-600"
+              />
+
+              <textarea
+                name="message"
+                rows={4}
+                placeholder="Your Message"
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full px-4 py-3 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-purple-600"
+              />
+
               <button
-                type="submit"
                 disabled={isSubmitting}
-                className={`${
-                  isSubmitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-                } text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 uppercase cursor-pointer`}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-md transition w-full sm:w-auto"
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
               </button>
@@ -205,25 +183,21 @@ export default function ContactUs() {
 
           {/* Map */}
           <div
-            className={`bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-700 
-              ${
-                isVisible
-                  ? "translate-x-0 opacity-100"
-                  : "translate-x-10 opacity-0"
-              }`}
-            style={{ transitionDelay: "400ms" }}
+            className={`bg-white rounded-xl shadow-md overflow-hidden h-75 sm:h-full transition-all duration-700
+            ${
+              isVisible
+                ? "translate-x-0 opacity-100"
+                : "translate-x-8 opacity-0"
+            }`}
           >
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.6990232557923!2d72.81300262498675!3d19.425406081852454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a9ef038b322f%3A0xe02b3de42dd9dc44!2sSonic%20Industries!5e0!3m2!1sen!2sin!4v1745071411343!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
+              className="w-full h-full"
               loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
+            />
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

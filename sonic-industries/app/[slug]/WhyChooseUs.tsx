@@ -157,7 +157,16 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
 
               {/* Play button */}
               <button
-                onClick={() => setIsVideoModalOpen(true)}
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    // Mobile → redirect to YouTube
+                    const youtubeURL = productData.yt_video_url;
+                    if (youtubeURL) window.open(youtubeURL, "_blank");
+                  } else {
+                    // Desktop → open modal
+                    setIsVideoModalOpen(true);
+                  }
+                }}
                 className="absolute rounded-full bg-white w-16 h-16 md:w-20 md:h-20 flex items-center justify-center shadow-xl hover:bg-opacity-90 transition-all duration-300 hover:scale-110 z-10 group cursor-pointer"
               >
                 <div className="absolute inset-0 rounded-full bg-white opacity-20 animate-ping"></div>
@@ -166,7 +175,6 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
                   fill="#4f46e5"
                   className="text-indigo-600 ml-1"
                 />
-
                 <span className="absolute -bottom-14 text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   Watch Video
                 </span>
@@ -274,28 +282,18 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div
             ref={modalRef}
-            className="bg-black rounded-lg overflow-hidden shadow-xl w-full max-w-4xl transform transition-all duration-300 animate-scaleIn"
+            className="bg-black rounded-lg overflow-hidden shadow-xl w-full max-w-full md:max-w-4xl transform transition-all duration-300"
           >
-            <div className="relative">
-              <button
-                onClick={() => setIsVideoModalOpen(false)}
-                className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors cursor-pointer"
-              >
-                <X size={24} className="text-white" />
-              </button>
-
-              {/* Video player */}
-              <div className="aspect-video w-full">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={getYouTubeEmbedURL(productData.yt_video_url || "") || ""}
-                  title="Product Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
+            <div className="aspect-video w-full">
+              <iframe
+                width="100%"
+                height="100%"
+                src={getYouTubeEmbedURL(productData.yt_video_url || "") || ""}
+                title="Product Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
             </div>
           </div>
         </div>

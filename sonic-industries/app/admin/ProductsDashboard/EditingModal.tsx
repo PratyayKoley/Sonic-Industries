@@ -179,7 +179,7 @@ const EditingModal = ({
       ...prev,
       labels: [
         ...(prev.labels || []),
-        { _id: "", x: 0, y: 0, name: "", desc: "" },
+        { x: 0, y: 0, name: "", desc: "" },
       ],
     }));
   };

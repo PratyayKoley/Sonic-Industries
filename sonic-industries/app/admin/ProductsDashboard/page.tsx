@@ -12,6 +12,7 @@ import {
   ProductCharacteristics,
   ProductLabels,
   FeaturesBlock,
+  NewProductLabels,
 } from "@/types";
 import CreateProduct from "./CreateProduct";
 import SearchBySlug from "./SearchBySlug";
@@ -57,7 +58,7 @@ const ProductsDashboard = () => {
       desc2: "",
       items: [] as ProductCharacteristics[],
     } as FeaturesBlock,
-    labels: [] as ProductLabels[],
+    labels: [] as NewProductLabels[],
     packaging: {
       length: 0,
       width: 0,

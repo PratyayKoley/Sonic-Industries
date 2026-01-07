@@ -14,11 +14,8 @@ export default function DealsOfWeek() {
 
   const fetchDeals = async () => {
     try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`
-      );
-      const data: DealBackend[] = res.data.deals;
-      setDeals(data);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`);
+      setDeals(res.data.deals);
     } catch (error) {
       console.error("Error fetching deals:", error);
     } finally {
@@ -38,11 +35,6 @@ export default function DealsOfWeek() {
     setCurrentDeal((prev) => (prev - 1 + deals.length) % deals.length);
   }, [deals.length]);
 
-  const goToDeal = (index: number) => {
-    setCurrentDeal(index);
-  };
-
-  // Auto-advance carousel every 5 seconds
   useEffect(() => {
     const interval = setInterval(nextDeal, 5000);
     return () => clearInterval(interval);
@@ -56,9 +48,7 @@ export default function DealsOfWeek() {
     );
   }
 
-  if (!loading && deals.length === 0) {
-    return null;
-  }
+  if (!loading && deals.length === 0) return null;
 
   const currentDealData = deals[currentDeal];
 
@@ -66,8 +56,7 @@ export default function DealsOfWeek() {
     const now = new Date();
     const expire = new Date(expiresAt);
     const diff = expire.getTime() - now.getTime();
-    if (diff <= 0)
-      return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+    if (diff <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
@@ -85,19 +74,19 @@ export default function DealsOfWeek() {
   const timeLeft = getTimeLeft(currentDealData.expiresAt);
 
   return (
-    <div className="bg-linear-to-br from-gray-50 to-gray-100 min-h-screen py-12 px-4">
+    <div className="bg-linear-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        {/* Heading */}
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-2 sm:mb-4">
             Deals Of The Week
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover incredible savings on premium tech products. Limited time
-            offers you don&apos;t want to miss!
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
+            Discover incredible savings on premium tech products. Limited time offers you don&apos;t want to miss!
           </p>
         </div>
 
-        {/* Carousel Container */}
+        {/* Carousel */}
         <div className="relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -106,59 +95,59 @@ export default function DealsOfWeek() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -80 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-5xl mx-auto transition-all duration-500 transform hover:shadow-2xl"
+              className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-full sm:max-w-5xl mx-auto transition-all duration-500 transform hover:shadow-2xl"
             >
               <div className="flex flex-col md:flex-row">
-                {/* Product Image */}
-                <div className="md:w-1/2 p-8 flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-50">
-                  <div className="relative">
+                {/* Image */}
+                <div className="md:w-1/2 p-4 sm:p-6 md:p-8 flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-50">
+                  <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md">
                     <Image
                       alt={currentDealData.title || "Deal Image"}
-                      className="max-w-full h-64 md:h-80 object-contain transition-transform duration-300 hover:scale-105"
+                      className="w-full h-48 sm:h-64 md:h-80 object-contain transition-transform duration-300 hover:scale-105"
                       src={currentDealData.imageUrl || "/placeholder.png"}
                       width={500}
                       height={500}
                     />
-                    <div className="absolute top-0 right-0 bg-red-500 text-white px-3 py-1 rounded-bl-lg font-bold text-sm">
-                      {currentDealData.dealType === "product" &&
-                      currentDealData.discountPercent
-                        ? `${Math.round(currentDealData.discountPercent)}% OFF`
-                        : "Limited Offer"}
-                    </div>
+                    {currentDealData.dealType === "product" || currentDealData.discountPercent ? (
+                      <div className="absolute top-0 right-0 bg-red-500 text-white px-2 sm:px-3 py-1 rounded-bl-lg font-bold text-xs sm:text-sm">
+                        {currentDealData.dealType === "product" && currentDealData.discountPercent
+                          ? `${Math.round(currentDealData.discountPercent)}% OFF`
+                          : "Limited Offer"}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
-                {/* Product Details */}
-                <div className="md:w-1/2 p-8 flex flex-col justify-center">
-                  <div className="flex items-center mb-3">
-                    {[...Array(5)].map((_, index) => (
+                {/* Details */}
+                <div className="md:w-1/2 p-4 sm:p-6 md:p-8 flex flex-col justify-center">
+                  <div className="flex items-center mb-2 sm:mb-3">
+                    {[...Array(5)].map((_, i) => (
                       <Star
-                        key={index}
-                        className={`w-5 h-5 ${
-                          index < (currentDealData.rating ?? 0)
+                        key={i}
+                        className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                          i < (currentDealData.rating ?? 0)
                             ? "text-yellow-400 fill-yellow-400"
                             : "text-gray-300"
                         }`}
                         aria-hidden="true"
                       />
                     ))}
-                    <span className="ml-2 text-sm text-gray-600">
+                    <span className="ml-1 sm:ml-2 text-xs sm:text-sm text-gray-600">
                       ({currentDealData.rating ?? 0}.0)
                     </span>
                   </div>
 
                   {currentDealData.dealType === "product" ? (
                     <>
-                      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">
                         {currentDealData.productName}
                       </h2>
-
-                      <div className="flex items-center mb-6">
-                        <span className="text-4xl font-bold text-indigo-600 mr-3">
+                      <div className="flex items-center mb-4 sm:mb-6">
+                        <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-indigo-600 mr-2 sm:mr-3">
                           ₹{currentDealData.discountedPrice}
                         </span>
                         {currentDealData.mrp && (
-                          <span className="text-xl text-gray-500 line-through">
+                          <span className="text-sm sm:text-base md:text-lg text-gray-500 line-through">
                             ₹{currentDealData.mrp}
                           </span>
                         )}
@@ -166,51 +155,43 @@ export default function DealsOfWeek() {
                     </>
                   ) : (
                     <>
-                      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">
                         {currentDealData.title}
                       </h2>
-                      <p className="text-gray-600 mb-6 leading-relaxed">
+                      <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
                         {currentDealData.description}
                       </p>
-                      <div className="flex items-center mb-6">
-                        <span className="text-3xl font-semibold text-indigo-600">
+                      <div className="flex items-center mb-4 sm:mb-6">
+                        <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-indigo-600">
                           Flat ₹{currentDealData.discountedPrice} off
                         </span>
                       </div>
                     </>
                   )}
 
-                  {/* Countdown Timer */}
-                  <div className="mb-8">
-                    <div className="flex items-center">
-                      <p className="text-sm text-gray-700 font-semibold mb-1">
-                        Use Coupon:
-                      </p>
-                      <p className="text-lg font-bold text-indigo-700 tracking-wider">
+                  {/* Countdown */}
+                  <div className="mb-4 sm:mb-6">
+                    <div className="flex items-center mb-2">
+                      <p className="text-xs sm:text-sm text-gray-700 font-semibold mr-2">Use Coupon:</p>
+                      <p className="text-sm sm:text-base font-bold text-indigo-700 tracking-wider">
                         {currentDealData.couponCode || "NO COUPON"}
                       </p>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3 font-medium">
-                      Deal expires in:
-                    </p>
-                    <div className="flex justify-between max-w-sm">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-2 font-medium">Deal expires in:</p>
+                    <div className="flex justify-between max-w-xs sm:max-w-sm gap-2">
                       {Object.entries(timeLeft).map(([key, value], index) => (
                         <div
                           key={index}
-                          className="text-center p-3 bg-linear-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-16"
+                          className="text-center p-2 sm:p-3 bg-linear-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-12"
                         >
-                          <div className="text-2xl font-bold text-gray-800">
-                            {value}
-                          </div>
-                          <div className="text-xs text-gray-600 capitalize">
-                            {key}
-                          </div>
+                          <div className="text-lg sm:text-xl font-bold text-gray-800">{value}</div>
+                          <div className="text-xs sm:text-sm text-gray-600 capitalize">{key}</div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
+                  <button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base md:text-lg">
                     BUY NOW - LIMITED TIME!
                   </button>
                 </div>
@@ -218,42 +199,40 @@ export default function DealsOfWeek() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation Arrows */}
+          {/* Arrows */}
           <button
             onClick={prevDeal}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white hover:bg-gray-50 text-gray-800 p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 z-10 cursor-pointer"
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 z-10"
             aria-label="Previous deal"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
           </button>
 
           <button
             onClick={nextDeal}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white hover:bg-gray-50 text-gray-800 p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 z-10 cursor-pointer"
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 z-10"
             aria-label="Next deal"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        {/* Dot Indicators */}
-        <div className="flex justify-center mt-8 space-x-3">
+        {/* Dots */}
+        <div className="flex justify-center mt-6 space-x-2 sm:space-x-3">
           {deals.map((_, index) => (
             <button
               key={index}
-              onClick={() => goToDeal(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentDeal
-                  ? "bg-indigo-600 scale-125"
-                  : "bg-gray-300 hover:bg-gray-400"
+              onClick={() => setCurrentDeal(index)}
+              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 ${
+                index === currentDeal ? "bg-indigo-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
               }`}
               aria-label={`Go to deal ${index + 1}`}
             />
           ))}
         </div>
 
-        <div className="text-center mt-6">
-          <p className="text-gray-600">
+        <div className="text-center mt-4 sm:mt-6">
+          <p className="text-gray-600 text-xs sm:text-sm">
             Deal {currentDeal + 1} of {deals.length}
           </p>
         </div>
