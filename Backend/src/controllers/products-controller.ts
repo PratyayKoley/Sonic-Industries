@@ -70,7 +70,7 @@ export const createProduct = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${categoryData.slug}`,
+        path: `/${productData.slug}`,
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -253,7 +253,7 @@ export const updateProduct = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${populatedProduct.categoryId.slug}`,
+        path: `/${populatedProduct.slug}`,
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -300,7 +300,7 @@ export const deleteProduct = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${populatedProduct.categoryId.slug}`,
+        path: `/${populatedProduct.slug}`,
         secret: process.env.REVALIDATE_SECRET,
       },
     });
