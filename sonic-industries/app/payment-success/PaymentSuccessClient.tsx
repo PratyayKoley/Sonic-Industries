@@ -92,32 +92,26 @@ const PaymentSuccessClient: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      <div className="max-w-2xl w-full text-center relative z-10">
-        {/* Animated Success Icon */}
-        <div className="relative mb-8">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="w-32 h-32 bg-linear-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center animate-scale-in shadow-2xl">
-                <CheckCircle className="w-16 h-16 text-white animate-check-draw" />
-              </div>
-              <div className="absolute inset-0 w-32 h-32 bg-linear-to-r from-green-400 to-emerald-500 rounded-full animate-ping opacity-20"></div>
-              <div className="absolute inset-2 w-28 h-28 bg-linear-to-r from-green-300 to-emerald-400 rounded-full animate-pulse opacity-30"></div>
+      <div className="w-full max-w-3xl text-center">
+        {/* SUCCESS ICON */}
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-linear-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center animate-scale-in shadow-xl">
+              <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
             </div>
           </div>
         </div>
 
         {/* Success Message */}
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4 animate-fade-in-up">
-            Payment Successful!
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-700 mb-4 animate-fade-in-up animation-delay-200">
-            🎉 Thank you for your purchase!
-          </p>
-          <p className="text-lg text-gray-600 animate-fade-in-up animation-delay-400">
-            Your transaction has been processed successfully.
-          </p>
-        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-linear-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
+          Payment Successful!
+        </h1>
+        <p className="text-base sm:text-lg text-gray-700 mb-2">
+          🎉 Thank you for your purchase!
+        </p>
+        <p className="text-sm sm:text-base text-gray-600 mb-8">
+          Your transaction has been processed successfully.
+        </p>
 
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-green-100 shadow-lg animate-fade-in-up animation-delay-600 relative z-20">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -137,16 +131,24 @@ const PaymentSuccessClient: React.FC = () => {
         {/* Spinning Wheel Section */}
         {razorpayOrderId && (
           <div className="bg-white rounded-2xl p-6 mb-8 shadow-xl border border-emerald-100">
-            <h2 className="text-2xl font-bold text-emerald-600 mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-emerald-600 mb-1">
               🎁 Prepaid Bonus Spin
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-gray-600 mb-6">
               Spin the wheel and win a guaranteed reward!
             </p>
 
             <div id="wrapper">
-              <div id="wheel">
-                <svg width="100%" height="100%" viewBox="0 0 300 300">
+              <div
+                id="wheel"
+                style={{ maxWidth: "90vmin", maxHeight: "90vmin" }}
+              >
+                <svg
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 300 300"
+                  style={{ display: "block" }}
+                >
                   <g
                     id="inner-wheel"
                     style={{
@@ -253,11 +255,23 @@ const PaymentSuccessClient: React.FC = () => {
             </div>
 
             {selectedReward && (
-              <div className="mt-6 p-4 bg-linear-to-r from-green-100 to-emerald-100 rounded-xl animate-bounce-in">
-                <p className="text-2xl font-bold text-green-700">
+              <div
+                className="mt-4 sm:mt-6 p-4 sm:p-5 md:p-6 
+                bg-linear-to-r from-green-100 to-emerald-100 
+                rounded-xl animate-bounce-in text-center"
+              >
+                <p
+                  className="text-lg sm:text-xl md:text-2xl 
+                font-bold text-green-700"
+                >
                   🎉 Congratulations!
                 </p>
-                <p className="text-xl font-semibold text-emerald-600 mt-2">
+
+                <p
+                  className="mt-2 
+                text-base sm:text-lg md:text-xl 
+                font-semibold text-emerald-600 wrap-break-word"
+                >
                   You won: {selectedReward}
                 </p>
               </div>
@@ -266,17 +280,18 @@ const PaymentSuccessClient: React.FC = () => {
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-800 relative z-20">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
           <button
             onClick={handleGoHome}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition"
           >
             <Home className="w-5 h-5" />
             Go Back
           </button>
+
           <button
             onClick={handleDownloadReceipt}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 hover:scale-105 transition shadow-lg"
           >
             <Download className="w-5 h-5" />
             Download Receipt
@@ -424,10 +439,7 @@ const PaymentSuccessClient: React.FC = () => {
         }
 
         #wheel {
-          width: 300px;
-          height: 300px;
           position: relative;
-          margin: 0 auto;
         }
 
         #spin {
@@ -479,7 +491,7 @@ const PaymentSuccessClient: React.FC = () => {
           border-style: solid;
           border-width: 0 15px 30px 15px;
           border-color: transparent transparent #fff transparent;
-          top: 90px;
+          top: 95px;
           left: 50%;
           margin-left: -14px;
           z-index: 99;

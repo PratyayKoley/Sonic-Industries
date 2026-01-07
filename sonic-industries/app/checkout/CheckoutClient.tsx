@@ -306,42 +306,44 @@ export default function CheckoutClient() {
     <div className="min-h-screen bg-gray-50">
       {/* Progress Steps */}
       <div className="bg-white border-b">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-center space-x-8">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
-                1
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            {[
+              { step: 1, label: "Shipping & Gift Options", active: true },
+              { step: 2, label: "Billing & Payment", active: false },
+              { step: 3, label: "Order Review", active: false },
+            ].map((item) => (
+              <div key={item.step} className="flex items-center gap-2">
+                <div
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold
+                ${
+                  item.active
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-300 text-gray-600"
+                }`}
+                >
+                  {item.step}
+                </div>
+                <span
+                  className={`text-xs sm:text-sm font-medium ${
+                    item.active ? "text-gray-900" : "text-gray-500"
+                  }`}
+                >
+                  {item.label}
+                </span>
               </div>
-              <span className="ml-2 text-sm font-medium text-gray-900">
-                Shipping & Gift Options
-              </span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                2
-              </div>
-              <span className="ml-2 text-sm font-medium text-gray-500">
-                Billing & Payment
-              </span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                3
-              </div>
-              <span className="ml-2 text-sm font-medium text-gray-500">
-                Order Review
-              </span>
-            </div>
+            ))}
           </div>
-          <div>
+
+          <div className="mt-3 flex justify-center">
             <CheckoutTimer token={sessionToken} />
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Side - Forms */}
           <div className="lg:col-span-2">
             <CustomerForm
@@ -358,27 +360,30 @@ export default function CheckoutClient() {
 
           {/* Right Side - Order Summary */}
           <div className="lg:col-span-1">
-            <OrderSummary
-              product={product}
-              quantity={quantity}
-              otpVerified={otpVerified}
-              coupon={coupon}
-              discount={discount}
-              totalPrice={totalPrice}
-              shippingFee={shippingFee}
-              gstPrice={gstPrice}
-              finalPrice={finalPrice}
-              isLoading={isLoading}
-              message={message}
-              onQuantityChange={handleQuantityChange}
-              onCouponChange={setCoupon}
-              onApplyCoupon={applyCoupon}
-              onCodCheckout={handleCodCheckout}
-              onRazorpayCheckout={handleRazorpayCheckout}
-            />
+            <div className="lg:sticky lg:top-6">
+              <OrderSummary
+                product={product}
+                quantity={quantity}
+                otpVerified={otpVerified}
+                coupon={coupon}
+                discount={discount}
+                totalPrice={totalPrice}
+                shippingFee={shippingFee}
+                gstPrice={gstPrice}
+                finalPrice={finalPrice}
+                isLoading={isLoading}
+                message={message}
+                onQuantityChange={handleQuantityChange}
+                onCouponChange={setCoupon}
+                onApplyCoupon={applyCoupon}
+                onCodCheckout={handleCodCheckout}
+                onRazorpayCheckout={handleRazorpayCheckout}
+              />
+            </div>
           </div>
         </div>
       </div>
+
       <RazorpayModeDialog
         isPaymentDialogOpen={isPaymentModalOpen}
         setIsPaymentDialogOpen={setIsPaymentModalOpen}
