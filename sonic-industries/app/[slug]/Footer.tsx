@@ -13,6 +13,8 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import VideoWidget from "@/lib/VideoWidget";
+import FakePopup from "@/lib/FakePopup";
 
 export default function Footer() {
   const [isVisible, setIsVisible] = useState(false);
@@ -396,6 +398,8 @@ export default function Footer() {
             </div>
           </motion.div>
         </div>
+        <FakePopup />
+        <VideoWidget />
       </footer>
     </>
   );
