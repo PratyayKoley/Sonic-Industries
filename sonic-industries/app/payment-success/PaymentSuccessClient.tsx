@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CheckCircle, Home, Download } from "lucide-react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 const PaymentSuccessClient: React.FC = () => {
   const searchParams = useSearchParams();
@@ -86,8 +87,37 @@ const PaymentSuccessClient: React.FC = () => {
     }
   };
 
-  const handleDownloadReceipt = () => {
-    alert("Receipt download initiated!");
+  const handleDownloadReceipt = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/invoice`,
+        {
+          razorpayOrderId,
+        },
+        {
+          responseType: "blob",
+        }
+      );
+
+      // Create blob URL
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+
+      // Create temporary link
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Invoice-${razorpayOrderId}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Invoice download failed", error);
+      toast.error("Failed to download invoice");
+    }
   };
 
   return (
@@ -283,7 +313,7 @@ const PaymentSuccessClient: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-20">
           <button
             onClick={handleGoHome}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition cursor-pointer"
           >
             <Home className="w-5 h-5" />
             Go Back
@@ -291,7 +321,7 @@ const PaymentSuccessClient: React.FC = () => {
 
           <button
             onClick={handleDownloadReceipt}
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 hover:scale-105 transition shadow-lg"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-600 font-semibold rounded-xl border-2 border-green-200 hover:bg-green-50 hover:scale-105 transition shadow-lg cursor-pointer"
           >
             <Download className="w-5 h-5" />
             Download Receipt

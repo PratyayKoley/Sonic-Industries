@@ -158,12 +158,6 @@ const CategoriesDashboard = () => {
     setCategories,
   };
 
-  const SearchAllCategoriesProps = {
-    categories,
-    startEdit,
-    handleDelete,
-  };
-
   const clearMessages = () => {
     setError("");
     setSuccess("");
