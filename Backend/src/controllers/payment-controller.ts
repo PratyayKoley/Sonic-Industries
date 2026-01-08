@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Order, OrderModel } from "../models/orders.model";
 import { handleSuccessfulOrderEmail } from "../config/MailActions";
 import { isDealApplicable } from "../utils/couponCode";
-import { generateInvoicePdf, InvoicePayload } from "../config/invoicePdf";
+import { generateInvoicePdf } from "../config/invoicePdf";
 import { pickWeightedReward } from "../utils/rewardPicker";
 import { sendMail } from "../config/mailer";
 import {
@@ -484,20 +484,43 @@ export const generateReceipt = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const payload = req.body as InvoicePayload;
-  const pdfDoc = await generateInvoicePdf(payload);
+  try {
+    const { razorpayOrderId } = req.body;
 
-  const chunks: Buffer[] = [];
-  pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
+    if (!razorpayOrderId) {
+      res.status(400).json({
+        message: "Order ID is required",
+      });
+      return;
+    }
 
-  pdfDoc.on("end", () => {
-    const pdfBuffer = Buffer.concat(chunks);
+    const order: Order | null = await OrderModel.findOne({
+      "razorpay.razorpay_order_id": razorpayOrderId,
+    }).populate("order_items.productId order_items.categoryId");
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
+    if (!order) {
+      res.status(404).json({
+        message: "Order not found",
+      });
+      return;
+    }
+    const pdfDoc = await generateInvoicePdf(order);
 
-    res.send(pdfBuffer);
-  });
+    const chunks: Buffer[] = [];
+    pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
 
-  pdfDoc.end();
+    pdfDoc.on("end", () => {
+      const pdfBuffer = Buffer.concat(chunks);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=invoice.pdf");
+
+      res.send(pdfBuffer);
+    });
+
+    pdfDoc.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Invoice Generation failed" });
+  }
 };
