@@ -255,6 +255,12 @@ export default function CheckoutClient() {
       return;
     }
 
+    if (!isPartialPaymentAllowed) {
+      setRazorPayMode("full");
+      confirmRazorpayPayment();
+      return;
+    }
+
     setRazorPayMode(null);
     setIsPaymentModalOpen(true);
   };
@@ -301,6 +307,8 @@ export default function CheckoutClient() {
   const shippingFee = totalPrice + gstPrice < 10000 ? 1000 : 5000;
   const finalPrice = totalPrice + gstPrice + shippingFee - discount;
   const prepaidDiscount = Math.round(finalPrice * 0.02);
+
+  const isPartialPaymentAllowed = finalPrice > shippingFee;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -391,6 +399,7 @@ export default function CheckoutClient() {
         finalPrice={finalPrice - prepaidDiscount}
         shippingFee={shippingFee}
         paymentMode={razorPayMode}
+        isPartialPaymentAllowed={isPartialPaymentAllowed}
         confirmRazorpayPayment={confirmRazorpayPayment}
       />
     </div>

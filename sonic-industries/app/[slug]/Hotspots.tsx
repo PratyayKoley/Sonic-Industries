@@ -137,8 +137,8 @@ export default function Hotspots({
               key={`mobile-${hotspot._id}`}
               className={`p-4 rounded-lg cursor-pointer transition-all ${
                 activeHotspot === hotspot._id
-                  ? "text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
+                  ? "bg-gray-400/60 text-gray-800"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-800"
               }`}
               onClick={() => setActiveHotspot(hotspot._id)}
             >
@@ -249,9 +249,7 @@ export default function Hotspots({
 
                 {/* Hotspot dot */}
                 <motion.div
-                  className={`w-1 h-1 md:w-2 md:h-2 rounded-full ${
-                    color
-                  } cursor-pointer z-10 relative ${
+                  className={`w-1 h-1 md:w-2 md:h-2 rounded-full ${color} cursor-pointer z-10 relative ${
                     activeHotspot === hotspot._id
                       ? "ring-2 ring-white ring-opacity-70"
                       : ""
@@ -271,9 +269,7 @@ export default function Hotspots({
                     <>
                       {/* Connecting line */}
                       <motion.div
-                        className={`absolute top-1/2 h-0.5 ${
-                          lineColor
-                        } origin-${
+                        className={`absolute top-1/2 h-0.5 ${lineColor} origin-${
                           cardPosition === "left" ? "right" : "left"
                         } z-0`}
                         initial={{ width: 0 }}
