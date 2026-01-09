@@ -17,9 +17,7 @@ const DealsDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<"browse" | "create">("browse");
-  const [activeFormTab, setActiveFormTab] = useState<
-    "basic" | "pricing" | "image-rating"
-  >("basic");
+  const [activeFormTab, setActiveFormTab] = useState<"basic" | "pricing" | "image-rating">("basic");
 
   const [formData, setFormData] = useState<DealFormDataType>({
     title: "",
@@ -43,14 +41,10 @@ const DealsDashboard = () => {
   const loadAllDeals = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`
-      );
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`);
       setDeals(response.data.deals || []);
     } catch {
-      setError(
-        "Failed to load deals. Make sure you have a GET /api/deals endpoint."
-      );
+      setError("Failed to load deals. Make sure you have a GET /api/deals endpoint.");
       setDeals([]);
     } finally {
       setLoading(false);
@@ -58,34 +52,19 @@ const DealsDashboard = () => {
   };
 
   const handleDelete = async (dealId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this deal? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+    if (!confirm("Are you sure you want to delete this deal? This action cannot be undone.")) return;
 
     setLoading(true);
     setError("");
-
     try {
       const token = localStorage.getItem("token");
-
-      await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setDeals(deals.filter((deal) => deal._id !== dealId));
       setSuccess("Deal deleted successfully!");
-      if (selectedDeal?._id === dealId) {
-        setSelectedDeal(null);
-      }
+      if (selectedDeal?._id === dealId) setSelectedDeal(null);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete deal");
@@ -119,9 +98,7 @@ const DealsDashboard = () => {
 
   const loadAllProducts = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`
-      );
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`);
       setProducts(response.data.products || []);
     } catch (err) {
       const error = err as Error;
@@ -167,65 +144,50 @@ const DealsDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Deals Management
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Manage your website deals with ease
-              </p>
-            </div>
-            <button
-              onClick={loadAllDeals}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-              />
-              Refresh
-            </button>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Deals Management</h1>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage your website deals with ease</p>
           </div>
+          <button
+            onClick={loadAllDeals}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
         </div>
 
         {/* Messages */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 flex items-center gap-3 text-sm sm:text-base">
             <AlertCircle className="w-5 h-5 text-red-600" />
             <span className="text-red-800">{error}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-red-600 hover:text-red-800 cursor-pointer"
-            >
+            <button onClick={clearMessages} className="ml-auto text-red-600 hover:text-red-800 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           </div>
         )}
-
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 flex items-center gap-3 text-sm sm:text-base">
             <CheckCircle className="w-5 h-5 text-green-600" />
             <span className="text-green-800">{success}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-green-600 hover:text-green-800"
-            >
+            <button onClick={clearMessages} className="ml-auto text-green-600 hover:text-green-800">
               <X className="w-4 h-4" />
             </button>
           </div>
         )}
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="flex border-b border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="flex flex-col sm:flex-row border-b border-gray-200">
             <button
               onClick={() => setActiveTab("browse")}
-              className={`px-6 py-3 font-medium text-sm ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 font-medium text-sm sm:text-base ${
                 activeTab === "browse"
                   ? "border-b-2 border-blue-600 text-blue-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -235,7 +197,7 @@ const DealsDashboard = () => {
             </button>
             <button
               onClick={() => setActiveTab("create")}
-              className={`px-6 py-3 font-medium text-sm ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 font-medium text-sm sm:text-base ${
                 activeTab === "create"
                   ? "border-b-2 border-blue-600 text-blue-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -245,17 +207,17 @@ const DealsDashboard = () => {
             </button>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Browse Tab */}
             {activeTab === "browse" && (
               <div className="space-y-4">
                 {loading ? (
-                  <div className="text-center py-8">
+                  <div className="text-center py-6 sm:py-8">
                     <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-                    <p className="text-gray-600">Loading deals...</p>
+                    <p className="text-gray-600 text-sm sm:text-base">Loading deals...</p>
                   </div>
                 ) : deals.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-6 sm:py-8 text-gray-500 text-sm sm:text-base">
                     <p>No deals found. Create your first deal!</p>
                   </div>
                 ) : (
