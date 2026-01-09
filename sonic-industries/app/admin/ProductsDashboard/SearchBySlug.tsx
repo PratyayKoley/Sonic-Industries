@@ -99,7 +99,7 @@ const SearchBySlug = ({
               <div className="flex flex-col lg:flex-row gap-6">
                 {/* Product Image */}
                 {product.images && product.images.length > 0 && (
-                  <div className="lg:w-48 lg:h-48 w-full h-48 flex-shrink-0">
+                  <div className="lg:w-48 lg:h-48 w-full h-48 shrink-0">
                     <Image
                       src={product.images[0]}
                       alt={product.name}

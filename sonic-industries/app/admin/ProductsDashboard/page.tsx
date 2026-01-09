@@ -10,7 +10,6 @@ import {
   CategoryBackend,
   ProductImage,
   ProductCharacteristics,
-  ProductLabels,
   FeaturesBlock,
   NewProductLabels,
 } from "@/types";
@@ -18,7 +17,6 @@ import CreateProduct from "./CreateProduct";
 import SearchBySlug from "./SearchBySlug";
 import EditingModal from "./EditingModal";
 import SearchAllProducts from "./SearchAllProducts";
-import Error from "next/error";
 
 const ProductsDashboard = () => {
   const [products, setProducts] = useState<ProductBackend[]>([]);
@@ -75,15 +73,12 @@ const ProductsDashboard = () => {
   const loadAllProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`
       );
-      setProducts(response.data.products || []);
+      setProducts(res.data.products || []);
     } catch {
-      setError(
-        "Failed to load products. Make sure you have a GET /api/products endpoint."
-      );
-      setProducts([]);
+      setError("Failed to load products.");
     } finally {
       setLoading(false);
     }
@@ -91,33 +86,24 @@ const ProductsDashboard = () => {
 
   const loadAllCategories = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`
       );
-      setCategories(response.data.categories || []);
+      setCategories(res.data.categories || []);
     } catch (err) {
-      const error = err as Error;
-      console.error("Failed to load categories:", error);
+      console.error("Failed to load categories:", err);
     }
   };
 
   const handleDelete = async (productId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this product? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+    if (!confirm("Are you sure you want to delete this product?")) return;
 
     setLoading(true);
     setError("");
 
     try {
-      const token = localStorage.getItem("token"); // Adjust this based on your auth implementation
-
-      // Find the product to get its slug
-      const productToDelete = products.find((prod) => prod._id === productId);
+      const token = localStorage.getItem("token");
+      const productToDelete = products.find((p) => p._id === productId);
       if (!productToDelete) {
         setError("Product not found");
         return;
@@ -126,13 +112,11 @@ const ProductsDashboard = () => {
       await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${productToDelete.slug}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setProducts(products.filter((prod) => prod._id !== productId));
+      setProducts((prev) => prev.filter((p) => p._id !== productId));
       setSuccess("Product deleted successfully!");
       if (selectedProduct?._id === productId) {
         setSelectedProduct(null);
@@ -231,26 +215,27 @@ const ProductsDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto max-w-screen-xl space-y-5 sm:space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">
                 Products Management
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="mt-1 text-xs sm:text-sm md:text-base text-gray-600">
                 Manage your product catalog with ease
               </p>
             </div>
+
             <button
               onClick={loadAllProducts}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs sm:text-sm md:text-base text-white transition hover:bg-blue-700 disabled:opacity-50"
             >
               <RefreshCw
-                className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
               />
               Refresh
             </button>
@@ -259,83 +244,65 @@ const ProductsDashboard = () => {
 
         {/* Messages */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600" />
-            <span className="text-red-800">{error}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-red-600 hover:text-red-800 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
+          <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-xs sm:text-sm md:text-base">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+            <span className="flex-1 text-red-800">{error}</span>
+            <button onClick={clearMessages}>
+              <X className="h-4 w-4 text-red-600" />
             </button>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <span className="text-green-800">{success}</span>
-            <button
-              onClick={clearMessages}
-              className="ml-auto text-green-600 hover:text-green-800"
-            >
-              <X className="w-4 h-4" />
+          <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-xs sm:text-sm md:text-base">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <span className="flex-1 text-green-800">{success}</span>
+            <button onClick={clearMessages}>
+              <X className="h-4 w-4 text-green-600" />
             </button>
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="flex border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab("browse")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "browse"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Browse All ({products.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("search")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "search"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Search by Slug
-            </button>
-            <button
-              onClick={() => setActiveTab("create")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "create"
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Create New
-            </button>
+        {/* Tabs */}
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="flex overflow-x-auto border-b scrollbar-hide">
+            {[
+              { id: "browse", label: `Browse (${products.length})` },
+              { id: "search", label: "Search by Slug" },
+              { id: "create", label: "Create New" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`min-w-35 px-4 py-3 text-xs sm:text-sm font-medium transition ${
+                  activeTab === tab.id
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <div className="p-6">
-            {/* Browse Tab */}
+          <div className="p-3 sm:p-5 lg:p-6">
             {activeTab === "browse" && (
-              <div className="space-y-4">
+              <>
                 {loading ? (
-                  <div className="text-center py-8">
-                    <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-                    <p className="text-gray-600">Loading products...</p>
+                  <div className="py-10 text-center">
+                    <RefreshCw className="mx-auto mb-2 h-6 w-6 sm:h-8 sm:w-8 animate-spin text-blue-600" />
+                    <p className="text-xs sm:text-sm md:text-base text-gray-600">
+                      Loading products...
+                    </p>
                   </div>
                 ) : products.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No products found. Create your first product!</p>
-                  </div>
+                  <p className="text-center text-xs sm:text-sm md:text-base text-gray-500">
+                    No products found.
+                  </p>
                 ) : (
                   <SearchAllProducts {...SearchAllProductsProps} />
                 )}
-              </div>
+              </>
             )}
 
             {activeTab === "search" && <SearchBySlug {...SearchBySlugProps} />}
@@ -346,6 +313,7 @@ const ProductsDashboard = () => {
           </div>
         </div>
 
+        {/* Edit Modal */}
         {isEditing && selectedProduct && (
           <EditingModal {...EditingModalProps} />
         )}
