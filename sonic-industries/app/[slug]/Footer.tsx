@@ -15,8 +15,13 @@ import Image from "next/image";
 import Link from "next/link";
 import VideoWidget from "@/lib/VideoWidget";
 import FakePopup from "@/lib/FakePopup";
+import { CategoryBackend, ProductBackend } from "@/types";
 
-export default function Footer() {
+interface FooterProps {
+  productData: CategoryBackend | null;
+}
+
+export default function Footer({ productData }: FooterProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const footerRef = useRef(null);
@@ -399,7 +404,7 @@ export default function Footer() {
           </motion.div>
         </div>
         <FakePopup />
-        <VideoWidget />
+        <VideoWidget productData={productData} />
       </footer>
     </>
   );

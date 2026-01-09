@@ -38,10 +38,13 @@ export default function HeroSection({
     ? allProductData.products.filter((item) => item.slug !== productData.slug)
     : allProductData.products;
 
+  const heroImage = isCategoryPage
+    ? allProductData.images?.[0] // category → any product image
+    : productData.images?.[0]; // product → its own image
+
   return (
     <section className="w-full bg-white px-4 py-12 sm:py-16">
       <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-14">
-
         {/* Text Section */}
         <div className="w-full lg:w-1/2 text-center lg:text-left">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-snug mb-5">
@@ -103,14 +106,13 @@ export default function HeroSection({
             <div className="relative z-10 flex items-center justify-center w-full h-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={allProductData.images[0]}
+                src={heroImage}
                 alt="Product"
                 className="w-full h-full object-contain"
               />
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

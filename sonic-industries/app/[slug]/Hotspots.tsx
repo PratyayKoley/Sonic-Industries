@@ -203,7 +203,7 @@ export default function Hotspots({
             }}
           >
             <Image
-              src={allProductData.images[0]}
+              src={productData.images[0]}
               alt="Labelling Image"
               className="max-w-full max-h-full object-contain"
               width={500}

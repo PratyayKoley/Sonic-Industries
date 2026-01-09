@@ -3,8 +3,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2, Minimize2, Video } from "lucide-react";
+import { CategoryBackend, ProductBackend } from "@/types";
 
-export default function VideoWidget() {
+interface VideoWidgetProps {
+  productData: CategoryBackend | null;
+}
+
+export default function VideoWidget({ productData }: VideoWidgetProps) {
   const [expanded, setExpanded] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -81,7 +86,7 @@ export default function VideoWidget() {
               </div>
 
               <video
-                src="/videos/unboxing1.mp4"
+                src={productData?.yt_video_url || ""}
                 autoPlay
                 loop
                 muted
@@ -118,7 +123,7 @@ export default function VideoWidget() {
               </div>
 
               <video
-                src="/videos/unboxing1.mp4"
+                src={productData?.yt_video_url || ""}
                 autoPlay
                 loop
                 muted

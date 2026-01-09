@@ -66,6 +66,10 @@ export default function ProductIntro({
       : emptyFeatures;
   }
 
+  const intro1 = isCategory(productData)
+    ? allProductData.images?.[2] // category → any product image
+    : productData.images?.[1];
+
   return (
     <div
       className="min-h-screen bg-white relative overflow-hidden"
@@ -83,7 +87,7 @@ export default function ProductIntro({
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <motion.img
-              src={allProductData.images[1]}
+              src={intro1}
               alt="Product Image"
               className="w-full md:w-5/6 lg:w-3/4"
               animate={{ y: [0, -10, 0] }}

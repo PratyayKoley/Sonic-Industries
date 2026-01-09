@@ -251,8 +251,8 @@ const CategoriesDashboard = () => {
                 ) : (
                   <SearchAllCategories
                     categories={categories}
-                    startEdit={() => {}}
-                    handleDelete={() => {}}
+                    startEdit={startEdit}
+                    handleDelete={handleDelete}
                   />
                 )}
               </>

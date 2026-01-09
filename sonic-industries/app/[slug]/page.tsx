@@ -263,7 +263,7 @@ export default async function ProductPage({ params }: Props) {
         <Testimonials />
         <FAQs allProductData={allProductData} />
         <ContactUs />
-        <Footer />
+        <Footer productData={categoryData} />
       </>
     );
   }
@@ -346,7 +346,7 @@ export default async function ProductPage({ params }: Props) {
         <Testimonials />
         <FAQs allProductData={allProductData} />
         <ContactUs />
-        <Footer />
+        <Footer productData={parentCategoryData} />
       </>
     );
   }
