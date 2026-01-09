@@ -14,6 +14,7 @@ import DealRoutes from "./routes/deal-routes";
 import LeadRoutes from "./routes/lead-routes";
 import PaymentRoutes from "./routes/payment-routes";
 import CloudinaryRoutes from "./routes/cloudinary-routes";
+import DashboardRoutes from "./routes/dashboard-routes";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/orders", OrderRoutes);
 app.use("/api/deals", DealRoutes);
 app.use("/api/leads", LeadRoutes);
 app.use("/api/payment", PaymentRoutes);
+app.use("/api/dashboard", DashboardRoutes);
 app.use("/api/cloudinary", CloudinaryRoutes);
 
 // Server Connection
