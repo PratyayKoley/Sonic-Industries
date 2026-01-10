@@ -175,7 +175,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
           decisions.
         </p>
 
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           {/* Accordion */}
           <motion.div
             className="w-full md:w-1/2 space-y-4"
@@ -236,7 +236,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
             variants={imageContainerVariants}
           >
             <motion.img
-              src={allProductData.images[4]}
+              src="https://res.cloudinary.com/drkzz6pfx/image/upload/v1768039731/Venture_by_Sapna_Group_wmum1z.png"
               alt="Product Info"
               className="max-w-md md:max-w-lg h-auto max-h-96 object-contain cursor-pointer"
               variants={imageVariants}

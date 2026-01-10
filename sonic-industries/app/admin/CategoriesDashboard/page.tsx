@@ -21,7 +21,7 @@ const CategoriesDashboard = () => {
     "browse"
   );
   const [activeFormTab, setActiveFormTab] = useState<
-    "basic" | "features" | "video"
+    "basic" | "features"
   >("basic");
 
   const [formData, setFormData] = useState({
@@ -34,7 +34,6 @@ const CategoriesDashboard = () => {
       desc2: "",
       items: [] as CategoryFeatures[],
     } as FeaturesBlock,
-    yt_video_url: "",
   });
 
   useEffect(() => {
@@ -102,7 +101,6 @@ const CategoriesDashboard = () => {
         desc2: "",
         items: [],
       },
-      yt_video_url: category.yt_video_url || "",
     });
     setIsEditing(true);
     setActiveFormTab("basic");

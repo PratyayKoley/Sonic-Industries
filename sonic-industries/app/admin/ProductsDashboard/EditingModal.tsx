@@ -64,6 +64,8 @@ const EditingModal = ({
       payload.append("packaging", JSON.stringify(formData.packaging || {}));
       if (formData.yt_video_url)
         payload.append("yt_video_url", formData.yt_video_url);
+      if (formData.unboxing_yt_video_url)
+        payload.append("unboxing_yt_video_url", formData.unboxing_yt_video_url);
 
       const existingImageUrls: string[] = [];
 
@@ -177,10 +179,7 @@ const EditingModal = ({
   const handleAddLabel = () => {
     setFormData((prev: typeof formData) => ({
       ...prev,
-      labels: [
-        ...(prev.labels || []),
-        { x: 0, y: 0, name: "", desc: "" },
-      ],
+      labels: [...(prev.labels || []), { x: 0, y: 0, name: "", desc: "" }],
     }));
   };
 
@@ -455,6 +454,23 @@ const EditingModal = ({
                     setFormData((prev: typeof formData) => ({
                       ...prev,
                       yt_video_url: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unboxing YouTube Video URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.unboxing_yt_video_url || ""}
+                  onChange={(e) =>
+                    setFormData((prev: typeof formData) => ({
+                      ...prev,
+                      unboxing_yt_video_url: e.target.value,
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"

@@ -2,14 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Play, RotateCw, Truck, RefreshCw, Headphones, X } from "lucide-react";
-import { CategoryBackend, ProductBackend } from "@/types";
+import { CategoryBackend, CategoryImages, ProductBackend } from "@/types";
 import Image from "next/image";
+import { getResolvedVideoData } from "@/lib/getVideoData";
 
 interface WhyChooseUsProps {
-  productData: CategoryBackend | ProductBackend;
+  productData: ProductBackend | null;
+  allProductData: CategoryImages | null;
 }
 
-export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
+export default function WhyChooseUs({
+  productData,
+  allProductData,
+}: WhyChooseUsProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -105,6 +110,12 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
       : null;
   }
 
+  const videoData = getResolvedVideoData(productData, allProductData);
+
+  if (!videoData?.yt_video_url) return null; // ❗ No video → no section
+
+  const videoURL = videoData.yt_video_url;
+
   return (
     <div
       ref={sectionRef}
@@ -143,7 +154,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <Image
                 src={
-                  getYouTubeThumbnail(productData.yt_video_url || "") ||
+                  getYouTubeThumbnail(videoURL || "") ||
                   "/opengraph-image.png"
                 }
                 alt="Product showcase video thumbnail"
@@ -160,7 +171,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
                 onClick={() => {
                   if (window.innerWidth < 768) {
                     // Mobile → redirect to YouTube
-                    const youtubeURL = productData.yt_video_url;
+                    const youtubeURL = videoURL;
                     if (youtubeURL) window.open(youtubeURL, "_blank");
                   } else {
                     // Desktop → open modal
@@ -288,7 +299,7 @@ export default function WhyChooseUs({ productData }: WhyChooseUsProps) {
               <iframe
                 width="100%"
                 height="100%"
-                src={getYouTubeEmbedURL(productData.yt_video_url || "") || ""}
+                src={getYouTubeEmbedURL(videoURL || "") || ""}
                 title="Product Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

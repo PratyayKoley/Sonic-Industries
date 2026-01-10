@@ -66,6 +66,8 @@ const CreateProduct = ({
       payload.append("labels", JSON.stringify(formData.labels || []));
       if (formData.yt_video_url)
         payload.append("yt_video_url", formData.yt_video_url);
+      if (formData.unboxing_yt_video_url)
+        payload.append("unboxing_yt_video_url", formData.unboxing_yt_video_url);
 
       // Append only NEW files (hybrid array: string | {file, preview})
       const images = formData.images || [];
@@ -129,6 +131,7 @@ const CreateProduct = ({
         height: 0,
       },
       yt_video_url: "",
+      unboxing_yt_video_url: "",
     });
     setIsEditing(false);
     setSelectedProduct(null);
@@ -273,6 +276,12 @@ const CreateProduct = ({
             <span className="font-medium text-gray-700">Video:</span>
             <span className="ml-2">
               {formData.yt_video_url ? "Set" : "Not set"}
+            </span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Unboxing Video:</span>
+            <span className="ml-2">
+              {formData.unboxing_yt_video_url ? "Set" : "Not set"}
             </span>
           </div>
           <div>

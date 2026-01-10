@@ -59,6 +59,7 @@ export interface ProductBackend {
   };
 
   yt_video_url?: string;
+  unboxing_yt_video_url?: string;
 
   createdAt?: string;
   updatedAt?: string;
@@ -76,7 +77,6 @@ export interface CategoryBackend {
     desc2?: string;
     items?: CategoryFeatures[];
   };
-  yt_video_url?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -223,7 +223,6 @@ export type FormDataType = {
     desc2?: string;
     items?: CategoryFeatures[];
   };
-  yt_video_url: string;
 };
 
 export type EditingModalProps = {
@@ -296,6 +295,7 @@ export type ProductFormDataType = {
   labels: NewProductLabels[];
 
   yt_video_url: string;
+  unboxing_yt_video_url: string;
 };
 
 export type CategoryImages = {
@@ -408,7 +408,7 @@ export interface OrdersDashboardProps {
 }
 
 export type DealFormTab = "basic" | "pricing" | "image-rating";
-export type FormTab = "basic" | "features" | "video";
+export type FormTab = "basic" | "features";
 export type ProductFormTab =
   | "basic"
   | "features"

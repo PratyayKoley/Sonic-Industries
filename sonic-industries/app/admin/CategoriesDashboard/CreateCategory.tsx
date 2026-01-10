@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import { CreateCategoryProps, FormTab } from "@/types";
 import BasicForm from "./BasicForm";
 import FeaturesForm from "./FeaturesForm";
-import VideoForm from "./VideoForm";
 
 const CreateCategory = ({
   formData,
@@ -48,7 +47,6 @@ const CreateCategory = ({
               desc: feature.desc || undefined,
             })) || [],
         },
-        yt_video_url: formData.yt_video_url,
       };
 
       const response = await axios.post(
@@ -85,7 +83,6 @@ const CreateCategory = ({
         desc2: "",
         items: [],
       },
-      yt_video_url: "",
     });
     setIsEditing(false);
     setSelectedCategory(null);
@@ -95,7 +92,6 @@ const CreateCategory = ({
   const tabs: { key: FormTab; label: string }[] = [
     { key: "basic", label: "Basic Info" },
     { key: "features", label: "Features" },
-    { key: "video", label: "Video" },
   ];
 
   const renderActiveForm = () => {
@@ -104,8 +100,6 @@ const CreateCategory = ({
         return <BasicForm formData={formData} setFormData={setFormData} />;
       case "features":
         return <FeaturesForm formData={formData} setFormData={setFormData} />;
-      case "video":
-        return <VideoForm formData={formData} setFormData={setFormData} />;
       default:
         return <BasicForm formData={formData} setFormData={setFormData} />;
     }
@@ -180,12 +174,6 @@ const CreateCategory = ({
           <div>
             <span className="font-medium text-gray-700">Features Items:</span>
             <span className="ml-2">{formData.features.items?.length}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Video:</span>
-            <span className="ml-2">
-              {formData.yt_video_url ? "Set" : "Not set"}
-            </span>
           </div>
         </div>
       </div>

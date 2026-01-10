@@ -3,13 +3,18 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2, Minimize2, Video } from "lucide-react";
-import { CategoryBackend, ProductBackend } from "@/types";
+import { CategoryImages, ProductBackend } from "@/types";
+import { getResolvedVideoData } from "./getVideoData";
 
 interface VideoWidgetProps {
-  productData: CategoryBackend | null;
+  productData: ProductBackend | null;
+  allProductData: CategoryImages | null;
 }
 
-export default function VideoWidget({ productData }: VideoWidgetProps) {
+export default function VideoWidget({
+  productData,
+  allProductData,
+}: VideoWidgetProps) {
   const [expanded, setExpanded] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -32,6 +37,21 @@ export default function VideoWidget({ productData }: VideoWidgetProps) {
       setExpanded(false);
     }
   }, [isMobile]);
+
+  const videoData = getResolvedVideoData(productData, allProductData);
+
+  const videoURL = videoData?.unboxing_yt_video_url || videoData?.yt_video_url;
+
+  if (!videoURL) return null;
+
+  function getYouTubeEmbedURL(url: string) {
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&?]+)/
+    );
+    return match
+      ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1`
+      : "";
+  }
 
   return (
     <>
@@ -85,13 +105,11 @@ export default function VideoWidget({ productData }: VideoWidgetProps) {
                 </button>
               </div>
 
-              <video
-                src={productData?.yt_video_url || ""}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
+              <iframe
+                src={getYouTubeEmbedURL(videoURL)}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full"
               />
             </motion.div>
           </motion.div>
@@ -122,13 +140,11 @@ export default function VideoWidget({ productData }: VideoWidgetProps) {
                 </button>
               </div>
 
-              <video
-                src={productData?.yt_video_url || ""}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
+              <iframe
+                src={getYouTubeEmbedURL(videoURL)}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full"
               />
             </div>
           </motion.div>

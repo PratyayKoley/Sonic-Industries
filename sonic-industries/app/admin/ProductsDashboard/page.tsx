@@ -63,6 +63,7 @@ const ProductsDashboard = () => {
       height: 0,
     } as ProductPackaged,
     yt_video_url: "",
+    unboxing_yt_video_url: "",
   });
 
   useEffect(() => {
@@ -157,6 +158,7 @@ const ProductsDashboard = () => {
         height: product.packaging?.height ?? 0,
       },
       yt_video_url: product.yt_video_url || "",
+      unboxing_yt_video_url: product.unboxing_yt_video_url || "",
     });
     setIsEditing(true);
     setActiveFormTab("basic");

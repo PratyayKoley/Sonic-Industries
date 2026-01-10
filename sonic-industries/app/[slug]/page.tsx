@@ -258,12 +258,12 @@ export default async function ProductPage({ params }: Props) {
         />
         <DealsOfWeek />
         <ProductVariants productData={categoryData} />
-        <WhyChooseUs productData={categoryData} />
+        <WhyChooseUs productData={null} allProductData={allProductData} />
         <ProductComparison allProductData={allProductData} />
         <Testimonials />
         <FAQs allProductData={allProductData} />
         <ContactUs />
-        <Footer productData={categoryData} />
+        <Footer productData={null} allProductData={allProductData} />
       </>
     );
   }
@@ -341,12 +341,12 @@ export default async function ProductPage({ params }: Props) {
         <Hotspots productData={productData} allProductData={allProductData} />
         <DealsOfWeek />
         <ProductVariants productData={parentCategoryData} />
-        <WhyChooseUs productData={productData} />
+        <WhyChooseUs productData={productData} allProductData={null} />
         <ProductComparison allProductData={allProductData} />
         <Testimonials />
         <FAQs allProductData={allProductData} />
         <ContactUs />
-        <Footer productData={parentCategoryData} />
+        <Footer productData={productData} allProductData={null} />
       </>
     );
   }

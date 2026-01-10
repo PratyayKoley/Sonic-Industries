@@ -15,13 +15,14 @@ import Image from "next/image";
 import Link from "next/link";
 import VideoWidget from "@/lib/VideoWidget";
 import FakePopup from "@/lib/FakePopup";
-import { CategoryBackend, ProductBackend } from "@/types";
+import { CategoryBackend, CategoryImages, ProductBackend } from "@/types";
 
 interface FooterProps {
-  productData: CategoryBackend | null;
+  productData: ProductBackend | null;
+  allProductData: CategoryImages | null;
 }
 
-export default function Footer({ productData }: FooterProps) {
+export default function Footer({ productData, allProductData }: FooterProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const footerRef = useRef(null);
@@ -37,6 +38,12 @@ export default function Footer({ productData }: FooterProps) {
       },
       { threshold: 0.1 }
     );
+
+    function isCategory(
+      data: CategoryBackend | ProductBackend
+    ): data is CategoryBackend {
+      return "title" in data;
+    }
 
     if (currentFooter) {
       observer.observe(currentFooter);
@@ -404,7 +411,7 @@ export default function Footer({ productData }: FooterProps) {
           </motion.div>
         </div>
         <FakePopup />
-        <VideoWidget productData={productData} />
+        <VideoWidget productData={productData} allProductData={allProductData} />
       </footer>
     </>
   );

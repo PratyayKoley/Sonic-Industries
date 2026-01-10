@@ -55,7 +55,7 @@ const OpenMail: React.FC<OpenMailProps> = ({ lead, onDelete, children }) => {
       >
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col h-full">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-slate-900 to-slate-700 text-white p-4 sm:p-6">
+          <div className="relative bg-linear-to-r from-slate-900 to-slate-700 text-white p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <DialogClose asChild>
@@ -97,7 +97,7 @@ const OpenMail: React.FC<OpenMailProps> = ({ lead, onDelete, children }) => {
               {/* Sender Info */}
               <div className="bg-slate-50 rounded-xl p-4 sm:p-5 mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-linear-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl">
                     {(lead.senderName || lead.senderEmail).charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -106,7 +106,7 @@ const OpenMail: React.FC<OpenMailProps> = ({ lead, onDelete, children }) => {
                     </h3>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs sm:text-sm text-gray-600 mt-1 truncate">
                       <span className="flex items-center truncate">
-                        <AtSign className="w-3 h-3 mr-1 flex-shrink-0" />
+                        <AtSign className="w-3 h-3 mr-1 shrink-0" />
                         {lead.senderEmail}
                       </span>
                     </div>
@@ -146,7 +146,7 @@ const OpenMail: React.FC<OpenMailProps> = ({ lead, onDelete, children }) => {
             </div>
 
             {/* Action Sidebar */}
-            <div className="w-full lg:w-80 bg-gray-50 p-4 sm:p-6 border-t lg:border-t-0 lg:border-l border-gray-200 flex-shrink-0">
+            <div className="w-full lg:w-80 bg-gray-50 p-4 sm:p-6 border-t lg:border-t-0 lg:border-l border-gray-200 shrink-0">
               <h4 className="font-semibold text-gray-900 mb-4 text-sm sm:text-base">Actions</h4>
 
               <div className="space-y-4">

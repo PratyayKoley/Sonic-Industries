@@ -208,6 +208,27 @@ const SearchBySlug = ({
                     </div>
                   )}
 
+                  {/* YouTube Video */}
+                  {product.unboxing_yt_video_url && (
+                    <div className="mb-4">
+                      <a
+                        href={product.unboxing_yt_video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M23.498 6.186a2.998 2.998 0 0 0-2.113-2.113C19.505 3.546 12 3.546 12 3.546s-7.505 0-9.385.527A2.998 2.998 0 0 0 .502 6.186C0 8.066 0 12 0 12s0 3.934.502 5.814a2.998 2.998 0 0 0 2.113 2.113c1.88.527 9.385.527 9.385.527s7.505 0 9.385-.527a2.998 2.998 0 0 0 2.113-2.113C24 15.934 24 12 24 12s0-3.934-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        Watch Video
+                      </a>
+                    </div>
+                  )}
+
                   {/* Action Buttons */}
                   <div className="flex gap-3 pt-4 border-t border-gray-200">
                     <button
