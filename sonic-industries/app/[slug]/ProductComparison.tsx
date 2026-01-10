@@ -13,168 +13,182 @@ export default function ProductComparison({
   allProductData,
 }: ProductComparisonProps) {
   const products = allProductData.products || [];
+  const [isMobile, setIsMobile] = useState(false);
 
   // -----------------------------
-  // UNIQUE FEATURES GENERATION
+  // UNIQUE FEATURES
   // -----------------------------
-  const getUniqueFeatures = () => {
-    const featureMap = new Map();
-    products.forEach((product) => {
-      product.features?.forEach((f) => {
-        if (!featureMap.has(f.name)) featureMap.set(f.name, f.name);
-      });
-    });
-    return Array.from(featureMap.values());
-  };
-
-  const uniqueFeatures = getUniqueFeatures();
-
-  // State management
-  const [, setIsMobile] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const uniqueFeatures = Array.from(
+    new Set(products.flatMap((p) => p.features?.map((f) => f.name) || []))
+  );
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Row component with proper once animation
-  function SpecRow({
-    featureName,
-    index,
-  }: {
-    featureName: string;
-    index: number;
-  }) {
-    const ref = useRef<HTMLTableRowElement | null>(null);
-
+  /* =========================================================
+     MOBILE / TABLET VIEW → PRODUCT CARDS
+     ========================================================= */
+  /* =========================================================
+   COMPACT MOBILE VIEW
+   ========================================================= */
+  if (isMobile) {
     return (
-      <motion.tr
-        ref={ref}
-        initial={{ opacity: 0, x: -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{
-          duration: 0.4,
-          delay: index * 0.05,
-          ease: "easeOut",
-        }}
-        className={index % 2 === 0 ? "bg-gray-50/50" : "bg-white"}
-      >
-        <td className="border border-gray-200 p-3 font-bold sticky left-0 bg-white z-10 min-w-37.5">
-          {featureName}
-        </td>
+      <section className="max-w-6xl mx-auto px-3 py-6">
+        <h1 className="text-xl font-extrabold text-center mb-4">
+          Compare Products
+        </h1>
 
-        {products.map((product) => {
-          const match = product.features?.find((f) => f.name === featureName);
-          return (
-            <td
+        <div className="space-y-3">
+          {products.map((product) => (
+            <motion.div
               key={product._id}
-              className="border border-gray-200 p-3 text-center min-w-37.5"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-xl shadow p-3"
             >
-              {match ? match.weight : "--"}
-            </td>
-          );
-        })}
-      </motion.tr>
+              {/* Header */}
+              <div className="flex items-center gap-3">
+                <Image
+                  src={product.images[0]}
+                  alt={product.name}
+                  width={80}
+                  height={80}
+                  className="w-14 h-14 object-contain"
+                />
+
+                <div className="flex-1">
+                  <h2 className="font-bold text-sm leading-tight">
+                    {product.name}
+                  </h2>
+                  <p className="text-blue-600 font-extrabold text-sm">
+                    ₹{product.price}
+                  </p>
+                </div>
+
+                <details className="group">
+                  <summary className="cursor-pointer text-xs text-gray-600 font-semibold">
+                    Specs
+                  </summary>
+
+                  <div className="absolute right-3 mt-2 w-64 bg-white rounded-lg shadow-lg p-3 text-xs z-20">
+                    <div className="divide-y">
+                      {uniqueFeatures.map((feature) => {
+                        const match = product.features?.find(
+                          (f) => f.name === feature
+                        );
+                        return (
+                          <div
+                            key={feature}
+                            className="flex justify-between py-1"
+                          >
+                            <span className="text-gray-600">{feature}</span>
+                            <span className="font-semibold">
+                              {match ? match.weight : "--"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </details>
+              </div>
+
+              {/* CTA */}
+              <button className="mt-2 w-full bg-red-600 text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-700 transition">
+                LEARN MORE
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </section>
     );
   }
 
+  /* =========================================================
+     DESKTOP VIEW → COMPARISON TABLE
+     ========================================================= */
   return (
-    <motion.div
-      className="max-w-6xl mx-auto px-4 py-8 md:py-16"
+    <motion.section
+      className="max-w-7xl mx-auto px-4 py-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
     >
-      <motion.h1
-        className="text-3xl md:text-4xl font-extrabold text-center mb-6"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
+      <h1 className="text-3xl lg:text-4xl font-extrabold text-center mb-10">
         Compare Products
-      </motion.h1>
+      </h1>
 
-      {/* Scroll Container */}
-      <div className="relative">
-        <motion.div
-          className="overflow-x-auto rounded-xl shadow-xl"
-          ref={scrollContainerRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <table className="w-full border-collapse bg-white">
-            <thead>
-              <tr>
-                {/* Empty Corner Cell */}
-                <th className="border-b border-gray-200 p-3 bg-gray-50 sticky left-0 z-10"></th>
-
-                {/* Product Headers */}
-                {products.map((product, idx) => (
-                  <th
-                    key={product._id}
-                    className="border-b border-gray-200 p-3 min-w-50 bg-white"
-                  >
-                    <motion.div
-                      className="flex flex-col items-center"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: 0.6 + idx * 0.1,
-                        ease: "easeOut",
-                      }}
-                    >
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        width={500}
-                        height={500}
-                        className="w-30 h-30 object-contain rounded-lg mb-2"
-                      />
-                      <h3 className="font-bold text-lg">{product.name}</h3>
-                      <p className="font-extrabold text-blue-600 mt-1">
-                        ₹{product.price}
-                      </p>
-                    </motion.div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {/* Dynamic Unique Feature Rows */}
-              {uniqueFeatures.map((featureName, index) => (
-                <SpecRow
-                  key={featureName}
-                  featureName={featureName}
-                  index={index}
-                />
+      <div className="overflow-x-auto rounded-xl shadow-xl">
+        <table className="w-full border-collapse bg-white text-sm lg:text-base">
+          <thead>
+            <tr>
+              <th className="sticky left-0 bg-gray-50 z-10 p-4"></th>
+              {products.map((product) => (
+                <th key={product._id} className="min-w-55 p-4 border-b">
+                  <div className="flex flex-col items-center">
+                    <Image
+                      src={product.images[0]}
+                      alt={product.name}
+                      width={140}
+                      height={140}
+                      className="w-24 h-24 lg:w-28 lg:h-28 object-contain mb-2"
+                    />
+                    <h3 className="font-bold text-center text-sm lg:text-base">
+                      {product.name}
+                    </h3>
+                    <p className="text-blue-600 font-extrabold mt-1">
+                      ₹{product.price}
+                    </p>
+                  </div>
+                </th>
               ))}
+            </tr>
+          </thead>
 
-              {/* BUY NOW Row */}
-              <tr>
-                <td className="border p-3 bg-gray-50 sticky left-0 z-10"></td>
+          <tbody>
+            {uniqueFeatures.map((feature, index) => (
+              <motion.tr
+                key={feature}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.03 }}
+                className={index % 2 === 0 ? "bg-gray-50/60" : ""}
+              >
+                <td className="sticky left-0 bg-white z-10 font-semibold p-4 border">
+                  {feature}
+                </td>
 
-                {products.map((product) => (
-                  <td
-                    key={product._id}
-                    className="border p-3 text-center min-w-37.5"
-                  >
-                    <button className="bg-red-600 text-white font-bold py-2 px-4 w-full rounded-lg shadow hover:bg-red-700 transition-colors cursor-pointer">
-                      LEARN MORE
-                    </button>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </motion.div>
+                {products.map((product) => {
+                  const match = product.features?.find(
+                    (f) => f.name === feature
+                  );
+                  return (
+                    <td key={product._id} className="p-4 text-center border">
+                      {match ? match.weight : "--"}
+                    </td>
+                  );
+                })}
+              </motion.tr>
+            ))}
+
+            <tr>
+              <td className="sticky left-0 bg-gray-50 z-10 p-4"></td>
+              {products.map((product) => (
+                <td key={product._id} className="p-4">
+                  <button className="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition">
+                    LEARN MORE
+                  </button>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

@@ -64,20 +64,20 @@ export default function ContactUs() {
     {
       id: 1,
       icon: <Phone className="w-6 h-6 text-purple-600" />,
-      content: ["+91 8010735898", "+333 153 4575 7893"],
+      content: ["+91 8010735898", "+91 9321970200"],
     },
     {
       id: 2,
       icon: <Mail className="w-6 h-6 text-purple-600" />,
-      content: ["sonicindustriesofficial@gmail.com", "anothername@name.com"],
+      content: ["sonicindustriesofficial@gmail.com"],
     },
     {
       id: 3,
       icon: <MapPin className="w-6 h-6 text-purple-600" />,
       content: [
-        "Sonic Industries, Gala No 05, Nityanand Bhakti",
-        "Opp Rajeev Gandhi Vidyalay, Nilemore Road",
-        "Nallasopara West, Palghar-401203",
+        "Sonic Industries, Office No. 5,6,7,8,9, Sai Shristi Apt,",
+        "Opp Railway Station, Nearby Bus Stop",
+        "Nallasopara West, MH-401203",
       ],
     },
   ];

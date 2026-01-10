@@ -70,12 +70,18 @@ const EditingModal = ({
       const existingImageUrls: string[] = [];
 
       (formData.images || []).forEach((img) => {
-        if (typeof img === "string") {
-          existingImageUrls.push(img);
-        } else if (img.file instanceof File) {
+        if (!img.isNew && img.preview) {
+          // existing image → keep
+          existingImageUrls.push(img.preview);
+        }
+
+        if (img.isNew && img.file instanceof File) {
+          // new image → upload
           payload.append("images", img.file);
         }
       });
+
+      payload.append("existingImages", JSON.stringify(existingImageUrls));
 
       // send existing ones as a JSON string so backend can keep them
       payload.append("existingImages", JSON.stringify(existingImageUrls));
@@ -222,21 +228,18 @@ const EditingModal = ({
     }));
   };
 
-  const updateImage = (index: number, value: string | File) => {
+  const updateImage = (index: number, file: File) => {
     setFormData((prev) => ({
       ...prev,
-      images:
-        prev.images?.map((img, i) => {
-          if (i !== index) return img;
-
-          if (value instanceof File) {
-            const preview = URL.createObjectURL(value);
-            return { file: value, preview, isNew: true };
-          } else {
-            // string URL
-            return { file: null, preview: value, isNew: false };
-          }
-        }) || [],
+      images: prev.images.map((img, i) =>
+        i === index
+          ? {
+              file,
+              preview: URL.createObjectURL(file),
+              isNew: true,
+            }
+          : img
+      ),
     }));
   };
 
@@ -375,47 +378,40 @@ const EditingModal = ({
                   Images
                 </label>
                 <div className="space-y-2">
-                  {(formData.images || []).map((image, index: number) => (
+                  {(formData.images || []).map((image, index) => (
                     <div key={index} className="flex gap-2 items-center">
-                      {/* If existing URL -> text input */}
-                      {typeof image === "string" ? (
+                      {image.isNew ? (
                         <>
                           <input
-                            type="text"
-                            value={image}
-                            onChange={(e) => updateImage(index, e.target.value)}
-                            placeholder="Image URL"
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) updateImage(index, file);
+                            }}
+                            className="flex-1"
                           />
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={image}
-                            className="w-16 h-16 object-cover rounded"
-                            alt={`img-${index}`}
-                          />
-                        </>
-                      ) : (
-                        // new file object (file + preview)
-                        <>
-                          <div className="flex-1">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const f = e.target.files?.[0];
-                                if (f) updateImage(index, f);
-                              }}
-                              className="w-full"
-                            />
-                          </div>
                           {image.preview && (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={image.preview}
                               className="w-16 h-16 object-cover rounded"
                               alt={`img-${index}`}
                             />
                           )}
+                        </>
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            value={image.preview}
+                            disabled
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                          />
+                          <img
+                            src={image.preview}
+                            className="w-16 h-16 object-cover rounded"
+                            alt={`img-${index}`}
+                          />
                         </>
                       )}
 
