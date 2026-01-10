@@ -48,6 +48,7 @@ const ProductSchema = new Schema(
     },
 
     yt_video_url: { type: String },
+    unboxing_yt_video_url: { type: String },
   },
   {
     timestamps: true,

@@ -18,8 +18,6 @@ const CategorySchema = new Schema(
       desc2: { type: String },
       items: [FeaturesSchema],
     },
-
-    yt_video_url: { type: String },
   },
   {
     timestamps: true,
