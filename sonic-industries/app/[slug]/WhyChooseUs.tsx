@@ -149,7 +149,7 @@ export default function WhyChooseUs({
             opacity: isVisible ? 1 : 0,
           }}
         >
-          <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px] lg:h-full group">
+          <div className="relative w-full h-55 sm:h-70 md:h-90 lg:h-full group">
             {/* Video placeholder */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <Image
