@@ -67,13 +67,20 @@ export const createProduct = async (
 
     productData.images = uploadedImages;
     const newProduct = await ProductModel.create(productData);
+    const populatedProduct = await newProduct.populate<{
+      categoryId: Category;
+    }>("categoryId");
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${productData.slug}`,
+        paths: JSON.stringify([
+          `/${productData.slug}`,
+          `/${populatedProduct.categoryId.slug}`,
+        ]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
+
     res.status(201).json({
       message: "Product created successfully.",
       newProduct,
@@ -162,9 +169,15 @@ export const updateProduct = async (
     const categoryName = existingProduct.categoryId.name;
 
     // Parse incoming JSON fields
-    const parsedFeatures = features ? JSON.parse(features) : existingProduct.features;
-    const parsedPackaging = packaging ? JSON.parse(packaging) : existingProduct.packaging;
-    const parsedCharacteristics = characteristics ? JSON.parse(characteristics) : existingProduct.characteristics;
+    const parsedFeatures = features
+      ? JSON.parse(features)
+      : existingProduct.features;
+    const parsedPackaging = packaging
+      ? JSON.parse(packaging)
+      : existingProduct.packaging;
+    const parsedCharacteristics = characteristics
+      ? JSON.parse(characteristics)
+      : existingProduct.characteristics;
     const parsedLabels = labels ? JSON.parse(labels) : existingProduct.labels;
 
     let parsedExistingImages: string[] = [];
@@ -253,7 +266,10 @@ export const updateProduct = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${populatedProduct.slug}`,
+        paths: JSON.stringify([
+          `/${populatedProduct.slug}`,
+          `/${populatedProduct.categoryId.slug}`,
+        ]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -300,7 +316,10 @@ export const deleteProduct = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${populatedProduct.slug}`,
+        paths: JSON.stringify([
+          `/${populatedProduct.slug}`,
+          `/${populatedProduct.categoryId.slug}`,
+        ]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
