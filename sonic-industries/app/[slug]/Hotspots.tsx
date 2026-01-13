@@ -175,9 +175,9 @@ export default function Hotspots({
             Attractive Features
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
-            Explore the amazing features of our latest smartwatch with
+            Explore the amazing features of our products with
             interactive hotspots. {isMobile ? "Tap" : "Hover over"} the points
-            to discover what makes this device special.
+            to discover what makes this product special.
           </p>
         </motion.div>
 
@@ -351,9 +351,9 @@ export default function Hotspots({
         {/* Additional info section */}
         <div className="text-center mt-6 md:mt-8">
           <p className="text-xs md:text-base text-gray-600 max-w-2xl mx-auto">
-            {isMobile ? "Tap" : "Hover over"} the hotspots on the smartwatch to
+            {isMobile ? "Tap" : "Hover over"} the hotspots on the product to
             explore all the amazing features and capabilities. Our next
-            generation smartwatch combines cutting-edge technology with elegant
+            generation products combines cutting-edge technology with elegant
             design.
           </p>
         </div>

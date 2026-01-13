@@ -99,7 +99,14 @@ export default function ProductComparison({
               </div>
 
               {/* CTA */}
-              <button className="mt-2 w-full bg-red-600 text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-700 transition">
+              <button
+                className="mt-2 w-full bg-red-600 text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-700 transition cursor-pointer"
+                onClick={() => {
+                  document.getElementById("features")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
                 LEARN MORE
               </button>
             </motion.div>
@@ -180,7 +187,14 @@ export default function ProductComparison({
               <td className="sticky left-0 bg-gray-50 z-10 p-4"></td>
               {products.map((product) => (
                 <td key={product._id} className="p-4">
-                  <button className="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition">
+                  <button
+                    className="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
+                    onClick={() => {
+                      document.getElementById("features")?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
                     LEARN MORE
                   </button>
                 </td>

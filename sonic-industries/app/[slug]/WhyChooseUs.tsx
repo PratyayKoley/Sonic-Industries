@@ -149,13 +149,12 @@ export default function WhyChooseUs({
             opacity: isVisible ? 1 : 0,
           }}
         >
-          <div className="relative h-full w-full group">
+          <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px] lg:h-full group">
             {/* Video placeholder */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer">
               <Image
                 src={
-                  getYouTubeThumbnail(videoURL || "") ||
-                  "/opengraph-image.png"
+                  getYouTubeThumbnail(videoURL || "") || "/opengraph-image.png"
                 }
                 alt="Product showcase video thumbnail"
                 className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
@@ -168,16 +167,7 @@ export default function WhyChooseUs({
 
               {/* Play button */}
               <button
-                onClick={() => {
-                  if (window.innerWidth < 768) {
-                    // Mobile → redirect to YouTube
-                    const youtubeURL = videoURL;
-                    if (youtubeURL) window.open(youtubeURL, "_blank");
-                  } else {
-                    // Desktop → open modal
-                    setIsVideoModalOpen(true);
-                  }
-                }}
+                onClick={() => setIsVideoModalOpen(true)}
                 className="absolute rounded-full bg-white w-16 h-16 md:w-20 md:h-20 flex items-center justify-center shadow-xl hover:bg-opacity-90 transition-all duration-300 hover:scale-110 z-10 group cursor-pointer"
               >
                 <div className="absolute inset-0 rounded-full bg-white opacity-20 animate-ping"></div>
@@ -305,6 +295,16 @@ export default function WhyChooseUs({
                 allowFullScreen
                 className="w-full h-full"
               ></iframe>
+              <div className="p-3 text-center bg-black">
+                <a
+                  href={videoURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-400 hover:text-blue-300 underline"
+                >
+                  Open in YouTube
+                </a>
+              </div>
             </div>
           </div>
         </div>

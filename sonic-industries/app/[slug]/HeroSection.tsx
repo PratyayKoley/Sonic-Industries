@@ -57,11 +57,25 @@ export default function HeroSection({
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <button className="bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider">
+            <button
+              className="bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider"
+              onClick={() => {
+                document.getElementById("products")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            >
               Buy Now
             </button>
 
-            <button className="border border-blue-500 text-blue-500 hover:bg-blue-50 transition-all duration-300 font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider">
+            <button
+              className="border border-blue-500 text-blue-500 hover:bg-blue-50 transition-all duration-300 font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider"
+              onClick={() => {
+                document.getElementById("features")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            >
               Learn More
             </button>
           </div>

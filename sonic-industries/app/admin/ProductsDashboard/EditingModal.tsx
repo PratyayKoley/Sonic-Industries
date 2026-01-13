@@ -81,8 +81,6 @@ const EditingModal = ({
         }
       });
 
-      payload.append("existingImages", JSON.stringify(existingImageUrls));
-
       // send existing ones as a JSON string so backend can keep them
       payload.append("existingImages", JSON.stringify(existingImageUrls));
 

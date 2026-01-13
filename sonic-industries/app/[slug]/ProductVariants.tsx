@@ -96,7 +96,8 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
             Our Awesome Products
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Prepared is me marianne pleasure likewise debating. Wonder an unable except better stairs do ye admire. His secure called esteem praise.
+            Explore every product in this category, designed to meet your needs
+            and expectations.
           </p>
         </div>
 
