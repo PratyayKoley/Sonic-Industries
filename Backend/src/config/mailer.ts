@@ -15,7 +15,7 @@ export const sendMail = async ({
 }: MailOptions): Promise<void> => {
   try {
     await resend.emails.send({
-      from: "Sonic Industries <onboarding@resend.dev>",
+      from: "Sonic Industries <support@thesonicindustries.com>",
       to,
       subject,
       html,
