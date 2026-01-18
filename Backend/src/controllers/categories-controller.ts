@@ -6,7 +6,7 @@ import { startSession } from "mongoose";
 
 export const getCategoryBySlug = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { slug } = req.params;
@@ -42,7 +42,7 @@ export const getCategoryBySlug = async (
 
 export const getAllCategories = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const allCategories = await CategoryModel.find();
@@ -69,7 +69,7 @@ export const getAllCategories = async (
 
 export const createCategory = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const categoryData: Category = req.body;
@@ -83,7 +83,7 @@ export const createCategory = async (
     const newCategory = await CategoryModel.create(categoryData);
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${newCategory.slug}`,
+        paths: JSON.stringify([`/${newCategory.slug}`]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -101,7 +101,7 @@ export const createCategory = async (
 
 export const updateCategory = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { slug, ...rest } = req.body;
@@ -116,7 +116,7 @@ export const updateCategory = async (
     const updatedCategory = await CategoryModel.findOneAndUpdate(
       { slug },
       rest,
-      { new: true, overwrite: true }
+      { new: true, overwrite: true },
     );
 
     if (!updatedCategory) {
@@ -129,7 +129,7 @@ export const updateCategory = async (
     console.log(`${process.env.FRONTEND_URL}/api/revalidate`);
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${updatedCategory.slug}`,
+        paths: JSON.stringify([`/${updatedCategory.slug}`]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -150,7 +150,7 @@ export const updateCategory = async (
 
 export const deleteCategory = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const session = await startSession();
   session.startTransaction();
@@ -176,7 +176,7 @@ export const deleteCategory = async (
 
     const deletedCategory = await CategoryModel.findByIdAndDelete(
       category._id,
-      { session }
+      { session },
     );
 
     await session.commitTransaction();
@@ -184,7 +184,7 @@ export const deleteCategory = async (
 
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
-        path: `/${deletedCategory?.slug}`,
+        paths: JSON.stringify([`/${deletedCategory?.slug}`]),
         secret: process.env.REVALIDATE_SECRET,
       },
     });
@@ -208,7 +208,7 @@ export const deleteCategory = async (
 
 export const getCategoryImages = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { id } = req.params;

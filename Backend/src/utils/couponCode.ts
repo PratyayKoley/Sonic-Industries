@@ -5,7 +5,7 @@ import { Product, ProductModel } from "../models/products.model";
 export const isDealApplicable = async (
   couponCode: string,
   productId: string,
-  email: string
+  email: string,
 ) => {
   try {
     // 1️⃣ Find the deal by coupon code
@@ -62,10 +62,26 @@ export const isDealApplicable = async (
     }
 
     // 5️⃣ All good → apply discount
+    // 5️⃣ All good → apply discount
+    let discount = 0;
+
+    if (deal.dealType === "product") {
+      // discountedPrice = final product price
+      discount = (deal.mrp ?? 0) - (deal.discountedPrice ?? 0);
+    }
+
+    if (deal.dealType === "general") {
+      // discountedPrice = discount amount
+      discount = deal.discountedPrice ?? 0;
+    }
+
+    // Safety guard
+    discount = Math.max(discount, 0);
+
     return {
       valid: true,
       message: "Coupon code applied successfully.",
-      discount: deal.discountedPrice,
+      discount,
     };
   } catch (err) {
     console.error("Error validating deal:", err);
