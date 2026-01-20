@@ -5,15 +5,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Package, Gift, Tag } from "lucide-react";
 
 const messages = [
-  { text: "Someone from Delhi purchased a Band Sealer Machine!", icon: "shopping" },
-  { text: "A customer from Mumbai just ordered a Shrink Tunnel Machine!", icon: "package" },
-  { text: "New order received for Vacuum Packaging Machine!", icon: "shopping" },
-  { text: "Ankur from Jaipur bought the Continuous Band Sealer!", icon: "shopping" },
-  { text: "Priya added a Carton Sealing Machine to her cart.", icon: "package" },
-  { text: "Ravi from Chennai placed an order for Packing Roll!", icon: "shopping" },
-  { text: "A user from Pune is checking out the Box Strapping Machine.", icon: "package" },
+  {
+    text: "Someone from Delhi purchased a Band Sealer Machine!",
+    icon: "shopping",
+  },
+  {
+    text: "A customer from Mumbai just ordered a Shrink Tunnel Machine!",
+    icon: "package",
+  },
+  {
+    text: "New order received for Vacuum Packaging Machine!",
+    icon: "shopping",
+  },
+  {
+    text: "Ankur from Jaipur bought the Continuous Band Sealer!",
+    icon: "shopping",
+  },
+  {
+    text: "Priya added a Carton Sealing Machine to her cart.",
+    icon: "package",
+  },
+  {
+    text: "Ravi from Chennai placed an order for Packing Roll!",
+    icon: "shopping",
+  },
+  {
+    text: "A user from Pune is checking out the Box Strapping Machine.",
+    icon: "package",
+  },
   { text: "Limited-time offer claimed by someone from Nagpur!", icon: "tag" },
-  { text: "Customer from Kolkata ordered a Hand Sealer Machine.", icon: "shopping" },
+  {
+    text: "Customer from Kolkata ordered a Hand Sealer Machine.",
+    icon: "shopping",
+  },
   { text: "A visitor unlocked a ₹500 coupon!", icon: "gift" },
   { text: "Rahul from Surat just won a smartwatch!", icon: "gift" },
 ];
@@ -39,11 +63,14 @@ export default function FakePopup() {
   const [msg, setMsg] = useState(messages[0]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMsg(messages[Math.floor(Math.random() * messages.length)]);
-      setShow(true);
-      setTimeout(() => setShow(false), 3500);
-    }, 5000 + Math.random() * 2000);
+    const interval = setInterval(
+      () => {
+        setMsg(messages[Math.floor(Math.random() * messages.length)]);
+        setShow(true);
+        setTimeout(() => setShow(false), 3500);
+      },
+      3 * 60 * 1000 + Math.random() * 60 * 1000,
+    );
 
     return () => clearInterval(interval);
   }, []);
@@ -67,9 +94,7 @@ export default function FakePopup() {
           "
         >
           <div className="flex items-start gap-3">
-            <div className="shrink-0 mt-0.5">
-              {getIcon(msg.icon)}
-            </div>
+            <div className="shrink-0 mt-0.5">{getIcon(msg.icon)}</div>
 
             <div className="flex-1 min-w-0">
               <p className="text-xs sm:text-sm text-gray-800 leading-relaxed font-medium">

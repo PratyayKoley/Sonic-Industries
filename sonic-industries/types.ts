@@ -375,6 +375,7 @@ export type DealEditingModalProps = {
   setIsEditing: (isEditing: boolean) => void;
   deals: DealBackend[];
   setDeals: (products: DealBackend[]) => void;
+  products: ProductBackend[];
 };
 
 export type SearchAllDealProps = {

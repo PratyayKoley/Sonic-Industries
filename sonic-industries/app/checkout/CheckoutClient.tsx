@@ -359,6 +359,7 @@ export default function CheckoutClient() {
               setCustomer={setCustomer}
               sameAsShipping={sameAsShipping}
               setSameAsShipping={setSameAsShipping}
+              otpVerified={otpVerified}
               setOtpVerified={setOtpVerified}
               otpSent={otpSent}
               setOtpSent={setOtpSent}

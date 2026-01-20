@@ -23,7 +23,7 @@ export default function HeroSection({
   }, [productData]);
 
   function isCategory(
-    data: CategoryBackend | ProductBackend
+    data: CategoryBackend | ProductBackend,
   ): data is CategoryBackend {
     return "title" in data;
   }
@@ -81,13 +81,14 @@ export default function HeroSection({
           </div>
 
           {/* Sibling Products */}
+          {/* Sibling Products */}
           {(isCategoryPage || siblingProducts.length > 0) && (
             <div className="mt-10">
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start pb-2">
                 {siblingProducts.map((item) => (
                   <div
                     key={item._id}
-                    className="flex flex-col items-center shrink-0 cursor-pointer"
+                    className="flex flex-col items-center cursor-pointer w-24"
                     onClick={() => router.push(item.slug)}
                   >
                     <div className="relative w-20 h-20 sm:w-24 sm:h-24">
@@ -98,7 +99,7 @@ export default function HeroSection({
                         }}
                       />
                     </div>
-                    <span className="mt-2 text-xs sm:text-sm text-center w-24">
+                    <span className="mt-2 text-xs sm:text-sm text-center">
                       {item.name}
                     </span>
                   </div>

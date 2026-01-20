@@ -18,8 +18,14 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
   };
 
   const calculateDiscountPercent = () => {
-    if (formData.mrp && formData.discountedPrice && formData.mrp > formData.discountedPrice) {
-      return Math.round(((formData.mrp - formData.discountedPrice) / formData.mrp) * 100);
+    if (
+      formData.mrp &&
+      formData.discountedPrice &&
+      formData.mrp > formData.discountedPrice
+    ) {
+      return Math.round(
+        ((formData.mrp - formData.discountedPrice) / formData.mrp) * 100,
+      );
     }
     return 0;
   };
@@ -59,7 +65,9 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
       <div className="bg-white rounded-xl p-6 border shadow-sm">
         <div className="flex items-center gap-2 mb-5">
           <DollarSign className="w-5 h-5 text-blue-600" />
-          <h3 className="text-xl font-semibold text-blue-900">Pricing Details</h3>
+          <h3 className="text-xl font-semibold text-blue-900">
+            Pricing Details
+          </h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -73,13 +81,13 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
                 <input
                   type="number"
                   value={formData.mrp || ""}
-                  onChange={(e) => handleMrpChange(parseFloat(e.target.value) || 0)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  placeholder="e.g. 2500"
-                  min="0"
+                  disabled
                 />
-                {formData.mrp && (
-                  <p className="text-sm text-gray-600 mt-1">{formatPrice(formData.mrp)}</p>
+                {formData.mrp !== undefined && formData.mrp > 0 && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {formatPrice(formData.mrp)}
+                  </p>
                 )}
               </div>
 
@@ -90,7 +98,9 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
                 <input
                   type="number"
                   value={formData.discountPercent || ""}
-                  onChange={(e) => handleDiscountPercentChange(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleDiscountPercentChange(parseFloat(e.target.value) || 0)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="e.g. 10"
                   min="0"
@@ -107,14 +117,18 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
             <input
               type="number"
               value={formData.discountedPrice || ""}
-              onChange={(e) => handleDiscountedPriceChange(parseFloat(e.target.value) || 0)}
+              onChange={(e) =>
+                handleDiscountedPriceChange(parseFloat(e.target.value) || 0)
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g. 1999"
               min="0"
               disabled={dealType === "product"} // 🧠 auto-calculated for products
             />
             {formData.discountedPrice && (
-              <p className="text-sm text-gray-600 mt-1">{formatPrice(formData.discountedPrice)}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                {formatPrice(formData.discountedPrice)}
+              </p>
             )}
           </div>
         </div>

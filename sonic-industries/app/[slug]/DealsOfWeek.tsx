@@ -6,6 +6,7 @@ import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export default function DealsOfWeek() {
   const [currentDeal, setCurrentDeal] = useState(0);
@@ -14,7 +15,9 @@ export default function DealsOfWeek() {
 
   const fetchDeals = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
+      );
       setDeals(res.data.deals);
     } catch (error) {
       console.error("Error fetching deals:", error);
@@ -56,7 +59,8 @@ export default function DealsOfWeek() {
     const now = new Date();
     const expire = new Date(expiresAt);
     const diff = expire.getTime() - now.getTime();
-    if (diff <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+    if (diff <= 0)
+      return { days: "00", hours: "00", minutes: "00", seconds: "00" };
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
@@ -82,7 +86,8 @@ export default function DealsOfWeek() {
             Deals Of The Week
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Discover incredible savings on premium tech products. Limited time offers you don&apos;t want to miss!
+            Discover incredible savings on premium tech products. Limited time
+            offers you don&apos;t want to miss!
           </p>
         </div>
 
@@ -108,9 +113,11 @@ export default function DealsOfWeek() {
                       width={500}
                       height={500}
                     />
-                    {currentDealData.dealType === "product" || currentDealData.discountPercent ? (
+                    {currentDealData.dealType === "product" ||
+                    currentDealData.discountPercent ? (
                       <div className="absolute top-0 right-0 bg-red-500 text-white px-2 sm:px-3 py-1 rounded-bl-lg font-bold text-xs sm:text-sm">
-                        {currentDealData.dealType === "product" && currentDealData.discountPercent
+                        {currentDealData.dealType === "product" &&
+                        currentDealData.discountPercent
                           ? `${Math.round(currentDealData.discountPercent)}% OFF`
                           : "Limited Offer"}
                       </div>
@@ -172,26 +179,58 @@ export default function DealsOfWeek() {
                   {/* Countdown */}
                   <div className="mb-4 sm:mb-6">
                     <div className="flex items-center mb-2">
-                      <p className="text-xs sm:text-sm text-gray-700 font-semibold mr-2">Use Coupon:</p>
+                      <p className="text-xs sm:text-sm text-gray-700 font-semibold mr-2">
+                        Use Coupon:
+                      </p>
                       <p className="text-sm sm:text-base font-bold text-indigo-700 tracking-wider">
                         {currentDealData.couponCode || "NO COUPON"}
                       </p>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-2 font-medium">Deal expires in:</p>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-2 font-medium">
+                      Deal expires in:
+                    </p>
                     <div className="flex justify-between max-w-xs sm:max-w-sm gap-2">
                       {Object.entries(timeLeft).map(([key, value], index) => (
                         <div
                           key={index}
                           className="text-center p-2 sm:p-3 bg-linear-to-b from-gray-100 to-gray-200 rounded-lg shadow-inner min-w-12"
                         >
-                          <div className="text-lg sm:text-xl font-bold text-gray-800">{value}</div>
-                          <div className="text-xs sm:text-sm text-gray-600 capitalize">{key}</div>
+                          <div className="text-lg sm:text-xl font-bold text-gray-800">
+                            {value}
+                          </div>
+                          <div className="text-xs sm:text-sm text-gray-600 capitalize">
+                            {key}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base md:text-lg">
+                  <button
+                    className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base md:text-lg"
+                    onClick={async () => {
+                      try {
+                        const coupon = currentDealData.couponCode;
+
+                        if (coupon) {
+                          await navigator.clipboard.writeText(
+                            currentDealData.couponCode,
+                          );
+
+                          toast.success(
+                            `Coupon copied successfully: ${currentDealData.couponCode}`,
+                          );
+
+                          document.getElementById("products")?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                        }
+                      } catch (error) {
+                        console.error("Internal Server Error: ", error);
+                        toast.error("Coupon cannot be applied now");
+                      }
+                    }}
+                  >
                     BUY NOW - LIMITED TIME!
                   </button>
                 </div>
@@ -224,7 +263,9 @@ export default function DealsOfWeek() {
               key={index}
               onClick={() => setCurrentDeal(index)}
               className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 ${
-                index === currentDeal ? "bg-indigo-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
+                index === currentDeal
+                  ? "bg-indigo-600 scale-125"
+                  : "bg-gray-300 hover:bg-gray-400"
               }`}
               aria-label={`Go to deal ${index + 1}`}
             />

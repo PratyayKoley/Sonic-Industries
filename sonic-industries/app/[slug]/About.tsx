@@ -192,12 +192,12 @@ export default function About() {
           ...cardVariants,
         }}
         transition={{ delay: index * 0.1 }}
-        className="relative overflow-hidden rounded-2xl shadow-lg bg-white h-auto sm:h-96 flex flex-col"
+        className="relative overflow-hidden rounded-2xl shadow-lg bg-white h-auto sm:h-96 flex"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div
-          className={`p-6 sm:p-10 relative z-10 flex flex-col justify-between h-full ${
+          className={`p-5 sm:p-6 md:p-8 relative z-10 flex flex-col justify-between h-full ${
             isHovered ? "text-white" : "text-gray-800"
           }`}
         >
@@ -208,18 +208,18 @@ export default function About() {
             animate={isHovered ? "hover" : "initial"}
           >
             <div
-              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl ${
+              className={`text-4xl md:text-5xl lg:text-6xl xl:text-7xl ${
                 isHovered ? "text-white" : "text-indigo-600"
               }`}
             >
               {feature.icon}
             </div>
           </motion.div>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-3 sm:mb-4">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center mb-3 sm:mb-4 leading-snug">
             {feature.title}
           </h3>
           <p
-            className={`text-sm sm:text-base md:text-base text-center ${
+            className={`text-sm sm:text-base text-center leading-relaxed ${
               isHovered ? "text-white" : "text-gray-600"
             }`}
           >

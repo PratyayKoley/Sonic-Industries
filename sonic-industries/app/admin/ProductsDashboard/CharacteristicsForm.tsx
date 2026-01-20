@@ -73,7 +73,10 @@ const CharacteristicsForm = ({
     ) {
       setFormData((prev) => ({
         ...prev,
-        features: [...prev.features, newFeature],
+        characteristics: {
+          ...prev.characteristics,
+          items: [...(prev.characteristics?.items || []), newFeature],
+        },
       }));
       setNewFeature({ image: "", name: "", desc: "" });
       setIconSearch("");
@@ -84,7 +87,10 @@ const CharacteristicsForm = ({
   const handleRemoveFeature = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      features: prev.features.filter((_, i) => i !== index),
+      characteristics: {
+        ...prev.characteristics,
+        items: prev.characteristics?.items?.filter((_, i) => i !== index),
+      },
     }));
   };
 
@@ -100,7 +106,10 @@ const CharacteristicsForm = ({
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              characteristics: { ...prev.characteristics, desc1: e.target.value },
+              characteristics: {
+                ...prev.characteristics,
+                desc1: e.target.value,
+              },
             }))
           }
           placeholder="Enter description line 1"
@@ -118,7 +127,10 @@ const CharacteristicsForm = ({
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              characteristics: { ...prev.characteristics, desc2: e.target.value },
+              characteristics: {
+                ...prev.characteristics,
+                desc2: e.target.value,
+              },
             }))
           }
           placeholder="Enter description line 2"
@@ -127,7 +139,9 @@ const CharacteristicsForm = ({
       </div>
 
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Characteristic Items</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          Characteristic Items
+        </h3>
         <button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -241,7 +255,7 @@ const CharacteristicsForm = ({
                       } catch (error) {
                         console.warn(
                           `Failed to render icon button for: ${name}`,
-                          error
+                          error,
                         );
                         return null;
                       }
@@ -260,7 +274,7 @@ const CharacteristicsForm = ({
                 }
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Add Feature
+                Add Characteristic
               </button>
               <button
                 onClick={() => {

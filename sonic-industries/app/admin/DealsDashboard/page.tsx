@@ -17,7 +17,9 @@ const DealsDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<"browse" | "create">("browse");
-  const [activeFormTab, setActiveFormTab] = useState<"basic" | "pricing" | "image-rating">("basic");
+  const [activeFormTab, setActiveFormTab] = useState<
+    "basic" | "pricing" | "image-rating"
+  >("basic");
 
   const [formData, setFormData] = useState<DealFormDataType>({
     title: "",
@@ -41,10 +43,14 @@ const DealsDashboard = () => {
   const loadAllDeals = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
+      );
       setDeals(response.data.deals || []);
     } catch {
-      setError("Failed to load deals. Make sure you have a GET /api/deals endpoint.");
+      setError(
+        "Failed to load deals. Make sure you have a GET /api/deals endpoint.",
+      );
       setDeals([]);
     } finally {
       setLoading(false);
@@ -52,15 +58,23 @@ const DealsDashboard = () => {
   };
 
   const handleDelete = async (dealId: string) => {
-    if (!confirm("Are you sure you want to delete this deal? This action cannot be undone.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to delete this deal? This action cannot be undone.",
+      )
+    )
+      return;
 
     setLoading(true);
     setError("");
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       setDeals(deals.filter((deal) => deal._id !== dealId));
       setSuccess("Deal deleted successfully!");
@@ -98,7 +112,9 @@ const DealsDashboard = () => {
 
   const loadAllProducts = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`,
+      );
       setProducts(response.data.products || []);
     } catch (err) {
       const error = err as Error;
@@ -126,15 +142,12 @@ const DealsDashboard = () => {
   const EditingModalProps = {
     selectedDeal,
     setSelectedDeal,
-    formData,
-    setFormData,
-    loading,
-    setLoading,
-    setError,
-    setSuccess,
     setIsEditing,
     deals,
     setDeals,
+    setError,
+    setSuccess,
+    products,
   };
 
   const SearchAllDealsProps = {
@@ -149,8 +162,12 @@ const DealsDashboard = () => {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Deals Management</h1>
-            <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage your website deals with ease</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Deals Management
+            </h1>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">
+              Manage your website deals with ease
+            </p>
           </div>
           <button
             onClick={loadAllDeals}
@@ -167,7 +184,10 @@ const DealsDashboard = () => {
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 flex items-center gap-3 text-sm sm:text-base">
             <AlertCircle className="w-5 h-5 text-red-600" />
             <span className="text-red-800">{error}</span>
-            <button onClick={clearMessages} className="ml-auto text-red-600 hover:text-red-800 cursor-pointer">
+            <button
+              onClick={clearMessages}
+              className="ml-auto text-red-600 hover:text-red-800 cursor-pointer"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -176,7 +196,10 @@ const DealsDashboard = () => {
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 flex items-center gap-3 text-sm sm:text-base">
             <CheckCircle className="w-5 h-5 text-green-600" />
             <span className="text-green-800">{success}</span>
-            <button onClick={clearMessages} className="ml-auto text-green-600 hover:text-green-800">
+            <button
+              onClick={clearMessages}
+              className="ml-auto text-green-600 hover:text-green-800"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -214,7 +237,9 @@ const DealsDashboard = () => {
                 {loading ? (
                   <div className="text-center py-6 sm:py-8">
                     <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-                    <p className="text-gray-600 text-sm sm:text-base">Loading deals...</p>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      Loading deals...
+                    </p>
                   </div>
                 ) : deals.length === 0 ? (
                   <div className="text-center py-6 sm:py-8 text-gray-500 text-sm sm:text-base">

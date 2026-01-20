@@ -29,6 +29,7 @@ interface CustomerFormProps {
   setCustomer: Dispatch<SetStateAction<CustomerData>>;
   sameAsShipping: boolean;
   setSameAsShipping: Dispatch<SetStateAction<boolean>>;
+  otpVerified: boolean;
   setOtpVerified: Dispatch<SetStateAction<boolean>>;
   otpSent: boolean;
   setOtpSent: Dispatch<SetStateAction<boolean>>;
@@ -40,6 +41,7 @@ export function CustomerForm({
   setCustomer,
   sameAsShipping,
   setSameAsShipping,
+  otpVerified,
   setOtpVerified,
   otpSent,
   setOtpSent,
@@ -154,7 +156,7 @@ export function CustomerForm({
         {
           email: customer.email,
           sessionId: sessionToken,
-        }
+        },
       );
 
       setOtpSent(true);
@@ -177,7 +179,7 @@ export function CustomerForm({
         {
           sessionId: sessionToken,
           otp,
-        }
+        },
       );
 
       setOtpVerified(true);
@@ -259,23 +261,37 @@ export function CustomerForm({
         {/* Email + OTP */}
         <div className="space-y-2">
           <label className={labelClassName}>Email Address</label>
-          <input
-            type="email"
-            placeholder="your.email@example.com"
-            value={customer.email}
-            onChange={(e) => {
-              const value = e.target.value;
-              setCustomer({ ...customer, email: value });
-              setEmailTouched(true);
-            }}
-            className={inputClassName}
-          />
+
+          <div className="relative">
+            <input
+              type="email"
+              placeholder="your.email@example.com"
+              value={customer.email}
+              disabled={otpVerified}
+              onChange={(e) => {
+                const value = e.target.value;
+                setCustomer({ ...customer, email: value });
+                setEmailTouched(true);
+              }}
+              className={`${inputClassName} ${
+                otpVerified ? "pr-24 border-green-500" : ""
+              }`}
+            />
+
+            {/* ✅ Verified badge + tick */}
+            {otpVerified && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-green-600 text-xs font-medium">
+                ✔ Verified
+              </div>
+            )}
+          </div>
+
           {errors.email && (
             <p className="text-red-600 text-xs mt-1">{errors.email}</p>
           )}
 
-          {/* Show Send OTP button when valid email is typed */}
-          {emailTouched && isEmailValid && !otpSent && (
+          {/* Send OTP button */}
+          {emailTouched && isEmailValid && !otpSent && !otpVerified && (
             <button
               onClick={handleOtpSend}
               className="px-4 py-2 bg-blue-600 text-white rounded text-sm cursor-pointer"
@@ -284,8 +300,8 @@ export function CustomerForm({
             </button>
           )}
 
-          {/* OTP input field */}
-          {otpSent && (
+          {/* OTP input */}
+          {otpSent && !otpVerified && (
             <div className="mt-2 space-y-2">
               <input
                 type="text"

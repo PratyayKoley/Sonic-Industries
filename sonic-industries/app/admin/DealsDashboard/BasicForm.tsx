@@ -38,9 +38,11 @@ const BasicForm = ({
           <select
             value={formData.productName || ""}
             onChange={(e) => {
+              const selectedProduct = products.find((p) => p.name === e.target.value);
               setFormData((prev) => ({
                 ...prev,
                 productName: e.target.value,
+                mrp: selectedProduct?.price || 0,
               }));
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"

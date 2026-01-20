@@ -1,5 +1,15 @@
 import { DealBackend, SearchAllDealProps } from "@/types";
-import { Edit2, Trash2, Percent, Tag, Copy, Clock, Star, IndianRupee, Package } from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  Percent,
+  Tag,
+  Copy,
+  Clock,
+  Star,
+  IndianRupee,
+  Package,
+} from "lucide-react";
 import Image from "next/image";
 
 const SearchAllDeals = ({
@@ -8,9 +18,9 @@ const SearchAllDeals = ({
   handleDelete,
 }: SearchAllDealProps) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -21,17 +31,30 @@ const SearchAllDeals = ({
     const now = new Date();
     const diffTime = d.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays < 0) {
       return { text: "Expired", color: "text-red-600 bg-red-50" };
     } else if (diffDays === 0) {
       return { text: "Expires today", color: "text-orange-600 bg-orange-50" };
     } else if (diffDays === 1) {
-      return { text: "Expires tomorrow", color: "text-orange-600 bg-orange-50" };
+      return {
+        text: "Expires tomorrow",
+        color: "text-orange-600 bg-orange-50",
+      };
     } else if (diffDays <= 7) {
-      return { text: `${diffDays} days left`, color: "text-yellow-600 bg-yellow-50" };
+      return {
+        text: `${diffDays} days left`,
+        color: "text-yellow-600 bg-yellow-50",
+      };
     } else {
-      return { text: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }), color: "text-green-600 bg-green-50" };
+      return {
+        text: d.toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+        color: "text-green-600 bg-green-50",
+      };
     }
   };
 
@@ -46,21 +69,22 @@ const SearchAllDeals = ({
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+        <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />,
       );
     }
 
     if (hasHalfStar) {
       stars.push(
-        <Star key="half" className="w-3 h-3 fill-yellow-400/50 text-yellow-400" />
+        <Star
+          key="half"
+          className="w-3 h-3 fill-yellow-400/50 text-yellow-400"
+        />,
       );
     }
 
     const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <Star key={`empty-${i}`} className="w-3 h-3 text-gray-300" />
-      );
+      stars.push(<Star key={`empty-${i}`} className="w-3 h-3 text-gray-300" />);
     }
 
     return stars;
@@ -68,17 +92,22 @@ const SearchAllDeals = ({
 
   const getDealTypeBadge = (dealType: string) => {
     const types: Record<string, { color: string; icon: string }> = {
-      'flash': { color: 'bg-red-500', icon: '⚡' },
-      'clearance': { color: 'bg-orange-500', icon: '🏷️' },
-      'seasonal': { color: 'bg-green-500', icon: '🎉' },
-      'bundle': { color: 'bg-purple-500', icon: '📦' },
-      'limited': { color: 'bg-blue-500', icon: '⏰' },
+      flash: { color: "bg-red-500", icon: "⚡" },
+      clearance: { color: "bg-orange-500", icon: "🏷️" },
+      seasonal: { color: "bg-green-500", icon: "🎉" },
+      bundle: { color: "bg-purple-500", icon: "📦" },
+      limited: { color: "bg-blue-500", icon: "⏰" },
     };
-    
-    const type = types[dealType.toLowerCase()] || { color: 'bg-gray-500', icon: '🎯' };
-    
+
+    const type = types[dealType.toLowerCase()] || {
+      color: "bg-gray-500",
+      icon: "🎯",
+    };
+
     return (
-      <span className={`${type.color} text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1`}>
+      <span
+        className={`${type.color} text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1`}
+      >
         <span>{type.icon}</span>
         {dealType}
       </span>
@@ -92,7 +121,8 @@ const SearchAllDeals = ({
         <div className="flex items-center gap-2">
           <Percent className="w-5 h-5 text-orange-600" />
           <h2 className="text-lg font-semibold text-gray-800">
-            Active Deals: <span className="text-orange-600">{deals.length}</span>
+            Active Deals:{" "}
+            <span className="text-orange-600">{deals.length}</span>
           </h2>
         </div>
       </div>
@@ -101,7 +131,7 @@ const SearchAllDeals = ({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {deals.map((deal: DealBackend) => {
           const expiryInfo = formatDate(deal.expiresAt);
-          
+
           return (
             <div
               key={deal._id}
@@ -116,7 +146,7 @@ const SearchAllDeals = ({
                     fill
                     className="object-cover"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.style.display = "none";
                     }}
                   />
                   {/* Discount Badge Overlay */}
@@ -159,7 +189,9 @@ const SearchAllDeals = ({
                     <div className="flex items-center gap-1">
                       {renderStars(deal.rating)}
                     </div>
-                    <span className="text-xs text-gray-600">({deal.rating})</span>
+                    <span className="text-xs text-gray-600">
+                      ({deal.rating})
+                    </span>
                   </div>
                 )}
 
@@ -198,7 +230,7 @@ const SearchAllDeals = ({
                     </div>
                     <button
                       onClick={() => copyToClipboard(deal.couponCode)}
-                      className="text-amber-700 hover:text-amber-900 transition-colors"
+                      className="text-amber-700 hover:text-amber-900 transition-colors cursor-pointer"
                       title="Copy code"
                     >
                       <Copy className="w-4 h-4" />
@@ -207,7 +239,9 @@ const SearchAllDeals = ({
                 </div>
 
                 {/* Expiry Date */}
-                <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold ${expiryInfo.color}`}>
+                <div
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold ${expiryInfo.color}`}
+                >
                   <Clock className="w-3.5 h-3.5" />
                   <span>{expiryInfo.text}</span>
                 </div>
@@ -216,14 +250,14 @@ const SearchAllDeals = ({
                 <div className="flex gap-2 pt-2 border-t border-gray-200">
                   <button
                     onClick={() => startEdit(deal)}
-                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-1 shadow-sm hover:shadow"
+                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-1 shadow-sm hover:shadow cursor-pointer"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(deal._id)}
-                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex-1 shadow-sm hover:shadow"
+                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex-1 shadow-sm hover:shadow cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Delete
