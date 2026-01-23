@@ -142,6 +142,7 @@ const SearchAllProducts = ({
                     {/* LINK */}
                     <Link
                       href={`/${product.slug}`}
+                      target="_blank"
                       className="block text-[11px] text-blue-600 truncate"
                     >
                       {process.env.NEXT_PUBLIC_FRONTEND_URL}/{product.slug}
