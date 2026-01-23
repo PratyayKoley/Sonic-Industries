@@ -53,6 +53,7 @@ const SearchAllCategories = ({
               <span className="font-medium">Link:</span>
               <Link
                 href={`/${category.slug}`}
+                target="_blank"
                 className="rounded bg-gray-100 px-2 py-1 font-mono break-all text-blue-600 hover:underline"
               >
                 {process.env.NEXT_PUBLIC_FRONTEND_URL}/{category.slug}

@@ -47,7 +47,7 @@ const PaymentSuccessClient: React.FC = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/spin-reward`,
         {
           razorpayOrderId: razorpayOrderId,
-        }
+        },
       );
       const data = res.data; // { reward: "Smartwatch" }
 
@@ -96,7 +96,7 @@ const PaymentSuccessClient: React.FC = () => {
         },
         {
           responseType: "blob",
-        }
+        },
       );
 
       // Create blob URL
@@ -464,8 +464,15 @@ const PaymentSuccessClient: React.FC = () => {
 
         #wrapper {
           margin: 20px auto;
-          width: 320px;
+          max-width: 240px;
+          width: 100%;
           position: relative;
+        }
+
+        @media (min-width: 375px) {
+          #wrapper {
+            max-width: 280px;
+          }
         }
 
         #wheel {
@@ -519,13 +526,19 @@ const PaymentSuccessClient: React.FC = () => {
           width: 0;
           height: 0;
           border-style: solid;
-          border-width: 0 15px 30px 15px;
+          border-width: 0 12px 25px 12px;
           border-color: transparent transparent #fff transparent;
-          top: 95px;
+          top: 54px;
           left: 50%;
-          margin-left: -14px;
+          margin-left: -12px;
           z-index: 99;
           filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+          
+        @media (min-width: 375px) {
+          #pointer {
+            top: 78px;
+          }
         }
       `}</style>
     </div>
