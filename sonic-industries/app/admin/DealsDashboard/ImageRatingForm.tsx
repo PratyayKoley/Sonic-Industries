@@ -17,7 +17,7 @@ const ImageRatingForm = ({
 }: ImageRatingFormProps) => {
   const handleChange = (
     field: keyof DealFormDataType,
-    value: string | number
+    value: string | number,
   ) => {
     setFormData({
       ...formData,
@@ -32,19 +32,27 @@ const ImageRatingForm = ({
 
   const formatDateForInput = (dateStr: string) => {
     if (!dateStr) return "";
-    try {
-      return new Date(dateStr).toISOString().slice(0, 16);
-    } catch {
-      return "";
-    }
+
+    const date = new Date(dateStr);
+
+    if (isNaN(date.getTime())) return "";
+
+    const pad = (n: number) => n.toString().padStart(2, "0");
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate(),
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
   const handleDateChange = (value: string) => {
-    if (value) {
-      handleChange("expiresAt", new Date(value).toISOString());
-    } else {
+    if (!value) {
       handleChange("expiresAt", "");
+      return;
     }
+
+    // convert local datetime-local value → ISO (UTC)
+    const iso = new Date(value).toISOString();
+    handleChange("expiresAt", iso);
   };
 
   return (
@@ -134,8 +142,8 @@ const ImageRatingForm = ({
                     star <= Math.floor(formData.rating)
                       ? "text-yellow-400 fill-yellow-400"
                       : star - 0.5 <= formData.rating
-                      ? "text-yellow-400 fill-yellow-200"
-                      : "text-gray-300"
+                        ? "text-yellow-400 fill-yellow-200"
+                        : "text-gray-300"
                   }`}
                 />
               ))}

@@ -100,7 +100,7 @@ const EditingModal = ({
 
       setDeals(
         deals.map((d) =>
-          d._id === selectedDeal?._id ? response.data.updatedDeal : d,
+          d._id === selectedDeal?._id ? response.data.deal : d,
         ),
       );
 
@@ -205,11 +205,11 @@ const EditingModal = ({
 };
 
 export default EditingModal;
-
+``;
 /* ----------------------------------
    Helpers
 ---------------------------------- */
-function mapDealToDraft(deal: DealBackend): DealFormDataType {
+function mapDealToDraft(deal: DealBackend) {
   return {
     title: deal.title ?? "",
     description: deal.description ?? "",
@@ -218,9 +218,10 @@ function mapDealToDraft(deal: DealBackend): DealFormDataType {
 
     discountedPrice: deal.discountedPrice ?? 0,
     rating: deal.rating ?? 0,
-    expiresAt: deal.expiresAt
-      ? new Date(deal.expiresAt).toISOString().slice(0, 16)
-      : "",
+    expiresAt:
+      deal.expiresAt instanceof Date
+        ? deal.expiresAt.toISOString()
+        : deal.expiresAt,
     couponCode: deal.couponCode ?? "",
 
     ...(deal.dealType === "product" && {

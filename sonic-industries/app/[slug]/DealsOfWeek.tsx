@@ -151,7 +151,7 @@ export default function DealsOfWeek() {
                       </h2>
                       <div className="flex items-center mb-4 sm:mb-6">
                         <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-indigo-600 mr-2 sm:mr-3">
-                          ₹{currentDealData.discountedPrice}
+                          ₹{currentDealData.discountedPrice.toFixed(2)}
                         </span>
                         {currentDealData.mrp && (
                           <span className="text-sm sm:text-base md:text-lg text-gray-500 line-through">
@@ -170,7 +170,7 @@ export default function DealsOfWeek() {
                       </p>
                       <div className="flex items-center mb-4 sm:mb-6">
                         <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-indigo-600">
-                          Flat ₹{currentDealData.discountedPrice} off
+                          Flat ₹{currentDealData.discountedPrice.toFixed(2)} off
                         </span>
                       </div>
                     </>
