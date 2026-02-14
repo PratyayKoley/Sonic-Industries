@@ -36,7 +36,7 @@ export const createLead = async (
     }
 
     const mailType: string = "inquiry";
-    const receiverEmail: string = process.env.EMAIL_USER as string;
+    const receiverEmail: string[] = process.env.ADMIN_EMAILS?.split(",") as string[];
     const receiverName: string = "Sonic Industries";
 
     const newLead: Lead = await LeadModel.create({

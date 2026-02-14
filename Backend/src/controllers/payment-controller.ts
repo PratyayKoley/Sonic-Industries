@@ -458,7 +458,7 @@ export const spinReward = async (
     await order.save();
 
     await sendMail({
-      to: process.env.EMAIL_USER as string,
+      to: process.env.ADMIN_EMAILS?.split(",") as string[],
       subject: `New Reward Assigned - Order ${order.orderNumber} for ${order.customer?.firstName} ${order.customer?.lastName}`,
       html: getAdminRewardsEmailTemplate(order),
     });

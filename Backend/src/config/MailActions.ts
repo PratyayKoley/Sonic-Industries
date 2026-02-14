@@ -30,7 +30,7 @@ export const handleSuccessfulOrderEmail = async (
   await LeadModel.create({
     subject: `Order Confirmation - ${order.orderNumber}`,
     content: `Order ${order.orderNumber} confirmed successfully for ${order.customer?.firstName}.`,
-    senderEmail: process.env.EMAIL_USER as string,
+    senderEmail: process.env.ADMIN_EMAILS?.split(",")[1] as string,
     senderName: "Sonic Industries",
     receiverEmail: order.customer?.email,
     receiverName: `${order.customer?.firstName} ${order.customer?.lastName}`,
@@ -46,7 +46,7 @@ export const handleSuccessfulOrderEmail = async (
 
   // send to admin
   await sendMail({
-    to: process.env.EMAIL_USER as string,
+    to: process.env.ADMIN_EMAILS?.split(",") as string[],
     subject: `New Order Placed - ${order.orderNumber}`,
     html: getAdminEmailTemplate(order), 
   });
