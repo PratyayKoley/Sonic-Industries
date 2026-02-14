@@ -138,7 +138,7 @@ export default function ProductVariants({ productData }: ProductVariantsProps) {
                   <div className="bg-gray-100 p-4 rounded-b-lg">
                     {/* Rating */}
                     <div className="flex items-center mb-2">
-                      {renderStars(product.rating)}
+                      {renderStars(product.rating || 5)}
                     </div>
 
                     {/* Price */}

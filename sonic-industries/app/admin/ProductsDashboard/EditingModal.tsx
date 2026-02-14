@@ -370,6 +370,25 @@ const EditingModal = ({
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Rating
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.rating || 0}
+                    onChange={(e) =>
+                      setFormData((prev: typeof formData) => ({
+                        ...prev,
+                        rating: parseFloat(e.target.value) || 0,
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
               {/* Images */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
