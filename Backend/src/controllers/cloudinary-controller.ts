@@ -45,7 +45,7 @@ export const uploadMultipleImage = async (
       urls.push({ url: result.secure_url, public_id: result.public_id });
     }
 
-    res.json({ success: true, images: urls });
+    res.json({ success: true, images: urls, message: "Images uploaded successfully" });
   } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
   }

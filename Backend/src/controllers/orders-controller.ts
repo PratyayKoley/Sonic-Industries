@@ -31,7 +31,7 @@ export const getAllOrders = async (
     });
   } catch (error) {
     console.error("Error getting orders:", error);
-    res.status(500).json({ message: "Failed to get orders", error });
+    res.status(500).json({ message: "Error fetching orders", error });
   }
 };
 

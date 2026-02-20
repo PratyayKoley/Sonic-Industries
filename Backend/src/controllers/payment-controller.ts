@@ -472,6 +472,7 @@ export const spinReward = async (
     });
     res.status(200).json({
       reward,
+      messaege: "Reward assigned successfully",
       alreadySpun: false,
     });
   } catch (error) {

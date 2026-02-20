@@ -34,7 +34,8 @@ export const getCategoryBySlug = async (
   } catch (error) {
     console.error("Error fetching category by slug:", error);
     res.status(500).json({
-      message: "Failed to fetch category.",
+      message:
+        "Something went wrong while fetching the category. Please try again later.",
       error,
     });
   }
@@ -61,7 +62,8 @@ export const getAllCategories = async (
   } catch (error) {
     console.error("Error fetching all categories:", error);
     res.status(500).json({
-      message: "Failed to fetch categories.",
+      message:
+        "Something went wrong while fetching the categories. Please try again later.",
       error,
     });
   }
@@ -73,6 +75,7 @@ export const createCategory = async (
 ): Promise<void> => {
   try {
     const categoryData: Category = req.body;
+
     if (!categoryData || Object.keys(categoryData).length === 0) {
       res.status(400).json({
         message: "Category data is required.",
@@ -80,7 +83,19 @@ export const createCategory = async (
       return;
     }
 
+    // Trim important fields at backend level
+    categoryData.name = categoryData.name?.trim();
+    categoryData.slug = categoryData.slug?.trim();
+
+    if (!categoryData.name || !categoryData.slug) {
+      res.status(400).json({
+        message: "Category name and slug are required.",
+      });
+      return;
+    }
+
     const newCategory = await CategoryModel.create(categoryData);
+
     await axios.get(`${process.env.FRONTEND_URL}/api/revalidate`, {
       params: {
         paths: JSON.stringify([`/${newCategory.slug}`]),
@@ -93,9 +108,21 @@ export const createCategory = async (
       newCategory,
     });
     return;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating category: ", error);
-    res.status(500).json({ message: "Failed to create category", error });
+
+    // ✅ Handle duplicate slug error
+    if (error.code === 11000 && error.keyPattern?.slug) {
+      res.status(409).json({
+        message: "Slug already exists. Please try a different name.",
+      });
+      return;
+    }
+
+    res.status(500).json({
+      message:
+        "Something went wrong while creating the category. Please try again later.",
+    });
   }
 };
 
@@ -142,7 +169,8 @@ export const updateCategory = async (
   } catch (error) {
     console.error("Error updating category:", error);
     res.status(500).json({
-      message: "Failed to update category.",
+      message:
+        "Something went wrong while updating the category. Please try again later.",
       error,
     });
   }
@@ -200,7 +228,8 @@ export const deleteCategory = async (
 
     console.error("Error deleting category:", error);
     res.status(500).json({
-      message: "Failed to delete category.",
+      message:
+        "Something went wrong while deleting the category. Please try again later.",
       error,
     });
   }
@@ -232,6 +261,12 @@ export const getCategoryImages = async (
     });
   } catch (error) {
     console.error("Error fetching category images: ", error);
-    res.status(500).json({ message: "Failed to fetch category images", error });
+    res
+      .status(500)
+      .json({
+        message:
+          "Something went wrong while fetching the category images. Please try again later.",
+        error,
+      });
   }
 };

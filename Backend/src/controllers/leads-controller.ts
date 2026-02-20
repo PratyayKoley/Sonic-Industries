@@ -31,7 +31,7 @@ export const createLead = async (
     const { name, email, message } = req.body;
 
     if (!name || !email || !message) {
-      res.status(400).json({ success: false, message: "Missing required fields" });
+      res.status(400).json({ success: false, message: "Missing required fields. Please check all fields are filled." });
       return;
     }
 

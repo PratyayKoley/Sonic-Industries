@@ -7,7 +7,7 @@ import axios from "axios";
 
 export const createProduct = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const productData: Product = {
@@ -21,17 +21,17 @@ export const createProduct = async (
     };
     if (!productData || Object.keys(productData).length === 0) {
       res.status(400).json({
-        message: "Product data is required.",
+        message: "Product data is required. Missing Fields.",
       });
       return;
     }
 
     const categoryData: Category | null = await CategoryModel.findById(
-      productData.categoryId
+      productData.categoryId,
     );
     if (!categoryData || Object.keys(categoryData).length === 0) {
       res.status(400).json({
-        message: "Category Id is not valid.",
+        message: "   Id is not valid. Category not found.",
       });
       return;
     }
@@ -55,10 +55,10 @@ export const createProduct = async (
               (error, result) => {
                 if (error) return reject(error);
                 resolve(result as UploadApiResponse);
-              }
+              },
             );
             stream.end(file.buffer);
-          }
+          },
         );
 
         uploadedImages.push(uploadResult.secure_url);
@@ -85,10 +85,19 @@ export const createProduct = async (
       message: "Product created successfully.",
       newProduct,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating product:", error);
+
+    if (error.code === 11000 && error.keyPattern?.slug) {
+      res.status(409).json({
+        message: "Slug already exists. Please try a different name.",
+      });
+      return;
+    }
+
     res.status(500).json({
-      message: "Failed to create product.",
+      message:
+        "Something went wrong while creating the product. Please try again later.",
       error,
     });
   }
@@ -96,7 +105,7 @@ export const createProduct = async (
 
 export const getProductBySlug = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { slug } = req.params;
@@ -124,7 +133,8 @@ export const getProductBySlug = async (
   } catch (error) {
     console.error("Error fetching product by slug:", error);
     res.status(500).json({
-      message: "Failed to fetch product.",
+      message:
+        "Something went wrong while fetching the product. Please try again later.",
       error,
     });
   }
@@ -132,7 +142,7 @@ export const getProductBySlug = async (
 
 export const updateProduct = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const {
@@ -206,10 +216,10 @@ export const updateProduct = async (
               (error, result) => {
                 if (error) return reject(error);
                 resolve(result as UploadApiResponse);
-              }
+              },
             );
             stream.end(file.buffer);
-          }
+          },
         );
         newImageUrls.push(uploadResult.secure_url);
       }
@@ -252,7 +262,7 @@ export const updateProduct = async (
     const updatedProduct = await ProductModel.findOneAndUpdate(
       { slug: originalSlug },
       updateData,
-      { new: true }
+      { new: true },
     );
 
     if (!updatedProduct) {
@@ -281,7 +291,8 @@ export const updateProduct = async (
   } catch (error) {
     console.error("Error updating product:", error);
     res.status(500).json({
-      message: "Failed to update product.",
+      message:
+        "Something went wrong while updating the product. Please try again later.",
       error,
     });
   }
@@ -289,7 +300,7 @@ export const updateProduct = async (
 
 export const deleteProduct = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { slug } = req.params;
@@ -332,7 +343,8 @@ export const deleteProduct = async (
   } catch (error) {
     console.error("Error deleting product:", error);
     res.status(500).json({
-      message: "Failed to delete product.",
+      message:
+        "Something went wrong while deleting the product. Please try again later.",
       error,
     });
   }
@@ -340,7 +352,7 @@ export const deleteProduct = async (
 
 export const getAllProducts = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const allProducts = await ProductModel.find().populate("categoryId");
@@ -359,7 +371,8 @@ export const getAllProducts = async (
   } catch (error) {
     console.error("Error fetching all products:", error);
     res.status(500).json({
-      message: "Failed to fetch products.",
+      message:
+        "Something went wrong while fetching all the products. Please try again later.",
       error,
     });
   }
@@ -367,7 +380,7 @@ export const getAllProducts = async (
 
 export const getProductByCategory = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { categoryId } = req.body;
@@ -395,7 +408,8 @@ export const getProductByCategory = async (
   } catch (error) {
     console.error("Error fetching products by category:", error);
     res.status(500).json({
-      message: "Failed to fetch products.",
+      message:
+        "Something went wrong while fetching the products. Please try again later.",
       error,
     });
   }

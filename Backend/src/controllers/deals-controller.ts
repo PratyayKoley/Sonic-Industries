@@ -21,7 +21,7 @@ export const getAllDeals = async (
     res.status(200).json({ message: "Deals fetched successfully", deals });
   } catch (error) {
     console.error("Error fetching deals:", error);
-    res.status(500).json({ message: "Failed to fetch deals", error });
+    res.status(500).json({ message: "Something went wrong while fetching the deals. Please try again later.", error });
   }
 };
 
@@ -33,7 +33,7 @@ export const validateCoupon = async (
     const { couponCode, productId, email } = req.body;
 
     if (!couponCode || !productId || !email) {
-      res.status(400).json({ message: "Missing fields." });
+      res.status(400).json({ message: "Missing fields of coupon code, product ID, or email." });
       return;
     }
     
@@ -46,7 +46,7 @@ export const validateCoupon = async (
     res.status(200).json({ valid, message, discount });
   } catch (error) {
     console.error("Error validating coupon:", error);
-    res.status(500).json({ message: "Error validating coupon" });
+    res.status(500).json({ message: "Something went wrong while validating the coupon. Please try again later." });
   }
 };
 
@@ -121,7 +121,7 @@ export const createDeal = async (
       .json({ message: "Deal created successfully", deal: newDeal });
   } catch (error) {
     console.error("Error creating deal:", error);
-    res.status(500).json({ message: "Failed to create deal", error });
+    res.status(500).json({ message: "Something went wrong while creating the deal. Please try again later.", error });
   }
 };
 
@@ -156,7 +156,7 @@ export const updateDeal = async (
       .json({ message: "Deal updated successfully", deal: updatedDeal });
   } catch (error) {
     console.error("Error updating deal:", error);
-    res.status(500).json({ message: "Failed to update deal", error });
+    res.status(500).json({ message: "Something went wrong while updating the deal. Please try again later.", error });
   }
 };
 
@@ -182,6 +182,6 @@ export const deleteDeal = async (
     res.status(200).json({ message: "Deal deleted successfully", deletedDeal });
   } catch (error) {
     console.error("Error deleting deal:", error);
-    res.status(500).json({ message: "Failed to delete deal", error });
+    res.status(500).json({ message: "Something went wrong while deleting the deal. Please try again later.", error });
   }
 }; 
