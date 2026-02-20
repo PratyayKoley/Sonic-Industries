@@ -27,6 +27,7 @@ const BasicForm = ({
           }
           placeholder="Enter deal title"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
         />
       </div>
 
@@ -46,6 +47,7 @@ const BasicForm = ({
               }));
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            required
           >
             <option value="">Select Product</option>
             {products.map((p) => (
@@ -77,7 +79,7 @@ const BasicForm = ({
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Deal Coupon Code
+          Deal Coupon Code *
         </label>
         <input
           type="text"
@@ -87,6 +89,7 @@ const BasicForm = ({
           }
           placeholder="Enter deal coupon code"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
         />
       </div>
     </div>

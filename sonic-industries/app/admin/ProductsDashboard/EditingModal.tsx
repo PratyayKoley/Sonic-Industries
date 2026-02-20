@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import { ProductBackend, ProductEditingModalProps } from "@/types";
 import { useState } from "react";
 import * as LucideIcons from "lucide-react";
+import { toast } from "sonner";
 
 const EditingModal = ({
   selectedProduct,
@@ -101,11 +102,13 @@ const EditingModal = ({
         )
       );
       setSuccess("Product updated successfully!");
+      toast.success(response.data.message);
       setIsEditing(false);
       setSelectedProduct(response.data.updatedProduct);
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      setError(error.response?.data?.message || "Failed to update product");
+      const error = err as AxiosError<{ message: string; error?: any }>;
+      setError(error.response?.data?.error?.message || "Failed to update product");
+      toast.error(error.response?.data?.error?.message || "Failed to update product");
     } finally {
       setLoading(false);
     }

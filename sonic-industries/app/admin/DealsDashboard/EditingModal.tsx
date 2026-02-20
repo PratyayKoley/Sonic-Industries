@@ -13,6 +13,7 @@ import {
 import BasicForm from "./BasicForm";
 import PricingForm from "./PricingForm";
 import ImageRatingForm from "./ImageRatingForm";
+import { toast } from "sonner";
 
 interface EditingModalProps {
   selectedDeal: DealBackend | null;
@@ -105,10 +106,12 @@ const EditingModal = ({
       );
 
       setSuccess("Deal updated successfully");
+      toast.success(response.data.message);
       close();
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Update failed");
+      toast.error(error.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);
     }

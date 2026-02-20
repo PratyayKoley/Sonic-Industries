@@ -44,7 +44,7 @@ export default function ContactUs() {
         toast.error("Failed to send message.");
       }
     } catch (error) {
-      toast.error("Something went wrong.");
+      toast.error("Something went wrong while sending the message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -8,16 +8,18 @@ interface BasicFormProps {
 const BasicForm = ({ formData, setFormData }: BasicFormProps) => {
   const generateSlug = (name: string) => {
     return name
+      .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
   };
 
   const handleNameChange = (name: string) => {
+    const trimmedName = name.replace(/^\s+/, "");
     setFormData((prev) => ({
       ...prev,
-      name,
-      slug: generateSlug(name),
+      name: trimmedName,
+      slug: generateSlug(trimmedName),
     }));
   };
 
@@ -33,6 +35,7 @@ const BasicForm = ({ formData, setFormData }: BasicFormProps) => {
           onChange={(e) => handleNameChange(e.target.value)}
           placeholder="Enter category name"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
         />
       </div>
 
@@ -40,20 +43,29 @@ const BasicForm = ({ formData, setFormData }: BasicFormProps) => {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Slug *
         </label>
+
         <input
           type="text"
           value={formData.slug}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              slug: e.target.value,
+              slug: e.target.value.trimStart(),
             }))
           }
           placeholder="category-slug"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
         />
+
         <p className="text-xs text-gray-500 mt-1">
-          Auto-generated from name, but you can customize it
+          Auto-generated from name, but you can customize it.
+        </p>
+
+        {/* Warning */}
+        <p className="text-xs text-amber-600 mt-1 font-medium">
+          ⚠️ This slug can only be selected once and cannot be changed later.
+          Please choose carefully.
         </p>
       </div>
 
@@ -72,10 +84,8 @@ const BasicForm = ({ formData, setFormData }: BasicFormProps) => {
           }
           placeholder="category-title"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Auto-generated from name, but you can customize it
-        </p>
       </div>
 
       <div>

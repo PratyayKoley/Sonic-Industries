@@ -7,6 +7,7 @@ import { DealBackend, DealFormDataType, ProductBackend } from "@/types";
 import CreateDeal from "./CreateDeal";
 import EditingModal from "./EditingModal";
 import SearchAllDeals from "./SearchAllDeals";
+import { toast } from "sonner";
 
 const DealsDashboard = () => {
   const [deals, setDeals] = useState<DealBackend[]>([]);
@@ -47,11 +48,13 @@ const DealsDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals`,
       );
       setDeals(response.data.deals || []);
+      toast.success(response.data.message);
     } catch {
       setError(
         "Failed to load deals. Make sure you have a GET /api/deals endpoint.",
       );
       setDeals([]);
+      toast.error("Failed to load deals. Make sure you have a GET /api/deals endpoint.");
     } finally {
       setLoading(false);
     }
@@ -69,7 +72,7 @@ const DealsDashboard = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deals/${dealId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -78,10 +81,12 @@ const DealsDashboard = () => {
 
       setDeals(deals.filter((deal) => deal._id !== dealId));
       setSuccess("Deal deleted successfully!");
+      toast.success(response.data.message);
       if (selectedDeal?._id === dealId) setSelectedDeal(null);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete deal");
+      toast.error(error.response?.data?.message || "Failed to delete deal");
     } finally {
       setLoading(false);
     }
@@ -116,9 +121,11 @@ const DealsDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`,
       );
       setProducts(response.data.products || []);
+      toast.success(response.data.message);
     } catch (err) {
       const error = err as Error;
       console.error("Failed to load products:", error);
+      toast.error("Failed to load products");
     }
   };
 

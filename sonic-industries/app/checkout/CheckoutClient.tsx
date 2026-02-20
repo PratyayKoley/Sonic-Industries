@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { initiatePayment } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ export default function CheckoutClient() {
   const [product, setProduct] = useState<ProductBackend | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [razorPayMode, setRazorPayMode] = useState<"full" | "partial" | null>(
-    null
+    null,
   );
   const [quantity, setQuantity] = useState(1);
   const [coupon, setCoupon] = useState("");
@@ -82,13 +82,26 @@ export default function CheckoutClient() {
       try {
         const res = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/checkout/verify-token`,
-          { sessionToken }
+          { sessionToken },
         );
 
         const productData = await res.data;
         setProduct(productData.product);
-      } catch (error) {
+        toast.success(res.data.message);
+      } catch (err) {
+        const error = err as AxiosError<{ message: string }>;
         console.error("Verification failed during session: ", error);
+
+        if (error.response) {
+          // Server responded with error (400, 401, 404, 500)
+          toast.error(error.response.data.message || "Something went wrong");
+        } else if (error.request) {
+          // Request made but no response (network issue)
+          toast.error("No response from server. Please check your connection.");
+        } else {
+          // Something else happened
+          toast.error("Unexpected error occurred.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -171,7 +184,7 @@ export default function CheckoutClient() {
             couponCode: coupon,
             productId: product._id,
             email: customer.email,
-          }
+          },
         );
         const { valid, message, discount } = await res.data;
 
@@ -183,8 +196,9 @@ export default function CheckoutClient() {
         setDiscount(discount);
       } catch (error) {
         console.error("Coupon validation failed:", error);
+        toast.error("Coupon validation failed");
         setMessage(
-          message || "Something went wrong while validating the coupon."
+          message || "Something went wrong while validating the coupon.",
         );
       }
     }
@@ -217,7 +231,7 @@ export default function CheckoutClient() {
           },
           payment_method: "cod",
           quantity,
-        }
+        },
       );
       const data = res.data;
 
@@ -232,7 +246,7 @@ export default function CheckoutClient() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Order failed. Please try again."
+          : "Order failed. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -282,7 +296,7 @@ export default function CheckoutClient() {
           payment_method: "razorpay",
           quantity,
           razorPayMode,
-        }
+        },
       );
       const { RazorpayOrder, customerData } = res.data;
       const paymentPayLoad = {
@@ -295,7 +309,7 @@ export default function CheckoutClient() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Payment initialization failed. Please try again."
+          : "Payment initialization failed. Please try again.",
       );
     } finally {
       setIsLoading(false);

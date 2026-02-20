@@ -22,6 +22,7 @@ import {
   Truck,
 } from "lucide-react";
 import { OrderModelBackend, OrdersDashboardProps } from "@/types";
+import { toast } from "sonner";
 
 const OrderDetailModal = ({
   order,
@@ -408,11 +409,13 @@ const OrdersDashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setOrders(response.data.items || []);
+      toast.success(response.data.message);
     } catch {
       setError(
         "Failed to load orders. Make sure you have a GET /api/orders endpoint."
       );
       setOrders([]);
+      toast.error("Failed to load orders. Make sure you have a GET /api/orders endpoint.");
     } finally {
       setLoading(false);
     }
@@ -425,7 +428,7 @@ const OrdersDashboard = () => {
   ) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.patch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/${orderId}`,
         { status, payment_status: paymentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -453,22 +456,25 @@ const OrdersDashboard = () => {
       }
 
       setSuccess("Order updated successfully!");
+      toast.success(response.data.message);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to update order");
+      toast.error(error.response?.data?.message || "Failed to update order");
     }
   };
 
   const deleteOrder = async (orderId: string) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/${orderId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setOrders(orders.filter((order) => order._id !== orderId));
       setSuccess("Order deleted successfully!");
+      toast.success(response.data.message);
 
       if (selectedOrder?._id === orderId) {
         setSelectedOrder(null);
@@ -476,6 +482,7 @@ const OrdersDashboard = () => {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete order");
+      toast.error(error.response?.data?.message || "Failed to delete order");
     }
   };
 

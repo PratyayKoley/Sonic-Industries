@@ -8,6 +8,7 @@ import CreateCategory from "./CreateCategory";
 import SearchBySlug from "./SearchBySlug";
 import EditingModal from "./EditingModal";
 import SearchAllCategories from "./SearchAllCategories";
+import { toast } from "sonner";
 
 const CategoriesDashboard = () => {
   const [categories, setCategories] = useState<CategoryBackend[]>([]);
@@ -47,8 +48,10 @@ const CategoriesDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`
       );
       setCategories(response.data.categories || []);
+      toast.success(response.data.message);
     } catch {
       setError("Failed to load categories.");
+      toast.error("Failed to load categories.");
       setCategories([]);
     } finally {
       setLoading(false);
@@ -69,7 +72,7 @@ const CategoriesDashboard = () => {
         return;
       }
 
-      await axios.delete(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${categoryToDelete.slug}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -78,12 +81,14 @@ const CategoriesDashboard = () => {
 
       setCategories((prev) => prev.filter((c) => c._id !== categoryId));
       setSuccess("Category deleted successfully!");
+      toast.success(response.data.message);
       if (selectedCategory?._id === categoryId) {
         setSelectedCategory(null);
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Delete failed");
+      toast.error(error.response?.data?.message || "Delete failed");
     } finally {
       setLoading(false);
     }

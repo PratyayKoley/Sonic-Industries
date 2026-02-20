@@ -19,7 +19,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -89,6 +89,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
             onChange={(e) => handleNameChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter product name"
+            required
           />
         </div>
 
@@ -104,9 +105,15 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
             }
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="product-slug"
+            required
           />
           <p className="text-xs text-gray-500 mt-1">
             Auto-generated from name, but you can customize it
+          </p>
+
+          <p className="text-xs text-amber-600 mt-1 font-medium">
+            ⚠️ This slug can only be selected once and cannot be changed later.
+            Please choose carefully.
           </p>
         </div>
       </div>
@@ -149,6 +156,7 @@ const BasicForm = ({ formData, setFormData, categories }: BasicFormProps) => {
           }
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Short product tagline"
+          required
         />
       </div>
 

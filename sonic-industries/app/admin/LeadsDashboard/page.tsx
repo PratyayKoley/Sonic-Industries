@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { LeadBackend } from "@/types";
 import OpenMail from "./OpenMail";
+import { toast } from "sonner";
 
 const LeadsDashboard = () => {
   const [leads, setLeads] = useState<LeadBackend[]>([]);
@@ -41,9 +42,11 @@ const LeadsDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLeads(response.data.leads || []);
+      toast.success(response.data.message);
     } catch {
       setError("Failed to load leads. Make sure you have a GET /api/leads endpoint.");
       setLeads([]);
+      toast.error("Failed to load leads. Make sure you have a GET /api/leads endpoint.");
     } finally {
       setLoading(false);
     }
@@ -60,6 +63,7 @@ const LeadsDashboard = () => {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to mark as read");
+      toast.error(error.response?.data?.message || "Failed to mark as read");
     }
   };
 
@@ -68,17 +72,19 @@ const LeadsDashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads/${leadId}`, {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads/${leadId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setLeads(leads.filter((lead) => lead._id !== leadId));
       setSuccess("Lead deleted successfully!");
+      toast.success(response.data.message);
 
       if (selectedLead?._id === leadId) setSelectedLead(null);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete lead");
+      toast.error(error.response?.data?.message || "Failed to delete lead");
     }
   };
 

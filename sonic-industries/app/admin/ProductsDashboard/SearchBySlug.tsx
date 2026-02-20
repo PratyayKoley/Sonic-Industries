@@ -5,6 +5,7 @@ import { Trash2, Edit2, Search, Star, DollarSign } from "lucide-react";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const SearchBySlug = ({
   loading,
@@ -27,17 +28,22 @@ const SearchBySlug = ({
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${searchSlug}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${searchSlug}`,
       );
       setSearchResults([response.data.product]);
+      toast.success(response.data.message);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       if (error.response?.status === 404) {
         setError("No product found with that slug.");
+        toast.error("No product found with that slug.");
         setSearchResults([]);
       } else {
         setError(
-          error.response?.data?.message || "Search failed. Please try again."
+          error.response?.data?.message || "Search failed. Please try again.",
+        );
+        toast.error(
+          error.response?.data?.message || "Search failed. Please try again.",
         );
         setSearchResults([]);
       }

@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { CategoryBackend, EditingModalProps } from "@/types";
 import { useState } from "react";
 import * as LucideIcons from "lucide-react";
+import { toast } from "sonner";
 
 const EditingModal = ({
   selectedCategory,
@@ -52,11 +53,13 @@ const EditingModal = ({
         )
       );
       setSuccess("Category updated successfully!");
+      toast.success(response.data.message);
       setIsEditing(false);
       setSelectedCategory(response.data.updatedCategory);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to update category");
+      toast.error(error.response?.data?.message || "Failed to update category");
     } finally {
       setLoading(false);
     }

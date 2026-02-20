@@ -8,6 +8,7 @@ import PackagingForm from "./PackagingForm";
 import VideoForm from "./VideoForm";
 import LabelsForm from "./LabelsForm";
 import CharacteristicsForm from "./CharacteristicsForm";
+import { toast } from "sonner";
 
 const CreateProduct = ({
   formData,
@@ -48,11 +49,11 @@ const CreateProduct = ({
 
       // Build FormData (append scalar fields individually)
       const payload = new FormData();
-      payload.append("name", formData.name);
-      payload.append("slug", formData.slug);
+      payload.append("name", formData.name.trim());
+      payload.append("slug", formData.slug.trim());
       if (formData.description)
-        payload.append("description", formData.description);
-      if (formData.tagline) payload.append("tagline", formData.tagline);
+        payload.append("description", formData.description.trim());
+      if (formData.tagline) payload.append("tagline", formData.tagline.trim());
       payload.append("categoryId", formData.categoryId);
       payload.append("price", String(formData.price));
       payload.append("rating", String(formData.rating || 0));
@@ -65,9 +66,9 @@ const CreateProduct = ({
       );
       payload.append("labels", JSON.stringify(formData.labels || []));
       if (formData.yt_video_url)
-        payload.append("yt_video_url", formData.yt_video_url);
+        payload.append("yt_video_url", formData.yt_video_url.trim());
       if (formData.unboxing_yt_video_url)
-        payload.append("unboxing_yt_video_url", formData.unboxing_yt_video_url);
+        payload.append("unboxing_yt_video_url", formData.unboxing_yt_video_url.trim());
 
       // Append only NEW files (hybrid array: string | {file, preview})
       const images = formData.images || [];
@@ -98,11 +99,13 @@ const CreateProduct = ({
 
       setProducts([...products, response.data.newProduct]);
       setSuccess("Product created successfully!");
+      toast.success(response.data.message);
       resetForm();
       setActiveTab("browse");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to create product");
+      toast.error(error.response?.data?.message || "Failed to create product");
     } finally {
       setLoading(false);
     }
@@ -220,6 +223,7 @@ const CreateProduct = ({
             loading ||
             !formData.name.trim() ||
             !formData.slug.trim() ||
+            !formData.tagline.trim() ||
             !formData.categoryId ||
             formData.price <= 0
           }

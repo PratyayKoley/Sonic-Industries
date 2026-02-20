@@ -5,6 +5,7 @@ import BasicForm from "./BasicForm";
 import PricingForm from "./PricingForm";
 import ImageRatingForm from "./ImageRatingForm";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const CreateDeal = ({
   formData,
@@ -32,11 +33,13 @@ const CreateDeal = ({
       !formData.couponCode
     ) {
       setError("Title, discounted price, and coupon code are required");
+      toast.error("Title, discounted price, and coupon code are required");
       return;
     }
 
     if (!dealType) {
       setError("Please select a deal type first");
+      toast.error("Please select a deal type first");
       return;
     }
 
@@ -56,7 +59,7 @@ const CreateDeal = ({
         formDataToSend.append("rating", formData.rating.toString());
         formDataToSend.append(
           "expiresAt",
-          new Date(formData.expiresAt).toISOString()
+          new Date(formData.expiresAt).toISOString(),
         );
         formDataToSend.append("couponCode", formData.couponCode);
         formDataToSend.append("dealType", formData.dealType);
@@ -65,18 +68,18 @@ const CreateDeal = ({
           formDataToSend.append("mrp", formData.mrp!.toString());
           formDataToSend.append(
             "discountPercent",
-            formData.discountPercent!.toString()
+            formData.discountPercent!.toString(),
           );
           formDataToSend.append(
             "discountedPrice",
-            formData.discountedPrice.toString()
+            formData.discountedPrice.toString(),
           );
           formDataToSend.append("productName", formData.productName!);
         } else {
           // general deal — only discountedPrice matters
           formDataToSend.append(
             "discountedPrice",
-            formData.discountedPrice.toString()
+            formData.discountedPrice.toString(),
           );
         }
 
@@ -88,7 +91,7 @@ const CreateDeal = ({
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
       } else {
         // 🌐 Case 2: URL upload
@@ -121,17 +124,19 @@ const CreateDeal = ({
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
       }
 
       setDeals([...deals, response.data.deal]);
       setSuccess("Deal created successfully!");
+      toast.success(response.data.message);
       resetForm();
       setActiveTab("browse");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to create deal");
+      toast.error(error.response?.data?.message || "Failed to create deal");
     } finally {
       setLoading(false);
     }
@@ -272,7 +277,15 @@ const CreateDeal = ({
       <div className="flex gap-3 pt-6 border-t border-gray-200">
         <button
           onClick={handleCreate}
-          disabled={loading || !formData.title.trim()}
+          disabled={
+            loading ||
+            !formData.title.trim() ||
+            !formData.discountedPrice ||
+            !formData.couponCode.trim() ||
+            !formData.dealType ||
+            !formData.expiresAt ||
+            !formData.imageUrl
+          }
           className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           <Plus className="w-4 h-4" />

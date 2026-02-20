@@ -17,6 +17,7 @@ import CreateProduct from "./CreateProduct";
 import SearchBySlug from "./SearchBySlug";
 import EditingModal from "./EditingModal";
 import SearchAllProducts from "./SearchAllProducts";
+import { toast } from "sonner";
 
 const ProductsDashboard = () => {
   const [products, setProducts] = useState<ProductBackend[]>([]);
@@ -78,8 +79,10 @@ const ProductsDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`
       );
       setProducts(res.data.products || []);
+      toast.success(res.data.message);
     } catch {
       setError("Failed to load products.");
+      toast.error("Failed to load products.");
     } finally {
       setLoading(false);
     }
@@ -91,8 +94,10 @@ const ProductsDashboard = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`
       );
       setCategories(res.data.categories || []);
+      toast.success(res.data.message);
     } catch (err) {
       console.error("Failed to load categories:", err);
+      toast.error("Failed to load categories.");
     }
   };
 
@@ -110,7 +115,7 @@ const ProductsDashboard = () => {
         return;
       }
 
-      await axios.delete(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${productToDelete.slug}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -119,12 +124,14 @@ const ProductsDashboard = () => {
 
       setProducts((prev) => prev.filter((p) => p._id !== productId));
       setSuccess("Product deleted successfully!");
+      toast.success(response.data.message);
       if (selectedProduct?._id === productId) {
         setSelectedProduct(null);
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to delete product");
+      toast.error(error.response?.data?.message || "Failed to delete product");
     } finally {
       setLoading(false);
     }

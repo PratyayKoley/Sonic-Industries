@@ -45,6 +45,7 @@ const PricingForm = ({ formData, setFormData }: PricingFormProps) => {
               placeholder="0"
               min="0"
               step="0.01"
+              required
             />
             {formData.price && (
               <p className="text-sm text-gray-600 mt-1">

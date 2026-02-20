@@ -4,6 +4,7 @@ import { CategoryBackend, SearchBySlugProps } from "@/types";
 import { Trash2, Edit2, Search } from "lucide-react";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const SearchBySlug = ({
   loading,
@@ -28,15 +29,18 @@ const SearchBySlug = ({
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${searchSlug}`
       );
+      toast.success(response.data.message);
       setSearchResults([response.data.category]);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       if (error.response?.status === 404) {
         setError("No category found with that slug.");
+        toast.error("No category found with that slug.");
       } else {
         setError(
           error.response?.data?.message || "Search failed. Please try again."
         );
+        toast.error(error.response?.data?.message || "Search failed. Please try again.")
       }
       setSearchResults([]);
     } finally {

@@ -104,6 +104,7 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="e.g. 10"
                   min="0"
+                  required
                 />
               </div>
             </>
@@ -124,6 +125,7 @@ const PricingForm = ({ formData, setFormData, dealType }: PricingFormProps) => {
               placeholder="e.g. 1999"
               min="0"
               disabled={dealType === "product"} // 🧠 auto-calculated for products
+              required
             />
             {formData.discountedPrice && (
               <p className="text-sm text-gray-600 mt-1">

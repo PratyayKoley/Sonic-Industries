@@ -74,7 +74,7 @@ const ImageRatingForm = ({
       <div className="space-y-6">
         <div className="group">
           <label className="block text-sm font-semibold text-gray-700 mb-3 transition-colors group-focus-within:text-blue-600">
-            Image URL
+            Image URL *
           </label>
           <div className="relative">
             <ImageIcon className="absolute left-4 top-8 -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none" />
@@ -155,7 +155,7 @@ const ImageRatingForm = ({
 
           <div className="group">
             <label className="block text-sm font-semibold text-gray-700 mb-3 transition-colors group-focus-within:text-blue-600">
-              Expires At
+              Expires At *
             </label>
             <div className="relative">
               <Calendar className="absolute left-4 top-7.5 -translate-y-1/2 w-5 h-5 text-gray-400 z-10 pointer-events-none" />
@@ -164,6 +164,7 @@ const ImageRatingForm = ({
                 value={formatDateForInput(formData.expiresAt)}
                 onChange={(e) => handleDateChange(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 transition-all duration-300 text-gray-800 shadow-sm hover:shadow-md"
+                required
               />
             </div>
             {formData.expiresAt && (

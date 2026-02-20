@@ -92,11 +92,8 @@ const SearchAllDeals = ({
 
   const getDealTypeBadge = (dealType: string) => {
     const types: Record<string, { color: string; icon: string }> = {
-      flash: { color: "bg-red-500", icon: "⚡" },
-      clearance: { color: "bg-orange-500", icon: "🏷️" },
-      seasonal: { color: "bg-green-500", icon: "🎉" },
-      bundle: { color: "bg-purple-500", icon: "📦" },
-      limited: { color: "bg-blue-500", icon: "⏰" },
+      product: { color: "bg-orange-500", icon: "🏷️" },
+      general: { color: "bg-green-500", icon: "🎉" },
     };
 
     const type = types[dealType.toLowerCase()] || {

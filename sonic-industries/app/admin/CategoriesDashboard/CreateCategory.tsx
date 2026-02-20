@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { CreateCategoryProps, FormTab } from "@/types";
 import BasicForm from "./BasicForm";
 import FeaturesForm from "./FeaturesForm";
+import { toast } from "sonner";
 
 const CreateCategory = ({
   formData,
@@ -20,8 +21,9 @@ const CreateCategory = ({
   categories,
 }: CreateCategoryProps) => {
   const handleCreate = async () => {
-    if (!formData.name.trim() || !formData.slug.trim()) {
-      setError("Name and slug are required");
+    if (!formData.name.trim() || !formData.slug.trim() || !formData.title.trim()) {
+      setError("Name, slug, and title are required");
+      toast.error("Name, slug, and title are required");
       return;
     }
 
@@ -62,11 +64,13 @@ const CreateCategory = ({
 
       setCategories([...categories, response.data.newCategory]);
       setSuccess("Category created successfully!");
+      toast.success(response.data.message);
       resetForm();
       setActiveTab("browse");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Failed to create category");
+      toast.error(error.response?.data?.message || "Failed to create category");
     } finally {
       setLoading(false);
     }
@@ -133,7 +137,7 @@ const CreateCategory = ({
       <div className="flex gap-3 pt-6 border-t border-gray-200">
         <button
           onClick={handleCreate}
-          disabled={loading || !formData.name.trim() || !formData.slug.trim()}
+          disabled={loading || !formData.name.trim() || !formData.slug.trim() || !formData.title.trim()}
           className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           <Plus className="w-4 h-4" />
