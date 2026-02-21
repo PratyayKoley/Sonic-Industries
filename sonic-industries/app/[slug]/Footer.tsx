@@ -245,7 +245,7 @@ export default function Footer({ productData, allProductData }: FooterProps) {
               <div className="space-y-2 pt-2">
                 <div className="flex items-start text-sm text-gray-600">
                   <Mail className="w-4 h-4 mr-2 mt-1 text-purple-600" />
-                  <span>support@sonicindustries.com</span>
+                  <span>support@thesonicindustries.com</span>
                 </div>
                 <div className="flex items-start text-sm text-gray-600">
                   <PhoneCall className="w-4 h-4 mr-2 mt-1 text-purple-600" />

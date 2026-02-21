@@ -211,7 +211,7 @@ export default function TermsAndConditions() {
             </p>
             <div className="space-y-2 text-gray-700">
               <p>
-                <strong>Email:</strong> support@sonicindustries.com
+                <strong>Email:</strong> support@thesonicindustries.com
               </p>
               <p>
                 <strong>Phone:</strong> +91 801 073 5898
