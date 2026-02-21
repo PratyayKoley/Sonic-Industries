@@ -1,11 +1,13 @@
 import { LeadModel } from "../models/leads.model";
 import { OrderModel } from "../models/orders.model";
+import { generateReceiptBuffer } from "../utils/generatePdfBuffer";
+import { uploadInvoiceToCloudinary } from "../utils/uploadInvoiceToCloudinary";
 import { getAdminEmailTemplate, getCustomerEmailTemplate } from "./Emails";
 import { sendMail } from "./mailer";
 
 export const handleSuccessfulOrderEmail = async (
   orderIdentifier: string,
-  isCod = false
+  isCod = false,
 ): Promise<void> => {
   const query = isCod
     ? {
@@ -37,17 +39,46 @@ export const handleSuccessfulOrderEmail = async (
     mailType: "order",
   });
 
+  const receiptId = isCod
+    ? order.orderNumber
+    : order.razorpay?.razorpay_order_id;
+
+  if (!receiptId) {
+    console.error("Receipt ID not found for:", orderIdentifier);
+    return;
+  }
+
+  console.log(receiptId);
+  const pdfBuffer = await generateReceiptBuffer(receiptId);
+
+  const invoiceUrl = await uploadInvoiceToCloudinary(
+    pdfBuffer,
+    order.orderNumber,
+  );
+
   // send to customer
   await sendMail({
     to: order.customer?.email as string,
     subject: `Your Order ${order.orderNumber} is Confirmed!`,
     html: getCustomerEmailTemplate(order),
+    attachments: [
+      {
+        filename: `Invoice-${order.orderNumber}.pdf`,
+        content: pdfBuffer.toString("base64"),
+      },
+    ],
   });
 
   // send to admin
   await sendMail({
     to: process.env.ADMIN_EMAILS?.split(",") as string[],
     subject: `New Order Placed - ${order.orderNumber}`,
-    html: getAdminEmailTemplate(order), 
+    html: getAdminEmailTemplate(order),
+    attachments: [
+      {
+        filename: `Invoice-${order.orderNumber}.pdf`,
+        content: pdfBuffer.toString("base64"),
+      },
+    ],
   });
 };

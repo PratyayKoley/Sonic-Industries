@@ -2,7 +2,6 @@ import PdfPrinter from "pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { Order } from "../models/orders.model";
 import { Category } from "../models/categories.model";
-import { text } from "body-parser";
 import { imageUrlToBase64 } from "../utils/stampDownloader";
 
 const fonts = {

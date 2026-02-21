@@ -19,7 +19,7 @@ const CheckoutSecret = process.env.JWT_CHECKOUT_SECRET!;
 
 export const createRazorPayOrder = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const newOrderRequest = req.body;
@@ -76,7 +76,7 @@ export const createRazorPayOrder = async (
 
     // fetch product securely from DB
     const product: Product | null = await ProductModel.findById(
-      (decoded as { productId: string }).productId
+      (decoded as { productId: string }).productId,
     );
 
     if (!product) {
@@ -107,7 +107,7 @@ export const createRazorPayOrder = async (
     const { discount } = await isDealApplicable(
       couponCode,
       product._id.toString(),
-      newOrderRequest.customer.email
+      newOrderRequest.customer.email,
     );
     const priceAfterCoupon: number = subtotal + gst + shipping - discount;
 
@@ -183,7 +183,7 @@ export const createRazorPayOrder = async (
 
 export const verifyPayment = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { response } = req.body;
@@ -235,7 +235,7 @@ export const verifyPayment = async (
           "razorpay.paidAt": new Date().toISOString(),
           spinEligible: true,
         },
-      }
+      },
     );
 
     await handleSuccessfulOrderEmail(response.razorpay_payment_id);
@@ -255,7 +255,7 @@ export const verifyPayment = async (
 
 export const createCheckoutSession = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { productId } = req.body;
@@ -275,7 +275,7 @@ export const createCheckoutSession = async (
         nonce,
       },
       CheckoutSecret,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     res.status(200).json({
@@ -293,7 +293,7 @@ export const createCheckoutSession = async (
 
 export const verifyCheckoutSession = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { sessionToken } = req.body;
@@ -326,7 +326,7 @@ export const verifyCheckoutSession = async (
 
 export const markPaymentFailed = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { orderId, reason } = req.body;
@@ -339,7 +339,7 @@ export const markPaymentFailed = async (
           payment_status: "failed",
           status: "cancelled",
         },
-      }
+      },
     );
     res.status(200).json({
       message: reason,
@@ -408,7 +408,7 @@ export const razorpayWebhook = async (req: Request, res: Response) => {
 
 export const spinReward = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { razorpayOrderId } = req.body;
@@ -483,12 +483,12 @@ export const spinReward = async (
 
 export const generateReceipt = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
-    const { razorpayOrderId } = req.body;
+    const { identifier } = req.body;
 
-    if (!razorpayOrderId) {
+    if (!identifier) {
       res.status(400).json({
         message: "Order ID is required",
       });
@@ -496,7 +496,10 @@ export const generateReceipt = async (
     }
 
     const order: Order | null = await OrderModel.findOne({
-      "razorpay.razorpay_order_id": razorpayOrderId,
+      $or: [
+        { "razorpay.razorpay_order_id": identifier },
+        { orderNumber: identifier },
+      ],
     }).populate("order_items.productId order_items.categoryId");
 
     if (!order) {
