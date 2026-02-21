@@ -74,7 +74,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
     const currentSection = sectionRef.current;
     if (currentSection) observer.observe(currentSection);
@@ -169,7 +169,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3">
           Asked Questions
         </h2>
-        <p className="text-center text-gray-600 mb-12 sm:mb-16 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
+        <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
           Find answers to commonly asked questions about our products, ordering
           process, payment options, and more to help you make informed
           decisions.

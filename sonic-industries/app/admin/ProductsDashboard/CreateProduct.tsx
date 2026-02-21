@@ -68,7 +68,10 @@ const CreateProduct = ({
       if (formData.yt_video_url)
         payload.append("yt_video_url", formData.yt_video_url.trim());
       if (formData.unboxing_yt_video_url)
-        payload.append("unboxing_yt_video_url", formData.unboxing_yt_video_url.trim());
+        payload.append(
+          "unboxing_yt_video_url",
+          formData.unboxing_yt_video_url.trim(),
+        );
 
       // Append only NEW files (hybrid array: string | {file, preview})
       const images = formData.images || [];
@@ -94,7 +97,7 @@ const CreateProduct = ({
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setProducts([...products, response.data.newProduct]);
@@ -103,9 +106,17 @@ const CreateProduct = ({
       resetForm();
       setActiveTab("browse");
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      setError(error.response?.data?.message || "Failed to create product");
-      toast.error(error.response?.data?.message || "Failed to create product");
+      const error = err as AxiosError<{ message: string; error?: any }>;
+      setError(
+        error.response?.data?.message ||
+          error.response?.data?.error?.message ||
+          "Failed to create product",
+      );  
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error?.message ||
+          "Failed to update product",
+      );
     } finally {
       setLoading(false);
     }
