@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const PaymentSuccessClient: React.FC = () => {
   const searchParams = useSearchParams();
-  const razorpayOrderId = searchParams.get("order_id") || "";
+  const razorpayOrderId = searchParams.get("order_id") || searchParams.get("cod_order_id");
   const handleGoHome = () => {
     window.history.back();
   };
@@ -92,7 +92,7 @@ const PaymentSuccessClient: React.FC = () => {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/invoice`,
         {
-          razorpayOrderId,
+          identifier: razorpayOrderId,
         },
         {
           responseType: "blob",

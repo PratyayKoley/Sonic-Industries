@@ -201,7 +201,7 @@ export function OrderSummary({
                 : onCodCheckout();
             }}
             disabled={isLoading || (selected === "razorpay" && !otpVerified)}
-            className={`w-full py-3 rounded-lg font-semibold flex justify-center items-center gap-2 transition
+            className={`w-full py-3 rounded-lg font-semibold flex justify-center items-center gap-2 cursor-pointer transition
               ${
                 selected === "razorpay"
                   ? "bg-[#1a3c92] hover:bg-[#0f2c6a]"
