@@ -2,7 +2,11 @@
 
 import { Save, Plus, X } from "lucide-react";
 import axios, { AxiosError } from "axios";
-import { ProductBackend, ProductEditingModalProps } from "@/types";
+import {
+  CategoryBackend,
+  ProductBackend,
+  ProductEditingModalProps,
+} from "@/types";
 import { useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +23,7 @@ const EditingModal = ({
   setIsEditing,
   products,
   setProducts,
+  categories,
 }: ProductEditingModalProps) => {
   const [activeTab, setActiveTab] = useState<
     | "basic"
@@ -59,8 +64,9 @@ const EditingModal = ({
       payload.append("features", JSON.stringify(formData.features || []));
       payload.append(
         "characteristics",
-        JSON.stringify(formData.characteristics || [])
+        JSON.stringify(formData.characteristics || []),
       );
+      payload.append("categoryId", formData.categoryId);
       payload.append("labels", JSON.stringify(formData.labels || []));
       payload.append("packaging", JSON.stringify(formData.packaging || {}));
       if (formData.yt_video_url)
@@ -93,13 +99,15 @@ const EditingModal = ({
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       setProducts(
         products.map((prod: ProductBackend) =>
-          prod._id === selectedProduct._id ? response.data.updatedProduct : prod
-        )
+          prod._id === selectedProduct._id
+            ? response.data.updatedProduct
+            : prod,
+        ),
       );
       setSuccess("Product updated successfully!");
       toast.success(response.data.message);
@@ -107,8 +115,12 @@ const EditingModal = ({
       setSelectedProduct(response.data.updatedProduct);
     } catch (err) {
       const error = err as AxiosError<{ message: string; error?: any }>;
-      setError(error.response?.data?.error?.message || "Failed to update product");
-      toast.error(error.response?.data?.error?.message || "Failed to update product");
+      setError(
+        error.response?.data?.error?.message || "Failed to update product",
+      );
+      toast.error(
+        error.response?.data?.error?.message || "Failed to update product",
+      );
     } finally {
       setLoading(false);
     }
@@ -137,10 +149,19 @@ const EditingModal = ({
     }));
   };
 
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const updateCharacteristic = (
     index: number,
     field: "name" | "image" | "desc" | "iconSearch",
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -148,7 +169,9 @@ const EditingModal = ({
         ...prev.characteristics,
         items:
           prev.characteristics?.items?.map((characteristic, i) =>
-            i === index ? { ...characteristic, [field]: value } : characteristic
+            i === index
+              ? { ...characteristic, [field]: value }
+              : characteristic,
           ) || [],
       },
     }));
@@ -171,13 +194,13 @@ const EditingModal = ({
   const updateFeature = (
     index: number,
     field: "name" | "weight",
-    value: string | number
+    value: string | number,
   ) => {
     setFormData((prev: typeof formData) => ({
       ...prev,
       features:
         prev.features?.map((feature, i) =>
-          i === index ? { ...feature, [field]: value } : feature
+          i === index ? { ...feature, [field]: value } : feature,
         ) || [],
     }));
   };
@@ -200,13 +223,13 @@ const EditingModal = ({
   const updateLabel = (
     index: number,
     field: "x" | "y" | "name" | "desc",
-    value: string | number
+    value: string | number,
   ) => {
     setFormData((prev: typeof formData) => ({
       ...prev,
       labels:
         prev.labels?.map((label, i) =>
-          i === index ? { ...label, [field]: value } : label
+          i === index ? { ...label, [field]: value } : label,
         ) || [],
     }));
   };
@@ -239,7 +262,7 @@ const EditingModal = ({
               preview: URL.createObjectURL(file),
               isNew: true,
             }
-          : img
+          : img,
       ),
     }));
   };
@@ -352,6 +375,30 @@ const EditingModal = ({
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="categoryId"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Category *
+                </label>
+                <select
+                  id="categoryId"
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category: CategoryBackend) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -655,7 +702,7 @@ const EditingModal = ({
                           updateCharacteristic(
                             index,
                             "iconSearch",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="w-full px-3 py-2 mb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -671,7 +718,7 @@ const EditingModal = ({
                                 .includes(
                                   (
                                     characteristic?.iconSearch ?? ""
-                                  ).toLowerCase()
+                                  ).toLowerCase(),
                                 )
                             );
                           })

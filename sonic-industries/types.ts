@@ -347,6 +347,7 @@ export type ProductEditingModalProps = {
   setIsEditing: (isEditing: boolean) => void;
   products: ProductBackend[];
   setProducts: (products: ProductBackend[]) => void;
+  categories: CategoryBackend[];
 };
 
 export type DealFormDataType = {
