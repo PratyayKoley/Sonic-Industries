@@ -155,6 +155,7 @@ export const updateProduct = async (
       rating,
       features,
       characteristics,
+      categoryId,
       labels,
       packaging,
       yt_video_url,
@@ -176,7 +177,22 @@ export const updateProduct = async (
       return;
     }
 
-    const categoryName = existingProduct.categoryId.name;
+    if (categoryId) {
+      const categoryExists = await CategoryModel.findById(categoryId);
+      if (!categoryExists) {
+        res.status(400).json({ message: "Invalid categoryId." });
+        return;
+      }
+    }
+
+    let categoryName = existingProduct.categoryId.name;
+
+    if (categoryId) {
+      const newCategory = await CategoryModel.findById(categoryId);
+      if (newCategory) {
+        categoryName = newCategory.name;
+      }
+    }
 
     // Parse incoming JSON fields
     const parsedFeatures = features
@@ -246,6 +262,7 @@ export const updateProduct = async (
       packaging: parsedPackaging,
       characteristics: parsedCharacteristics,
       labels: parsedLabels,
+      categoryId,
     };
 
     if (finalImages !== undefined) {
