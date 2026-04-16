@@ -98,6 +98,11 @@ export interface DealBackend {
   updatedAt?: string;
 }
 
+export interface TestimonialBackend {
+  _id: string;
+  link: string;
+}
+
 export interface LeadBackend {
   _id: string;
   subject: string;

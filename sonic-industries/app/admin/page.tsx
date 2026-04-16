@@ -13,6 +13,7 @@ import {
   Mail,
   ShoppingCart,
   BarChart3,
+  MessageSquareQuote,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ import axios from "axios";
 import Image from "next/image";
 import OrdersDashboard from "./OrdersDashboard/page";
 import Dashboard from "./Dashboard/page";
+import TestimonialsDashboard from "./TestimonialsDashboard/page";
 
 const AdminDashboard = () => {
   const router = useRouter();
@@ -29,7 +31,13 @@ const AdminDashboard = () => {
     prof_image_url: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "products" | "categories" | "deals" | "leads" | "orders" | "dashboard"
+    | "products"
+    | "categories"
+    | "deals"
+    | "testimonials"
+    | "leads"
+    | "orders"
+    | "dashboard"
   >("products");
 
   const handleLogout = () => {
@@ -53,6 +61,11 @@ const AdminDashboard = () => {
       label: "Deals",
       onClick: () => setActiveTab("deals"),
       icon: <Tag className="h-5 w-5 shrink-0 text-neutral-700" />,
+    },
+    {
+      label: "Testimonials",
+      onClick: () => setActiveTab("testimonials"),
+      icon: <MessageSquareQuote className="h-5 w-5 shrink-0 text-neutral-700" />,
     },
     {
       label: "Orders",
@@ -94,7 +107,7 @@ const AdminDashboard = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (!res.data.valid) {
@@ -160,6 +173,7 @@ const AdminDashboard = () => {
         {activeTab === "products" && <ProductDashboard />}
         {activeTab === "categories" && <CategoriesDashboard />}
         {activeTab === "deals" && <DealsDashboard />}
+        {activeTab === "testimonials" && <TestimonialsDashboard />}
         {activeTab === "leads" && <LeadsDashboard />}
         {activeTab === "orders" && <OrdersDashboard />}
         {activeTab === "dashboard" && <Dashboard />}

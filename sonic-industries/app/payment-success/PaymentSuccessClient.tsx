@@ -3,14 +3,15 @@
 import React, { useState } from "react";
 import { CheckCircle, Home, Download } from "lucide-react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 const PaymentSuccessClient: React.FC = () => {
   const searchParams = useSearchParams();
   const razorpayOrderId = searchParams.get("order_id") || searchParams.get("cod_order_id");
+  const router = useRouter();
   const handleGoHome = () => {
-    window.history.back();
+    router.push("/");
   };
 
   const rewards = [

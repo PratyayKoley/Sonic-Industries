@@ -169,7 +169,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3">
           Asked Questions
         </h2>
-        <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mb-5">
           Find answers to commonly asked questions about our products, ordering
           process, payment options, and more to help you make informed
           decisions.
@@ -199,7 +199,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
                   onClick={() => toggleAccordion(item.id)}
                   className="w-full flex justify-between items-center p-4 sm:p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
                 >
-                  <h3 className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">
+                  <h3 className="font-medium text-gray-800 text-sm sm:text-base md:text-sm lg:text-xl">
                     {item.question}
                   </h3>
                   <motion.div
@@ -218,7 +218,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="p-4 sm:p-5 bg-gray-50 text-gray-600 text-sm sm:text-base md:text-lg border-t border-gray-100">
+                      <div className="p-3 sm:p-4 md:p-5 lg:p-6 bg-gray-50 text-gray-600 text-xs sm:text-sm md:text-sm lg:text-lg border-t border-gray-100">
                         {item.answer}
                       </div>
                     </motion.div>
@@ -238,7 +238,7 @@ export default function FAQs({ allProductData }: FAQsProps) {
             <motion.img
               src="https://res.cloudinary.com/drkzz6pfx/image/upload/v1768039731/Venture_by_Sapna_Group_wmum1z.png"
               alt="Product Info"
-              className="max-w-md md:max-w-lg h-auto max-h-96 object-contain cursor-pointer"
+              className="max-w-md md:max-w-xs lg:max-w-md h-auto max-h-96 object-contain cursor-pointer"
               variants={imageVariants}
               whileHover="hover"
             />

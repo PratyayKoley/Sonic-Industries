@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const sections = [
@@ -48,21 +49,25 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="flex justify-between items-center px-4 md:px-8 py-4">
         <div className="text-xl md:text-2xl font-bold text-black flex items-center">
-          <div className="w-12 h-16 relative mr-2">
-            <Image
-              src="/Sonic Logo.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="w-12 h-16"
-            />
-          </div>
-          <div className="text-2xl font-medium tracking-wider text-purple-600">
-            <div className="text-transparent bg-clip-text bg-black">SONIC</div>
-            <div className="text-transparent bg-clip-text bg-black">
-              INDUSTRIES
+          <Link href="/" className="flex items-center cursor-pointer">
+            <div className="w-12 h-16 relative mr-2">
+              <Image
+                src="/Sonic Logo.png"
+                alt="Logo"
+                width={48}
+                height={48}
+                className="w-12 h-16"
+              />
             </div>
-          </div>
+            <div className="text-2xl font-medium tracking-wider text-purple-600">
+              <div className="text-transparent bg-clip-text bg-black">
+                SONIC
+              </div>
+              <div className="text-transparent bg-clip-text bg-black">
+                INDUSTRIES
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Animated Mobile Menu Button */}
@@ -111,23 +116,6 @@ const Navbar = () => {
               </a>
             </li>
           ))}
-
-          <li className="relative group">
-            <button className="relative px-1 py-2 block transition-colors duration-300 hover:text-purple-400 cursor-pointer">
-              Pages ▾
-            </button>
-            <ul className="absolute hidden group-hover:block bg-white border shadow-lg mt-2 w-40 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200">
-                Blog
-              </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200">
-                Careers
-              </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200">
-                Pricing
-              </li>
-            </ul>
-          </li>
         </ul>
       </div>
 
@@ -160,29 +148,6 @@ const Navbar = () => {
               </a>
             </li>
           ))}
-
-          {/* Pages Dropdown for Mobile */}
-          <li
-            className="border-b"
-            style={{
-              transform: isMenuOpen ? "translateX(0)" : "translateX(-20px)",
-              opacity: isMenuOpen ? 1 : 0,
-              transition: `all 0.3s ease ${sections.length * 0.05}s`,
-            }}
-          >
-            <div className="px-4 py-3 text-gray-800">Pages</div>
-            <ul className="bg-gray-50 pl-4">
-              <li className="py-2 pl-4 border-b border-gray-100 text-gray-700 transition-colors duration-200 hover:text-purple-600">
-                Blog
-              </li>
-              <li className="py-2 pl-4 border-b border-gray-100 text-gray-700 transition-colors duration-200 hover:text-purple-600">
-                Careers
-              </li>
-              <li className="py-2 pl-4 text-gray-700 transition-colors duration-200 hover:text-purple-600">
-                Pricing
-              </li>
-            </ul>
-          </li>
         </ul>
       </div>
     </nav>

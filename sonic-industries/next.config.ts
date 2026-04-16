@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     //     pathname: "/drkzz6pfx/**",
     //   }
     // ]
-    domains: ['img.youtube.com', 'res.cloudinary.com'],
+    domains: ['img.youtube.com', 'res.cloudinary.com', 'lh3.googleusercontent.com'],
   }
 };
 

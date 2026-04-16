@@ -4,45 +4,107 @@ import { useState, useEffect, useRef } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { motion, AnimatePresence, spring } from "framer-motion";
 import Image from "next/image";
+import { TestimonialBackend } from "@/types";
+import axios from "axios";
 
 export default function Testimonials() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const holdTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [vidTestimonials, setVidTestimonials] = useState<TestimonialBackend[]>(
+    [],
+  );
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/testimonials`,
+        );
+
+        setVidTestimonials(res.data.testimonials);
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  const handleTouchStart = () => {
+    holdTimeout.current = setTimeout(() => {
+      setIsPaused(true);
+    }, 200); // hold delay
+  };
+
+  const handleTouchEnd = () => {
+    if (holdTimeout.current !== null) {
+      clearTimeout(holdTimeout.current);
+    }
+    setIsPaused(false);
+  };
 
   const testimonials = [
     {
+      type: "single",
       id: 1,
-      name: "Natha Roy",
-      position: "CEO of Apple",
+      name: "Shubham Shrivastva",
+      position: "",
       avatar:
-        "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189141/1_ckeuna.jpg",
+        "https://lh3.googleusercontent.com/a-/ALV-UjV0s8Jqtr5HHsBey_HEe1w1zQCKUCTrv94y7TWOFIt21jX-ZiMe=w45-h45-p-rp-mo-br100",
       rating: 5,
       content:
-        "Do play they miss give so up. Words to up style of since world. Way own uncommonly travelling now acceptance bed compliment solicitude. We leaf to snug on no need.",
+        "I recently purchased a Sonic Band Sealer, and I must say the overall experience has been excellent. The product was delivered with utmost care, packed just like a fragile item, ensuring it reached me safely. I’ve been using it for sealing packets, and it works perfectly without any issues. What impressed me even more was the level of support provided by the team — prompt, helpful, and professional throughout. Truly a hassle-free experience. I would rate it 5/5 without any hesitation. Keep up the great work guys!",
     },
     {
+      type: "single",
       id: 2,
-      name: "Sarah Johnson",
-      position: "CTO of Microsoft",
+      name: "Prem Sekhon",
+      position: "",
       avatar:
-        "https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg",
+        "https://lh3.googleusercontent.com/a/ACg8ocLnemANySWTGuTbBG9RNBBvytw7zH4U99F-6D7HzKoHcJkvlA=w45-h45-p-rp-mo-ba2-br100",
       rating: 5,
       content:
-        "Peculiar trifling absolute and wandered vicinity property yet. The and collecting motionless difficulty son. His hearing staying ten colonel met. Word drew six easy four dear cold deny.",
+        "Best company to deal with. I bought labeling machine and it was not suitable for our business and they swapped the one we needed without a question. Always answer the phone calls and great technical support after the purchase. I was facing issues to install the machines and called for technical support and Sonic team helped me in installing the machines and how it works with a video call. Anand being very patient with us and he explained us in very simple ways. I highly recommend this company.",
     },
-  ];
-
-  // Small avatar images that appear around the main testimonial with varied positions
-  const avatarBubbles = [
-    { id: 1, top: "15%", left: "10%", size: "w-16 h-16", delay: 0.2 },
-    { id: 2, top: "55%", left: "5%", size: "w-14 h-14", delay: 0.3 },
-    { id: 3, top: "80%", left: "20%", size: "w-16 h-16", delay: 0.4 },
-    { id: 4, top: "10%", right: "5%", size: "w-14 h-14", delay: 0.5 },
-    { id: 5, top: "60%", right: "8%", size: "w-16 h-16", delay: 0.6 },
-    { id: 6, top: "85%", right: "20%", size: "w-14 h-14", delay: 0.7 },
+    {
+      type: "single",
+      id: 3,
+      name: "Laishram Bijenkumar",
+      position: "",
+      avatar:
+        "https://lh3.googleusercontent.com/a/ACg8ocJI3fPoOgNAVEVt1v92iqL1lq7DesNFXunRdfUoC54oY6_faA=w45-h45-p-rp-mo-br100",
+      rating: 5,
+      content:
+        "Fantastic experience! I bought the continuous band sealer with nitrogen flush (FR-900) from Sonic, and team sonic was extremely friendly and helpful throughout the process. He patiently guided me, explained everything clearly, and made sure I got exactly what I needed. The machine works perfectly - smooth, fast, and reliable sealing. Highly recommend Sonic and team for their excellent service and support",
+    },
+    {
+      type: "single",
+      id: 4,
+      name: "Sujeet Kumar Singh",
+      position: "",
+      avatar:
+        "https://lh3.googleusercontent.com/a/ACg8ocLEyp7xs0DfbksvL4v5pTYqSfJ0FlhZwWNTyTPXGaMzfIPOGrO_=w45-h45-p-rp-mo-br100",
+      rating: 5,
+      content:
+        "I purchased a packaging sealing machine from the company, and their team installed it on the same day. The installation was done very professionally, and they explained everything clearly. The machine quality and service are excellent. I am fully satisfied. Highly recommended!",
+    },
+    {
+      type: "single",
+      id: 5,
+      name: "Faisal Latif",
+      position: "",
+      avatar:
+        "https://lh3.googleusercontent.com/a/ACg8ocKCnuIYWtvbLd0nZdXznyV-LXBHLo8RfZVOYj_tQIMzen9oPQ=w45-h45-p-rp-mo-ba3-br100",
+      rating: 5,
+      content:
+        "I needed a machine urgently and they delivered it the same day with installation and demo ... Excellent service .. the team at sonic industries is very professional and helpful.",
+    },
   ];
 
   useEffect(() => {
@@ -56,15 +118,15 @@ export default function Testimonials() {
   }, []);
 
   // Handle next/previous testimonial navigation with Framer Motion animations
-  const handlePrev = () => {
+  const handleNext = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
+      prevIndex === vidTestimonials.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
-  const handleNext = () => {
+  const handlePrev = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
+      prevIndex === 0 ? vidTestimonials.length - 1 : prevIndex - 1,
     );
   };
 
@@ -80,7 +142,7 @@ export default function Testimonials() {
           setIsVisible(false);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     if (currentCarousel) {
@@ -110,6 +172,31 @@ export default function Testimonials() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (vidTestimonials.length === 0) return;
+    if (isPaused) return;
+
+    setProgress(0);
+
+    const duration = 20000;
+    let start = Date.now();
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const percent = (elapsed / duration) * 100;
+
+      if (percent >= 100) {
+        setProgress(100);
+        clearInterval(interval);
+        handleNext();
+      } else {
+        setProgress(percent);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [activeIndex, isPaused, vidTestimonials.length]);
 
   // Animation variants
   const containerVariants = {
@@ -174,51 +261,6 @@ export default function Testimonials() {
     },
   };
 
-  const cardVariants = {
-    hidden: { y: 30, opacity: 0, scale: 0.95 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: spring,
-        stiffness: 100,
-        damping: 15,
-        when: "beforeChildren",
-      },
-    },
-    hover: {
-      boxShadow: "0 20px 30px rgba(191, 219, 254, 0.3)",
-      transition: { duration: 0.3 },
-    },
-  };
-
-  const fadeInVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (custom: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: custom,
-        duration: 0.5,
-      },
-    }),
-  };
-
-  const decorativeElementVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: (custom: number) => ({
-      scale: 1,
-      opacity: 0.2,
-      transition: {
-        delay: custom,
-        type: spring,
-        stiffness: 70,
-        damping: 10,
-      },
-    }),
-  };
-
   const navButtonVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -234,6 +276,19 @@ export default function Testimonials() {
       backgroundColor: "#2563eb",
       color: "#ffffff",
       transition: { duration: 0.2 },
+    },
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: spring,
+        stiffness: 80,
+        damping: 14,
+      },
     },
   };
 
@@ -292,131 +347,135 @@ export default function Testimonials() {
         <div className="relative">
           {/* Decorative quote icons */}
           <motion.div
-            className="absolute -top-12 -left-6 md:left-16 text-blue-100"
+            className="absolute -top-8 -left-4 md:left-10 text-blue-100"
             variants={quoteVariants}
           >
-            <Quote size={80} strokeWidth={1} />
-          </motion.div>
-          <motion.div
-            className="absolute -bottom-12 -right-6 md:right-16 text-blue-100 transform rotate-180"
-            variants={quoteVariants}
-          >
-            <Quote size={80} strokeWidth={1} />
+            <Quote
+              className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20"
+              strokeWidth={1}
+            />
           </motion.div>
 
+          <motion.div
+            className="absolute -bottom-8 -right-4 md:right-10 text-blue-100 rotate-180"
+            variants={quoteVariants}
+          >
+            <Quote
+              className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20"
+              strokeWidth={1}
+            />
+          </motion.div>
           {/* Avatar bubbles with staggered animations */}
           {!isMobile &&
-            avatarBubbles.map((bubble) => (
-              <motion.div
-                key={bubble.id}
-                className={`absolute ${bubble.size} rounded-full bg-white shadow-xl p-1`}
-                style={{
-                  top: bubble.top,
-                  left: bubble.left,
-                  right: bubble.right,
-                  zIndex: 5,
-                }}
-                variants={bubbleVariants}
-                custom={bubble.delay}
-                whileHover="hover"
-              >
-                <Image
-                  src="https://res.cloudinary.com/drkzz6pfx/image/upload/v1763189176/2_jdks1k.jpg"
-                  alt="Client avatar"
-                  className="w-full h-full rounded-full object-cover"
-                  width={64}
-                  height={64}
-                />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center border-2 border-white">
-                  <Star size={12} className="text-white fill-white" />
-                </div>
-              </motion.div>
-            ))}
+            testimonials
+              .filter((t) => t.type === "single")
+              .map((item, index) => {
+                const positions = [
+                  "top-[2%] left-[3%]",
+                  "top-[73%] left-[4%]",
+                  "top-[38%] left-[0%]",
+                  "top-[6%] right-[1%]",
+                  "bottom-[12%] right-[4%]",
+                ];
+
+                return (
+                  <motion.div
+                    key={item.id}
+                    className={`
+                      absolute ${positions[index]}
+                      w-[clamp(160px,22vw,320px)]
+                      bg-white rounded-2xl shadow-xl
+                      p-3 sm:p-4 md:p-5
+                      border border-gray-100 z-0 cursor-pointer
+                    `}
+                    variants={bubbleVariants}
+                    custom={0.2 + index * 0.1}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    {/* Avatar + Name */}
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                      <Image
+                        src={item.avatar}
+                        alt={item.name}
+                        width={36}
+                        height={36}
+                        className="rounded-full object-cover sm:w-7 sm:h-7"
+                      />
+                      <div>
+                        <p className="text-xs sm:text-xs font-semibold">
+                          {item.name}
+                        </p>
+                        <p className="text-xs sm:text-xs text-gray-500">
+                          {item.position}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Stars */}
+                    <div className="flex mb-2">
+                      {[...Array(item.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={12}
+                          className="text-yellow-400 fill-yellow-400 mr-1"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Content */}
+                    <p className="text-lg sm:text-xs md:text-xs text-gray-700 italic leading-relaxed line-clamp-5">
+                      {item.content}
+                    </p>
+                  </motion.div>
+                );
+              })}
 
           {/* Main testimonial card with animations */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
-              className="bg-white rounded-2xl shadow-2xl p-10 max-w-3xl mx-auto relative z-10 cursor-pointer"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at top right, rgba(239, 246, 255, 0.6), rgba(255, 255, 255, 1) 60%)",
-              }}
-              variants={cardVariants}
-              whileHover="hover"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-              }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-md mx-auto"
             >
-              {/* Floating decorative elements */}
-              <motion.div
-                className="absolute top-5 right-5 w-24 h-24 bg-blue-50 rounded-full opacity-20"
-                variants={decorativeElementVariants}
-                custom={0.6}
-              ></motion.div>
-              <motion.div
-                className="absolute bottom-10 left-10 w-16 h-16 bg-purple-50 rounded-full opacity-20"
-                variants={decorativeElementVariants}
-                custom={0.7}
-              ></motion.div>
-
-              <div className="flex flex-col items-center relative">
-                {/* Avatar with animation */}
-                <motion.div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-blue-600 mb-6 sm:mb-8 relative overflow-hidden shadow-lg">
-                  <Image
-                    src={testimonials[activeIndex].avatar}
-                    alt={testimonials[activeIndex].name}
-                    className="w-full h-full rounded-full object-cover"
-                    width={112}
-                    height={112}
-                  />
-                </motion.div>
-
-                {/* Star rating */}
-                <motion.div
-                  className="flex mb-6"
-                  variants={fadeInVariants}
-                  custom={0.4}
-                >
-                  {[...Array(testimonials[activeIndex].rating)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + i * 0.1 }}
-                    >
-                      <Star
-                        size={20}
-                        className="text-yellow-400 fill-yellow-400 mx-1"
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-
-                {/* Testimonial content with animation */}
-                <motion.div
-                  className="text-center"
-                  variants={fadeInVariants}
-                  custom={0.5}
-                >
-                  <p className="text-center text-gray-700 text-sm sm:text-base md:text-lg italic mb-4 sm:mb-6">
-                    {testimonials[activeIndex].content}
-                  </p>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600">
-                    {testimonials[activeIndex].name}
-                  </h3>
-                  <p className="text-gray-600 font-medium text-sm sm:text-base">
-                    {testimonials[activeIndex].position}
-                  </p>
-                </motion.div>
+              <div
+                className="w-full flex justify-center cursor-pointer"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className="w-full max-w-70 md:max-w-[320px] aspect-9/16 max-h-125">
+                  {vidTestimonials.length > 0 && (
+                    <iframe
+                      src={`${
+                        vidTestimonials[activeIndex % vidTestimonials.length]
+                          ?.link
+                      }?autoplay=1&mute=1`}
+                      title="YouTube Short"
+                      className="w-full h-full rounded-2xl shadow-xl"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  )}
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Progress bar */}
+          <motion.div
+            variants={childVariants}
+            className="max-w-xs mx-auto mt-5 h-1 bg-gray-100 rounded-full overflow-hidden"
+          >
+            <div
+              className="h-full bg-[#378ADD] rounded-full transition-none"
+              style={{ width: `${progress}%` }}
+            />
+          </motion.div>
 
           {/* Navigation buttons with enhanced hover effects */}
           <motion.div

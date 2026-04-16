@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 const PaymentFailed: React.FC = () => {
   const router = useRouter();
-  const handleGoHome = () => router.back();
+  const handleGoHome = () => router.push("/");
 
   return (
     <div className="min-h-screen bg-linear-to-br from-red-50 via-orange-50 to-pink-50 flex items-center justify-center px-4 sm:px-6 relative overflow-hidden">

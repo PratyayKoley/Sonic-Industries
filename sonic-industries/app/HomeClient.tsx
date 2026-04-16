@@ -21,9 +21,10 @@ import { CategoryBackend } from "@/types";
 
 type Props = {
   categories: CategoryBackend[];
+  categoryImages: Record<string, string | null>;
 };
 
-export default function HomeClient({ categories }: Props) {
+export default function HomeClient({ categories, categoryImages }: Props) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -213,8 +214,18 @@ export default function HomeClient({ categories }: Props) {
                 key={category._id}
                 className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
-                <div className="h-48 bg-linear-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
-                  <Package className="w-20 h-20 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
+                <div className="h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  {categoryImages[category._id] ? (
+                    <Image
+                      src={categoryImages[category._id]!}
+                      alt={category.name}
+                      width={300}
+                      height={200}
+                      className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <Package className="w-20 h-20 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
+                  )}
                 </div>
 
                 <div className="p-6">

@@ -53,7 +53,7 @@ const NotFound: React.FC = () => {
         <div className="flex justify-center">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-gray-100 text-gray-700 text-sm sm:text-base font-semibold rounded-lg border border-gray-300 hover:bg-gray-200 hover:scale-105 transition-all duration-200"
+            className="flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-gray-100 text-gray-700 text-sm sm:text-base font-semibold rounded-lg border border-gray-300 hover:bg-gray-200 hover:scale-105 transition-all duration-200 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             Go Back
