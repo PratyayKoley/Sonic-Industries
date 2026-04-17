@@ -447,15 +447,15 @@ export default function Testimonials() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-                <div className="w-full max-w-70 md:max-w-[320px] aspect-9/16 max-h-125">
+                <div className="relative w-full max-w-70 md:max-w-[320px] aspect-9/16 overflow-hidden rounded-xl">
                   {vidTestimonials.length > 0 && (
                     <iframe
                       src={`${
                         vidTestimonials[activeIndex % vidTestimonials.length]
                           ?.link
-                      }?autoplay=1&mute=1`}
+                      }?autoplay=1&mute=1&controls=0&playsinline=1&rel=0`}
                       title="YouTube Short"
-                      className="w-full h-full rounded-2xl shadow-xl"
+                      className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen

@@ -4,6 +4,8 @@ import { CategoryBackend, CategoryImages, ProductBackend } from "@/types";
 import { Ripple } from "../ui/ripple";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { ArrowRight } from "lucide-react";
 
 interface HeroSectionProps {
   productData: CategoryBackend | ProductBackend;
@@ -42,6 +44,20 @@ export default function HeroSection({
     ? allProductData.images?.[0] // category → any product image
     : productData.images?.[0]; // product → its own image
 
+  const handleBuyNow = async (productId: string) => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/checkout`,
+        { productId },
+      );
+
+      const { checkoutSessionToken } = res.data;
+      router.push(`/checkout?token=${checkoutSessionToken}`);
+    } catch (error) {
+      console.error("Error initiating checkout:", error);
+    }
+  };
+
   return (
     <section className="w-full bg-white px-4 py-12 sm:py-16">
       <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-14">
@@ -60,24 +76,53 @@ export default function HeroSection({
             <button
               className="bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider"
               onClick={() => {
-                document.getElementById("products")?.scrollIntoView({
-                  behavior: "smooth",
-                });
+                if (isCategoryPage) {
+                  document.getElementById("products")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                } else {
+                  handleBuyNow(productData._id); // ✅ product purchase
+                }
               }}
             >
               Buy Now
             </button>
 
-            <button
-              className="border border-blue-500 text-blue-500 hover:bg-blue-50 transition-all duration-300 font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider"
-              onClick={() => {
-                document.getElementById("features")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-            >
-              Learn More
-            </button>
+            {isCategoryPage ? (
+              <button
+                className="group flex justify-center items-center gap-2.5 border border-blue-500 text-blue-500 hover:bg-blue-50 transition-all duration-300 font-medium px-6 sm:px-8 py-3 rounded-md uppercase text-sm sm:text-base cursor-pointer tracking-normal hover:tracking-wider"
+                onClick={() => {
+                  document.getElementById("features")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Learn More
+                <ArrowRight
+                  width={20}
+                  height={20}
+                  className="transition-transform duration-250 group-hover:translate-x-1"
+                />
+              </button>
+            ) : (
+              "price" in productData && (
+                <div className="group w-full sm:w-auto inline-flex items-stretch rounded-[10px] overflow-hidden border border-blue-300 hover:border-blue-500 transition-all duration-200 cursor-pointer">
+                  {/* Label */}
+                  <div className="bg-blue-50 group-hover:bg-blue-100 px-12.5 md:px-8.5 xl:px-6.5 py-2 flex items-center border-r border-blue-300 group-hover:border-blue-500 transition-all duration-200">
+                    <span className="text-xs sm:text-sm font-medium tracking-widest uppercase text-blue-500 group-hover:text-blue-700 transition-colors duration-200">
+                      Price
+                    </span>
+                  </div>
+
+                  {/* Value */}
+                  <div className="flex-1 px-3 sm:px-4 py-2 bg-white group-hover:bg-blue-50 flex items-center justify-center sm:justify-start transition-all duration-200">
+                    <span className="text-sm sm:text-md font-semibold text-blue-700 tracking-normal group-hover:tracking-wider transition-all duration-200">
+                      ₹{productData.price}
+                    </span>
+                  </div>
+                </div>
+              )
+            )}
           </div>
 
           {/* Sibling Products */}
