@@ -80,6 +80,20 @@ export default function RootLayout({
       <body className={`${poppins.variable} antialiased`}>
         {children}
         <Toaster position="top-center" theme="light" richColors />
+
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-KKGC4KM9G1"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-KKGC4KM9G1');
+          `}
+        </Script>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="beforeInteractive"
