@@ -58,6 +58,7 @@ const ProductsDashboard = () => {
       items: [] as ProductCharacteristics[],
     } as FeaturesBlock,
     labels: [] as NewProductLabels[],
+    keywords: [] as string[],
     packaging: {
       length: 0,
       width: 0,
@@ -159,6 +160,7 @@ const ProductsDashboard = () => {
         items: [],
       },
       labels: product.labels || [],
+      keywords: product.keywords || [],
       packaging: {
         length: product.packaging?.length ?? 0,
         width: product.packaging?.width ?? 0,

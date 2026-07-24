@@ -65,6 +65,7 @@ const CreateProduct = ({
         JSON.stringify(formData.characteristics || [])
       );
       payload.append("labels", JSON.stringify(formData.labels || []));
+      payload.append("keywords", JSON.stringify(formData.keywords || []));
       if (formData.yt_video_url)
         payload.append("yt_video_url", formData.yt_video_url.trim());
       if (formData.unboxing_yt_video_url)
@@ -139,6 +140,7 @@ const CreateProduct = ({
         items: [],
       },
       labels: [],
+      keywords: [],
       packaging: {
         length: 0,
         width: 0,

@@ -39,6 +39,7 @@ const CreateCategory = ({
         slug: formData.slug,
         title: formData.title,
         description: formData.description,
+        keywords: formData.keywords?.map((keyword) => keyword.trim()).filter((keyword) => keyword.length > 0) || [],
         features: {
           desc1: formData.features.desc1 || undefined,
           desc2: formData.features.desc2 || undefined,
@@ -82,6 +83,7 @@ const CreateCategory = ({
       slug: "",
       title: "",
       description: "",
+      keywords: [] as string[],
       features: {
         desc1: "",
         desc2: "",

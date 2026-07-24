@@ -38,6 +38,7 @@ export interface ProductBackend {
   price: number;
   images: string[];
   rating: number;
+  keywords?: string[];
 
   features?: {
     name?: string;
@@ -71,6 +72,7 @@ export interface CategoryBackend {
   slug: string;
   title: string;
   description?: string;
+  keywords?: string[];
 
   features?: {
     desc1?: string;
@@ -223,6 +225,7 @@ export type FormDataType = {
   slug: string;
   title: string;
   description: string;
+  keywords: string[];
   features: {
     desc1?: string;
     desc2?: string;
@@ -288,6 +291,7 @@ export type ProductFormDataType = {
   price: number;
   images: ProductImage[];
   rating: number;
+  keywords: string[];
 
   features: ProductFeatures[];
 

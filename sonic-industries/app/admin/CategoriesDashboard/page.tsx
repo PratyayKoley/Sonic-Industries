@@ -30,6 +30,7 @@ const CategoriesDashboard = () => {
     slug: "",
     title: "",
     description: "",
+    keywords: [] as string[],
     features: {
       desc1: "",
       desc2: "",
@@ -101,6 +102,7 @@ const CategoriesDashboard = () => {
       slug: category.slug,
       title: category.title,
       description: category.description || "",
+      keywords: category.keywords || [],
       features: category.features || {
         desc1: "",
         desc2: "",

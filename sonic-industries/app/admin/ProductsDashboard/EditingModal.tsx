@@ -34,6 +34,8 @@ const EditingModal = ({
     | "packaging"
   >("basic");
 
+  const [keywordInput, setKeywordInput] = useState("");
+
   const handleUpdate = async () => {
     if (!selectedProduct || !formData.name.trim() || !formData.slug.trim()) {
       setError("Name and slug are required");
@@ -68,6 +70,7 @@ const EditingModal = ({
       );
       payload.append("categoryId", formData.categoryId);
       payload.append("labels", JSON.stringify(formData.labels || []));
+      payload.append("keywords", JSON.stringify(formData.keywords || []));
       payload.append("packaging", JSON.stringify(formData.packaging || {}));
       if (formData.yt_video_url)
         payload.append("yt_video_url", formData.yt_video_url);
@@ -267,6 +270,34 @@ const EditingModal = ({
     }));
   };
 
+  const addKeywords = (text: string) => {
+    const newKeywords = text
+      .split(/[,\n]/)
+      .map((k) => k.trim())
+      .filter(Boolean);
+
+    setFormData((prev) => {
+      const existing = prev.keywords ?? [];
+
+      const keywords = [...existing];
+
+      newKeywords.forEach((keyword) => {
+        const exists = keywords.some(
+          (k) => k.toLowerCase() === keyword.toLowerCase(),
+        );
+
+        if (!exists) {
+          keywords.push(keyword);
+        }
+      });
+
+      return {
+        ...prev,
+        keywords,
+      };
+    });
+  };
+
   const tabs = [
     { id: "basic", label: "Basic Info" },
     { id: "details", label: "Details" },
@@ -375,6 +406,62 @@ const EditingModal = ({
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  SEO Keywords
+                </label>
+
+                <input
+                  type="text"
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    addKeywords(e.clipboardData.getData("text"));
+                    setKeywordInput("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === ",") {
+                      e.preventDefault();
+                      addKeywords(keywordInput);
+                      setKeywordInput("");
+                    }
+                  }}
+                  placeholder="Type or paste keywords"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+
+                <p className="text-xs text-gray-500 mt-1">
+                  Press Enter or comma (,) to add a keyword.
+                </p>
+
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {(formData.keywords ?? []).map((keyword, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
+                    >
+                      <span>{keyword}</span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            keywords: (prev.keywords ?? []).filter(
+                              (_, i) => i !== index,
+                            ),
+                          }))
+                        }
+                        className="font-bold text-blue-700 hover:text-red-600 cursor-pointer"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div>

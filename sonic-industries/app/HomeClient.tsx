@@ -404,7 +404,7 @@ export default function HomeClient({ categories, categoryImages }: Props) {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/RazorpayPages/privacy-policy"
+                    href="/privacy-policy"
                     className="text-gray-400 hover:text-purple-400 transition"
                   >
                     Privacy Policy
@@ -412,7 +412,7 @@ export default function HomeClient({ categories, categoryImages }: Props) {
                 </li>
                 <li>
                   <Link
-                    href="/RazorpayPages/terms-and-conditions"
+                    href="/terms-and-conditions"
                     className="text-gray-400 hover:text-purple-400 transition"
                   >
                     Terms & Conditions
@@ -420,7 +420,7 @@ export default function HomeClient({ categories, categoryImages }: Props) {
                 </li>
                 <li>
                   <Link
-                    href="/RazorpayPages/refund-policy"
+                    href="/refund-policy"
                     className="text-gray-400 hover:text-purple-400 transition"
                   >
                     Refund & Cancellation
@@ -428,7 +428,7 @@ export default function HomeClient({ categories, categoryImages }: Props) {
                 </li>
                 <li>
                   <Link
-                    href="/RazorpayPages/shipping-policy"
+                    href="/shipping-policy"
                     className="text-gray-400 hover:text-purple-400 transition"
                   >
                     Shipping & Delivery
@@ -450,28 +450,28 @@ export default function HomeClient({ categories, categoryImages }: Props) {
               </p>
               <div className="flex gap-4 text-xs text-gray-400">
                 <Link
-                  href="/RazorpayPages/privacy-policy"
+                  href="/privacy-policy"
                   className="hover:text-purple-400 transition"
                 >
                   Privacy
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/terms-and-conditions"
+                  href="/terms-and-conditions"
                   className="hover:text-purple-400 transition"
                 >
                   Terms
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/refund-policy"
+                  href="/refund-policy"
                   className="hover:text-purple-400 transition"
                 >
                   Refunds
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/shipping-policy"
+                  href="/shipping-policy"
                   className="hover:text-purple-400 transition"
                 >
                   Shipping

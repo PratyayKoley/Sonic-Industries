@@ -33,22 +33,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
-      url: `${frontend}/RazorpayPages/privacy-policy`,
+      url: `${frontend}/privacy-policy`,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${frontend}/RazorpayPagesrefund-policy`,
+      url: `${frontend}/refund-policy`,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${frontend}/RazorpayPages/shipping-policy`,
+      url: `${frontend}/shipping-policy`,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${frontend}/RazorpayPages/terms-and-conditions`,
+      url: `${frontend}/terms-and-conditions`,
       changeFrequency: "monthly",
       priority: 0.8,
     },

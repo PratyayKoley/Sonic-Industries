@@ -26,7 +26,7 @@ const getCategory = async (slug: string): Promise<CategoryBackend | null> => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${slug}`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 3600 } },
     );
 
     if (!res.ok) return null;
@@ -39,12 +39,12 @@ const getCategory = async (slug: string): Promise<CategoryBackend | null> => {
 };
 
 const getSingleProduct = async (
-  slug: string
+  slug: string,
 ): Promise<ProductBackend | null> => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${slug}`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 3600 } },
     );
 
     if (!res.ok) return null;
@@ -57,13 +57,13 @@ const getSingleProduct = async (
 };
 
 const getAllProductsUnderCategory = async (
-  id: string | undefined
+  id: string | undefined,
 ): Promise<CategoryImages> => {
   if (!id) return { products: [], images: [] };
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${id}/images`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 3600 } },
     );
 
     if (!res.ok) return { products: [], images: [] };
@@ -97,7 +97,7 @@ export async function generateStaticParams() {
     const productSlugs = productData.products.map(
       (product: ProductBackend) => ({
         slug: product.slug,
-      })
+      }),
     );
 
     return [...categorySlugs, ...productSlugs];
@@ -118,7 +118,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         category?.description ||
         "Explore high-quality packaging and coding machinery from Sonic Industries.",
-      keywords: [],
+      keywords: category?.keywords || [
+        "sonic industries",
+        "packaging machinery",
+        "capping machinery",
+        "batch coding",
+        "vacuum packaging",
+        "band sealer",
+        "inkjet printer",
+        "labeling machine",
+        "industrial machinery",
+        "packaging equipment",
+        "sealing machine",
+        "vacuum sealer",
+        "industrial packaging",
+        "coding equipment",
+        "packaging solutions",
+        "industrial sealing",
+        "packaging technology",
+        "machinery for packaging",
+        "industrial labeling",
+        "packaging automation",
+      ],
       openGraph: {
         title: category?.name || "Sonic Industries",
         description:
@@ -162,7 +183,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         product?.description ||
         "Explore high-quality packaging and coding machinery from Sonic Industries.",
-      keywords: [],
+      keywords: product?.keywords || [
+        "sonic industries",
+        "packaging machinery",
+        "capping machinery",
+        "batch coding",
+        "vacuum packaging",
+        "band sealer",
+        "inkjet printer",
+        "labeling machine",
+        "industrial machinery",
+        "packaging equipment",
+        "sealing machine",
+        "vacuum sealer",
+        "industrial packaging",
+        "coding equipment",
+        "packaging solutions",
+        "industrial sealing",
+        "packaging technology",
+        "machinery for packaging",
+        "industrial labeling",
+        "packaging automation",
+      ],
       openGraph: {
         title: product?.name || "Sonic Industries",
         description:
@@ -271,10 +313,10 @@ export default async function ProductPage({ params }: Props) {
   const productData: ProductBackend | null = await getSingleProduct(slug);
   if (productData) {
     const parentCategoryData: CategoryBackend | null = await getCategory(
-      productData.categoryId.slug
+      productData.categoryId.slug,
     );
     const allProductData = await getAllProductsUnderCategory(
-      productData.categoryId._id
+      productData.categoryId._id,
     );
 
     return (

@@ -141,10 +141,10 @@ export default function Footer({ productData, allProductData }: FooterProps) {
   };
 
   const policyLinks = [
-    { name: "Privacy Policy", href: "/RazorpayPages/privacy-policy" },
-    { name: "Terms & Conditions", href: "/RazorpayPages/terms-and-conditions" },
-    { name: "Refund & Cancellation", href: "/RazorpayPages/refund-policy" },
-    { name: "Shipping & Delivery", href: "/RazorpayPages/shipping-policy" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Refund & Cancellation", href: "/refund-policy" },
+    { name: "Shipping & Delivery", href: "/shipping-policy" },
   ];
 
   return (
@@ -380,28 +380,28 @@ export default function Footer({ productData, allProductData }: FooterProps) {
 
               <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
                 <Link
-                  href="/RazorpayPages/privacy-policy"
+                  href="/privacy-policy"
                   className="hover:text-purple-600 transition-colors"
                 >
                   Privacy
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/terms-and-conditions"
+                  href="/terms-and-conditions"
                   className="hover:text-purple-600 transition-colors"
                 >
                   Terms
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/refund-policy"
+                  href="/refund-policy"
                   className="hover:text-purple-600 transition-colors"
                 >
                   Refunds
                 </Link>
                 <span>•</span>
                 <Link
-                  href="/RazorpayPages/shipping-policy"
+                  href="/shipping-policy"
                   className="hover:text-purple-600 transition-colors"
                 >
                   Shipping
