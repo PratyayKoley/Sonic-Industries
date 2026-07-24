@@ -12,6 +12,7 @@ const CategorySchema = new Schema(
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: { type: String },
+    keywords: [{ type: String }],
 
     features: {
       desc1: { type: String },
@@ -21,7 +22,7 @@ const CategorySchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export type Category = InferSchemaType<typeof CategorySchema> & {

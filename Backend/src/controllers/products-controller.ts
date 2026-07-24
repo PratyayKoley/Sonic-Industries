@@ -18,6 +18,7 @@ export const createProduct = async (
       characteristics: JSON.parse(req.body.characteristics || "[]"),
       labels: JSON.parse(req.body.labels || "[]"),
       packaging: JSON.parse(req.body.packaging || "{}"),
+      keywords: JSON.parse(req.body.keywords || "[]"),
     };
     if (!productData || Object.keys(productData).length === 0) {
       res.status(400).json({
@@ -25,6 +26,11 @@ export const createProduct = async (
       });
       return;
     }
+
+    productData.keywords =
+      productData.keywords
+        ?.map((keyword: string) => keyword.trim())
+        .filter((keyword: string) => keyword.length > 0) || [];
 
     const categoryData: Category | null = await CategoryModel.findById(
       productData.categoryId,
@@ -160,6 +166,7 @@ export const updateProduct = async (
       packaging,
       yt_video_url,
       existingImages,
+      keywords,
     } = req.body;
 
     if (!originalSlug) {
@@ -205,6 +212,11 @@ export const updateProduct = async (
       ? JSON.parse(characteristics)
       : existingProduct.characteristics;
     const parsedLabels = labels ? JSON.parse(labels) : existingProduct.labels;
+    const parsedKeywords = keywords
+      ? JSON.parse(keywords)
+          .map((keyword: string) => keyword.trim())
+          .filter((keyword: string) => keyword.length > 0)
+      : existingProduct.keywords;
 
     let parsedExistingImages: string[] = [];
     if (existingImages) {
@@ -262,6 +274,7 @@ export const updateProduct = async (
       packaging: parsedPackaging,
       characteristics: parsedCharacteristics,
       labels: parsedLabels,
+      keywords: parsedKeywords,
       categoryId,
     };
 

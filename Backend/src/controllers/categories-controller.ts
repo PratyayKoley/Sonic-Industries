@@ -87,6 +87,11 @@ export const createCategory = async (
     categoryData.name = categoryData.name?.trim();
     categoryData.slug = categoryData.slug?.trim();
 
+    categoryData.keywords =
+      categoryData.keywords
+        ?.map((keyword) => keyword.trim())
+        .filter((keyword) => keyword.length > 0) || [];
+
     if (!categoryData.name || !categoryData.slug) {
       res.status(400).json({
         message: "Category name and slug are required.",
@@ -138,6 +143,12 @@ export const updateCategory = async (
         message: "Slug and category data are required.",
       });
       return;
+    }
+
+    if (rest.keywords) {
+      rest.keywords = rest.keywords
+        .map((keyword: string) => keyword.trim())
+        .filter((keyword: string) => keyword.length > 0);
     }
 
     const updatedCategory = await CategoryModel.findOneAndUpdate(
@@ -261,12 +272,10 @@ export const getCategoryImages = async (
     });
   } catch (error) {
     console.error("Error fetching category images: ", error);
-    res
-      .status(500)
-      .json({
-        message:
-          "Something went wrong while fetching the category images. Please try again later.",
-        error,
-      });
+    res.status(500).json({
+      message:
+        "Something went wrong while fetching the category images. Please try again later.",
+      error,
+    });
   }
 };

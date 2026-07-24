@@ -18,6 +18,7 @@ const ProductSchema = new Schema(
     price: { type: Number, required: true },
     images: [{ type: String }], // image URLs
     rating: { type: Number, default: 0, min: 0, max: 5 },
+    keywords: [{type: String}],
 
     features: [
       {
