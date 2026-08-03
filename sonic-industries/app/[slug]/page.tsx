@@ -111,6 +111,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategory(slug);
+  const allProductData = await getAllProductsUnderCategory(categoryData?._id);
 
   if (category) {
     return {
@@ -150,7 +151,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         siteName: "Sonic Industries",
         images: [
           {
-            url: `link to opengraph image url`,
+            url: allProductData.images?.[0] || allProductData.images?.[1],
             width: 1200,
             height: 630,
             alt: "Sonic Industries Product Showcase",
@@ -164,7 +165,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           "Explore high-quality packaging and coding machinery from Sonic Industries.",
         images: [
           {
-            url: `link to opengraph image url`,
+            url: allProductData.images?.[0] || allProductData.images?.[1],
             width: 1200,
             height: 630,
             alt: "Sonic Industries Product Showcase",
@@ -215,7 +216,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         siteName: "Sonic Industries",
         images: [
           {
-            url: `link to opengraph image url`,
+            url: product?.images[0] || product?.images[1],
             width: 1200,
             height: 630,
             alt: "Sonic Industries Product Showcase",
@@ -229,7 +230,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           "Explore high-quality packaging and coding machinery from Sonic Industries.",
         images: [
           {
-            url: `link to opengraph image url`,
+            url: product?.images[0] || product?.images[1],
             width: 1200,
             height: 630,
             alt: "Sonic Industries Product Showcase",
