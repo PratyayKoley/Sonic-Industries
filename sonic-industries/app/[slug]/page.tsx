@@ -111,7 +111,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategory(slug);
-  const allProductData = await getAllProductsUnderCategory(categoryData?._id);
+  const allProductData = await getAllProductsUnderCategory(category?._id);
 
   if (category) {
     return {
